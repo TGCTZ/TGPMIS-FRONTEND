@@ -11,7 +11,7 @@ import { StoneStatusBadge } from './status-badge'
 export function formatWeight(stone: Stone) {
   if (!stone.weight) return '—'
   const symbol = WEIGHT_UNIT_SYMBOLS[stone.weight_unit] ?? stone.weight_unit
-  return `${stone.weight} ${symbol}`
+  return `${Number(stone.weight).toFixed(2)} ${symbol}`
 }
 
 /**

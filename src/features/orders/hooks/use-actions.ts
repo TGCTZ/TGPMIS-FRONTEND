@@ -60,7 +60,9 @@ export function useOrderActions(order: Order | null): RowAction[] {
       icon: Pencil,
       permission: perm('orders', 'change'),
       onSelect: () => select('update'),
-      hidden: isDeleted,
+      // Hide as soon as the bill is requested; the server locks edits once
+      // GePG returns a control number.
+      hidden: isDeleted || isBilled(order),
     },
     {
       // Same dialog either way; once every stone is in, all that is left to do

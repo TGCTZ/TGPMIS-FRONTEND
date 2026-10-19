@@ -53,7 +53,13 @@ function formatStoneWeight(report: IdentificationReport): string | null {
   if (!report.stone_weight) return null
   const symbol =
     WEIGHT_UNIT_SYMBOLS[report.stone_weight_unit] ?? report.stone_weight_unit
-  return `${report.stone_weight} ${symbol}`
+  return `${Number(report.stone_weight).toFixed(2)} ${symbol}`
+}
+
+/** Round numeric readings to two decimals while preserving ranges and labels. */
+function formatMeasurement(value: string | null): string | null {
+  if (value === null || value === '') return null
+  return value.replace(/\d+\.\d+/g, (reading) => Number(reading).toFixed(2))
 }
 
 /**
@@ -155,8 +161,14 @@ export function ReportViewDialog({
             <DefinitionList
               items={[
                 { label: 'Weight', value: formatStoneWeight(report) },
-                { label: 'Refractive index', value: report.refractive_index },
-                { label: 'Specific gravity', value: report.specific_gravity },
+                {
+                  label: 'Refractive index',
+                  value: formatMeasurement(report.refractive_index),
+                },
+                {
+                  label: 'Specific gravity',
+                  value: formatMeasurement(report.specific_gravity),
+                },
                 {
                   label: 'Optic character',
                   value: enumLabel(OPTIC_CHARACTERS, report.optic_character),
