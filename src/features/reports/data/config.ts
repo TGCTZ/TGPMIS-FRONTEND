@@ -10,11 +10,10 @@ export const reportConfigs = {
   },
   operational: {
     title: 'Operational reports',
-    description: 'Orders, findings, and certificates.',
+    description: 'Orders, stones, and certificates.',
     permissions: [
       perm('orders', 'view'),
       perm('stones', 'view'),
-      perm('identification-reports', 'view'),
       perm('certificates', 'view'),
     ],
     gate: PERMISSIONS.operationalReports,

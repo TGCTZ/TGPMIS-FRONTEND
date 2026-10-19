@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { formatMoney } from '@/lib/format'
 import { serverMessageOr } from '@/lib/handle-server-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -14,6 +15,7 @@ import { DataTable } from '@/components/data-table'
 import { brandPanelClassName } from '@/components/layout/brand-panel'
 import { reportsQuery } from '../data/api'
 import { type ReportKind } from '../data/config'
+import { formatReportBadgeMoney } from '../data/format'
 import { type ReportSearch, type ReportSection } from '../data/schema'
 import { reportColumns } from './columns'
 
@@ -64,11 +66,25 @@ export function ReportSectionCard({
             </span>{' '}
             matching records
           </p>
-          {summary.amounts.map((amount) => (
-            <p key={amount.currency} className='font-semibold tabular-nums'>
-              {formatMoney(Number(amount.amount), amount.currency)}
-            </p>
-          ))}
+          {summary.amounts.map((amount) =>
+            kind === 'financial' ? (
+              <Badge
+                key={amount.currency}
+                className='border-emerald-300 bg-emerald-100 px-3 py-1 text-base font-bold text-emerald-800 shadow-sm dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200'
+              >
+                {kind === 'financial'
+                  ? formatReportBadgeMoney(
+                      Number(amount.amount),
+                      amount.currency
+                    )
+                  : formatMoney(Number(amount.amount), amount.currency)}
+              </Badge>
+            ) : (
+              <p key={amount.currency} className='font-semibold tabular-nums'>
+                {formatMoney(Number(amount.amount), amount.currency)}
+              </p>
+            )
+          )}
           {summary.statuses.map((status) => (
             <p
               key={status.status}
@@ -105,7 +121,7 @@ export function ReportSectionCard({
         ) : (
           <DataTable
             panel={false}
-            columns={reportColumns(data?.columns ?? [])}
+            columns={reportColumns(data?.columns ?? [], kind)}
             data={data?.page.items ?? []}
             meta={data?.page.meta}
             isFetching={query.isFetching}

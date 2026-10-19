@@ -10,7 +10,6 @@ function reportParams(search: ReportSearch) {
     from_date: search.from,
     to_date: search.to,
     section: search.section,
-    customer: search.customer,
     status: search.status,
     stone_type: search.stoneType,
     page: search.page,
