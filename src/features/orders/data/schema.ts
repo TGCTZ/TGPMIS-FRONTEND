@@ -36,6 +36,10 @@ export const orderSchema = z.object({
    * look identical by stone counts alone, since both are fully identified.
    */
   bill_number: z.string().nullable().default(null),
+  /** Total amount charged by the order's bill, as a decimal string. */
+  bill_total_amount: z.string().nullable().default(null),
+  /** Currency used by the bill. */
+  bill_currency: z.string().nullable().default(null),
   /**
    * The number the customer quotes when paying.
    *
