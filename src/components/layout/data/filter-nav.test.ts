@@ -58,11 +58,13 @@ describe('filterNavGroups', () => {
 
 describe('sidebar module gates', () => {
   it('keeps the bench from a receptionist who can view orders', () => {
-    // Identification is reached through orders.view_order, so before the gates
-    // this set of permissions also surfaced the whole Gemmology Lab group.
+    // Model permissions allow the pages to load, but the module gate controls
+    // whether the Gemmology Lab section appears in navigation.
     const receptionist = [
       perm('customers', 'view'),
       perm('orders', 'view'),
+      perm('stones', 'view'),
+      perm('identification-reports', 'view'),
       PERMISSIONS.moduleOrders,
       PERMISSIONS.moduleReports,
       PERMISSIONS.operationalReports,
