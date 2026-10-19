@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { stoneQuery } from '@/features/stones/data/api'
 import { finalizeReport, gemmologistCandidatesQuery } from '../data/api'
 import { listLabels, missingForFinalize } from '../data/finalize-rules'
 import { type IdentificationReport } from '../data/schema'
@@ -79,10 +80,19 @@ export function FinalizeReportDialog({
     isError,
   } = useQuery({ ...gemmologistCandidatesQuery(), enabled: open })
 
+  const {
+    data: stone,
+    isPending: isStonePending,
+    isError: isStoneError,
+  } = useQuery({ ...stoneQuery(currentRow.stone), enabled: open })
+
   // The service refuses an incomplete report, so the refusal is shown here
   // rather than spent on a round trip - and it names what is missing while the
   // gemmologist is still in front of the report they can fix.
-  const missing = missingForFinalize(currentRow)
+  const missing = [
+    ...missingForFinalize(currentRow),
+    ...(stone?.photo ? [] : ['photograph']),
+  ]
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -131,6 +141,14 @@ export function FinalizeReportDialog({
           </p>
         )}
 
+        {(isStonePending || isStoneError) && (
+          <p className='text-sm text-destructive'>
+            {isStonePending
+              ? 'Checking the stone photograph…'
+              : 'The stone photograph could not be checked. Try again before finalizing.'}
+          </p>
+        )}
+
         <div className='space-y-2'>
           <Label htmlFor='verified-by'>Second gemmologist</Label>
           <Select value={verifiedBy} onValueChange={setVerifiedBy}>
@@ -174,7 +192,12 @@ export function FinalizeReportDialog({
           </Button>
           <Button
             onClick={() => mutation.mutate()}
-            disabled={mutation.isPending || missing.length > 0}
+            disabled={
+              mutation.isPending ||
+              isStonePending ||
+              isStoneError ||
+              missing.length > 0
+            }
           >
             {mutation.isPending ? 'Finalizing...' : 'Finalize'}
           </Button>
