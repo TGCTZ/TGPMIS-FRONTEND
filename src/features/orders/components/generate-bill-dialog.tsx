@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { LoaderCircle, TriangleAlert } from 'lucide-react'
 import { toast } from 'sonner'
@@ -60,6 +60,13 @@ export function GenerateBillDialog({
   })
   const controlNumber =
     requestedBill?.control_number || billDetails.data?.control_number || null
+
+  useEffect(() => {
+    if (controlNumber) {
+      void queryClient.invalidateQueries({ queryKey: ['orders'] })
+    }
+  }, [controlNumber, queryClient])
+
   const closeRequestedBill = () => {
     setRequestedBill(null)
     onOpenChange(false)

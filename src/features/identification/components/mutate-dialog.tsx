@@ -703,7 +703,7 @@ export function ReportMutateDialog({
                             >
                               <Input
                                 type='number'
-                                step='0.001'
+                                step='0.01'
                                 min='0'
                                 {...field}
                                 value={field.value ?? ''}
@@ -761,7 +761,7 @@ export function ReportMutateDialog({
                           <FormControl>
                             <Input
                               type='number'
-                              step='0.001'
+                              step='0.01'
                               min='0'
                               {...field}
                               value={field.value ?? ''}
