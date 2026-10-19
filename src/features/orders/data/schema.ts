@@ -21,7 +21,8 @@ export const orderSchema = z.object({
   stone_count: z.number().default(0),
   identified_count: z.number().default(0),
   /**
-   * What the next stone identified here will be called — A, B, C…
+   * What the next stone identified here will be called — numeric for new
+   * orders, alphabetic for existing orders that already use letter labels.
    *
    * Comes from the server rather than being derived in the browser: the label
    * is allocated by `add_stone`, and a dialog that promises "C" while the
