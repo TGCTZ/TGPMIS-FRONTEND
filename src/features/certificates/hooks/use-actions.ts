@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { Download, Eye, FileSearch, Pencil, Printer } from 'lucide-react'
+import { Download, FileSearch, Pencil, Printer } from 'lucide-react'
 import { PERMISSIONS, perm } from '@/lib/permissions'
 import { type RowAction } from '@/components/data-table'
 import { useCertificates } from '../components/provider'
@@ -26,7 +26,7 @@ export function useCertificateActions(
   const { download } = useDownloadCertificatePdf()
   const { print } = usePrintCertificatePdf()
 
-  function select(dialog: 'view' | 'preview') {
+  function select(dialog: 'preview') {
     setCurrentRow(certificate)
     setOpen(dialog)
   }
@@ -35,12 +35,6 @@ export function useCertificateActions(
   if (!certificate) return []
 
   return [
-    {
-      label: 'View',
-      icon: Eye,
-      permission: perm('certificates', 'view'),
-      onSelect: () => select('view'),
-    },
     ...(certificate.report
       ? [
           {
