@@ -87,7 +87,8 @@ export function StonePhotoPanel({
         <div>
           <h3 className='text-sm font-medium'>Photograph</h3>
           <p className='text-xs text-muted-foreground'>
-            Printed on the certificate. Saved as soon as you choose it.
+            Required before findings can be finalized. Printed on the
+            certificate and saved as soon as you choose it.
           </p>
         </div>
 
@@ -155,7 +156,7 @@ export function StonePhotoPanel({
         </div>
       ) : (
         <p className='rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground'>
-          No photograph yet. The certificate will print a placeholder.
+          No photograph yet. Add one before finalizing findings.
         </p>
       )}
     </div>
