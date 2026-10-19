@@ -92,19 +92,10 @@ const ordersDataColumns: ColumnDef<Order>[] = [
         return <span className='text-xs text-muted-foreground'>Not billed</span>
       }
 
-      return (
-        <div className='min-w-36'>
-          {order.control_number ? (
-            <div className='font-medium tabular-nums'>
-              {order.control_number}
-            </div>
-          ) : (
-            <StatusBadge tone='danger'>Awaiting number</StatusBadge>
-          )}
-          <div className='text-xs text-muted-foreground'>
-            {order.bill_number}
-          </div>
-        </div>
+      return order.control_number ? (
+        <span className='font-medium tabular-nums'>{order.control_number}</span>
+      ) : (
+        <StatusBadge tone='danger'>Awaiting number</StatusBadge>
       )
     },
   },
