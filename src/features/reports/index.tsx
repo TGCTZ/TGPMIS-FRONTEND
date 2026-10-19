@@ -3,9 +3,12 @@ import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
 import { Download } from 'lucide-react'
 import { toast } from 'sonner'
+import { formatMoney } from '@/lib/format'
 import { serverMessageOr } from '@/lib/handle-server-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -16,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { brandPanelClassName } from '@/components/layout/brand-panel'
 import { Header } from '@/components/layout/header'
@@ -27,6 +31,7 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { ReportSectionCard } from './components/section'
 import { downloadReport, reportsQuery } from './data/api'
 import { reportConfigs, type ReportKind } from './data/config'
+import { formatReportBadgeMoney } from './data/format'
 import {
   dateRangePresets,
   defaultPeriod,
@@ -34,7 +39,7 @@ import {
   periodPresetForRange,
   periodProblem,
 } from './data/period'
-import { type ReportSearch } from './data/schema'
+import { type ReportResult, type ReportSearch } from './data/schema'
 
 const financialRoute = getRouteApi('/_authenticated/reports/financial/')
 const operationalRoute = getRouteApi('/_authenticated/reports/operational/')
@@ -128,6 +133,100 @@ export function ReportsPage({ kind, search, onChange }: Props) {
     }
   }
 
+  const reportFallback = problem ? (
+    <Alert variant='destructive'>
+      <AlertTitle>Check the date range</AlertTitle>
+      <AlertDescription>{problem}</AlertDescription>
+    </Alert>
+  ) : query.isError ? (
+    <Alert variant='destructive'>
+      <AlertTitle>Could not load the report</AlertTitle>
+      <AlertDescription>
+        {serverMessageOr(query.error, 'Please try again.')}
+      </AlertDescription>
+      <Button variant='outline' onClick={() => void query.refetch()}>
+        Retry
+      </Button>
+    </Alert>
+  ) : query.isPending ? (
+    <Skeleton className='h-48 w-full' />
+  ) : null
+
+  const fullReport = data && (
+    <FullReport
+      kind={kind}
+      data={data}
+      state={state}
+      totalRows={totalRows}
+      onPageChange={(section, page, pageSize) =>
+        onChange({ ...state, section, page, pageSize })
+      }
+    />
+  )
+
+  const summaryReport = data && (
+    <div className='grid gap-4 sm:grid-cols-2'>
+      {data.sections.map((section) => (
+        <Card
+          key={section.key}
+          className={`${brandPanelClassName} dark:bg-card dark:text-card-foreground`}
+        >
+          <CardHeader>
+            <CardTitle>{section.title}</CardTitle>
+          </CardHeader>
+          <CardContent className='space-y-4'>
+            <div>
+              <p className='text-5xl font-bold tabular-nums'>
+                {section.count.toLocaleString('en-TZ')}
+              </p>
+            </div>
+            <div className='flex flex-wrap gap-x-6 gap-y-2 text-sm'>
+              {section.amounts.map((amount) =>
+                kind === 'financial' ? (
+                  <Badge
+                    key={amount.currency}
+                    className='border-emerald-300 bg-emerald-100 px-3 py-1 text-base font-bold text-emerald-800 shadow-sm dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200'
+                  >
+                    {kind === 'financial'
+                      ? formatReportBadgeMoney(
+                          Number(amount.amount),
+                          amount.currency
+                        )
+                      : formatMoney(Number(amount.amount), amount.currency)}
+                  </Badge>
+                ) : (
+                  <p
+                    key={amount.currency}
+                    className='font-semibold tabular-nums'
+                  >
+                    {formatMoney(Number(amount.amount), amount.currency)}
+                  </p>
+                )
+              )}
+              {section.statuses.map((status) => (
+                <p
+                  key={status.status}
+                  className='text-primary-foreground/80 dark:text-muted-foreground'
+                >
+                  {status.status.replace(/_/g, ' ')}: {status.count}
+                </p>
+              ))}
+            </div>
+            {section.missing_dates > 0 && (
+              <Alert>
+                <AlertTitle>Records without an event date</AlertTitle>
+                <AlertDescription>
+                  {section.missing_dates} records have no event date and are
+                  excluded from the selected period.
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  )
+
   return (
     <>
       <Header fixed>
@@ -170,169 +269,171 @@ export function ReportsPage({ kind, search, onChange }: Props) {
             </Button>
           </div>
         </PageHeading>
-        <div
-          className={`${brandPanelClassName} flex flex-wrap items-end gap-3 p-4 dark:bg-card dark:text-card-foreground`}
-        >
-          <div className='space-y-2'>
-            <Label htmlFor='report-from'>From</Label>
-            <Input
-              id='report-from'
-              type='date'
-              value={state.from}
-              onChange={(event) =>
-                changeFilters({
-                  from: event.target.value,
-                  rangePreset: undefined,
-                })
-              }
-            />
-          </div>
-          <div className='space-y-2'>
-            <Label htmlFor='report-to'>To</Label>
-            <Input
-              id='report-to'
-              type='date'
-              value={state.to}
-              onChange={(event) =>
-                changeFilters({
-                  to: event.target.value,
-                  rangePreset: undefined,
-                })
-              }
-            />
-          </div>
-          <div className='min-w-48 space-y-2'>
-            <Label htmlFor='report-date-range'>Date range</Label>
-            <Select
-              value={periodPresetForRange(
-                state.from,
-                state.to,
-                new Date(),
-                preferredRangePreset
-              )}
-              onValueChange={(value) => {
-                const preset = dateRangePresets.find(
-                  (option) => option.value === value
-                )
-                if (preset)
+        <Tabs defaultValue='full' className='space-y-4'>
+          <div
+            className={`${brandPanelClassName} flex flex-wrap items-end gap-3 p-4 dark:bg-card dark:text-card-foreground`}
+          >
+            <div className='space-y-2'>
+              <Label htmlFor='report-from'>From</Label>
+              <Input
+                id='report-from'
+                type='date'
+                value={state.from}
+                onChange={(event) =>
                   changeFilters({
-                    ...periodForPreset(preset.value),
-                    rangePreset: preset.value,
+                    from: event.target.value,
+                    rangePreset: undefined,
                   })
-              }}
-            >
-              <SelectTrigger id='report-date-range'>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='custom' disabled>
-                  Custom range
-                </SelectItem>
-                {dateRangePresets.map((preset) => (
-                  <SelectItem key={preset.value} value={preset.value}>
-                    {preset.label}
+                }
+              />
+            </div>
+            <div className='space-y-2'>
+              <Label htmlFor='report-to'>To</Label>
+              <Input
+                id='report-to'
+                type='date'
+                value={state.to}
+                onChange={(event) =>
+                  changeFilters({
+                    to: event.target.value,
+                    rangePreset: undefined,
+                  })
+                }
+              />
+            </div>
+            <div className='min-w-48 space-y-2'>
+              <Label htmlFor='report-date-range'>Date range</Label>
+              <Select
+                value={periodPresetForRange(
+                  state.from,
+                  state.to,
+                  new Date(),
+                  preferredRangePreset
+                )}
+                onValueChange={(value) => {
+                  const preset = dateRangePresets.find(
+                    (option) => option.value === value
+                  )
+                  if (preset)
+                    changeFilters({
+                      ...periodForPreset(preset.value),
+                      rangePreset: preset.value,
+                    })
+                }}
+              >
+                <SelectTrigger id='report-date-range'>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='custom' disabled>
+                    Custom range
                   </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                  {dateRangePresets.map((preset) => (
+                    <SelectItem key={preset.value} value={preset.value}>
+                      {preset.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {kind === 'financial' ? (
+              <>
+                {data?.sections.some((section) =>
+                  ['billing', 'outstanding'].includes(section.key)
+                ) && (
+                  <FilterSelect
+                    label='Bill status'
+                    value={state.status}
+                    choices={[
+                      'pending',
+                      'partially_paid',
+                      'paid',
+                      'cancelled',
+                      'expired',
+                    ].map((status) => ({
+                      id: status,
+                      label: status.replace(/_/g, ' '),
+                    }))}
+                    onChange={(value) => changeFilters({ status: value })}
+                  />
+                )}
+              </>
+            ) : (
+              <FilterSelect
+                label='Stone type'
+                value={state.stoneType?.toString()}
+                choices={data?.filters.stone_types ?? []}
+                onChange={(value) =>
+                  changeFilters({
+                    stoneType: value ? Number(value) : undefined,
+                  })
+                }
+              />
+            )}
+            <TabsList className='ml-auto'>
+              <TabsTrigger value='full'>Full report</TabsTrigger>
+              <TabsTrigger value='summary'>Summarized report</TabsTrigger>
+            </TabsList>
           </div>
-          {kind === 'operational' && (
-            <FilterSelect
-              label='Customer'
-              value={state.customer?.toString()}
-              choices={data?.filters.customers ?? []}
-              onChange={(value) =>
-                changeFilters({ customer: value ? Number(value) : undefined })
-              }
-            />
+          {query.isPlaceholderData && (
+            <p role='status' className='text-sm text-muted-foreground'>
+              Updating report...
+            </p>
           )}
-          {kind === 'financial' ? (
-            <>
-              {data?.sections.some((section) =>
-                ['billing', 'outstanding'].includes(section.key)
-              ) && (
-                <FilterSelect
-                  label='Bill status'
-                  value={state.status}
-                  choices={[
-                    'pending',
-                    'partially_paid',
-                    'paid',
-                    'cancelled',
-                    'expired',
-                  ].map((status) => ({
-                    id: status,
-                    label: status.replace(/_/g, ' '),
-                  }))}
-                  onChange={(value) => changeFilters({ status: value })}
-                />
-              )}
-            </>
-          ) : (
-            <FilterSelect
-              label='Stone type'
-              value={state.stoneType?.toString()}
-              choices={data?.filters.stone_types ?? []}
-              onChange={(value) =>
-                changeFilters({ stoneType: value ? Number(value) : undefined })
-              }
-            />
-          )}
-        </div>
-        {query.isPlaceholderData && (
-          <p role='status' className='text-sm text-muted-foreground'>
-            Updating report...
-          </p>
-        )}
-        {problem ? (
-          <Alert variant='destructive'>
-            <AlertTitle>Check the date range</AlertTitle>
-            <AlertDescription>{problem}</AlertDescription>
-          </Alert>
-        ) : query.isError ? (
-          <Alert variant='destructive'>
-            <AlertTitle>Could not load the report</AlertTitle>
-            <AlertDescription>
-              {serverMessageOr(query.error, 'Please try again.')}
-            </AlertDescription>
-            <Button variant='outline' onClick={() => void query.refetch()}>
-              Retry
-            </Button>
-          </Alert>
-        ) : query.isPending ? (
-          <Skeleton className='h-48 w-full' />
-        ) : (
-          data && (
-            <>
-              {totalRows > 10000 && (
-                <Alert>
-                  <AlertTitle>Narrow the filters to export</AlertTitle>
-                  <AlertDescription>
-                    The report contains {totalRows.toLocaleString('en-TZ')}{' '}
-                    detail rows. Downloads support up to 10,000 rows.
-                  </AlertDescription>
-                </Alert>
-              )}
-              {data.sections.map((section) => (
-                <ReportSectionCard
-                  key={section.key}
-                  kind={kind}
-                  summary={section}
-                  search={state}
-                  active={
-                    state.section === section.key ||
-                    (!state.section && data.section === section.key)
-                  }
-                  onPageChange={(page, pageSize) =>
-                    onChange({ ...state, section: section.key, page, pageSize })
-                  }
-                />
-              ))}
-            </>
-          )
-        )}
+          <TabsContent value='full' className='space-y-4'>
+            {reportFallback ?? fullReport}
+          </TabsContent>
+          <TabsContent value='summary' className='space-y-4'>
+            {reportFallback ?? summaryReport}
+          </TabsContent>
+        </Tabs>
       </Main>
     </>
+  )
+}
+
+type FullReportProps = {
+  kind: ReportKind
+  data: ReportResult
+  state: ReportSearch
+  totalRows: number
+  onPageChange: (section: string, page: number, pageSize: number) => void
+}
+
+function FullReport({
+  kind,
+  data,
+  state,
+  totalRows,
+  onPageChange,
+}: FullReportProps) {
+  return (
+    <div className='space-y-4'>
+      {totalRows > 10000 && (
+        <Alert>
+          <AlertTitle>Narrow the filters to export</AlertTitle>
+          <AlertDescription>
+            The report contains {totalRows.toLocaleString('en-TZ')} detail rows.
+            Downloads support up to 10,000 rows.
+          </AlertDescription>
+        </Alert>
+      )}
+      {data.sections.map((section) => (
+        <ReportSectionCard
+          key={section.key}
+          kind={kind}
+          summary={section}
+          search={state}
+          active={
+            state.section === section.key ||
+            (!state.section && data.section === section.key)
+          }
+          onPageChange={(page, pageSize) =>
+            onPageChange(section.key, page, pageSize)
+          }
+        />
+      ))}
+    </div>
   )
 }
 

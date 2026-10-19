@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from 'vitest-browser-react'
+import { formatReportBadgeMoney } from './data/format'
 import { type ReportSearch } from './data/schema'
 import { ReportsPage } from './index'
 
@@ -107,6 +108,12 @@ describe('Financial reports page', () => {
     await expect
       .element(screen.getByText('Billing summary'))
       .toBeInTheDocument()
+    await expect
+      .element(screen.getByRole('tab', { name: 'Full report' }))
+      .toBeInTheDocument()
+    await expect
+      .element(screen.getByRole('tab', { name: 'Summarized report' }))
+      .toBeInTheDocument()
     await expect.element(screen.getByText('Date range')).toBeInTheDocument()
     await expect
       .element(screen.getByText(/Dates are inclusive/))
@@ -123,9 +130,16 @@ describe('Financial reports page', () => {
     await expect
       .element(screen.getByRole('button', { name: 'PDF', exact: true }))
       .toHaveClass(/bg-institutional/)
+    await screen.getByRole('tab', { name: 'Summarized report' }).click()
+    await expect
+      .element(screen.getByText('3', { exact: true }).last())
+      .toHaveClass(/text-5xl/)
+    await expect
+      .element(screen.getByText(formatReportBadgeMoney(300, 'TZS')))
+      .toHaveClass(/bg-emerald-100/)
   })
 
-  it('shows Customer only on Operational reports and omits providers', async () => {
+  it('omits the customer filter on Operational reports and shows report tabs', async () => {
     const financial = await renderPage()
     await expect
       .element(financial.screen.getByText('Customer', { exact: true }))
@@ -134,10 +148,81 @@ describe('Financial reports page', () => {
       .element(financial.screen.getByText('Payment provider', { exact: true }))
       .not.toBeInTheDocument()
 
+    const operationalData = {
+      ...result(),
+      sections: [
+        {
+          key: 'orders',
+          title: 'Orders summary',
+          description: 'Orders.',
+          count: 3,
+          missing_dates: 0,
+          amounts: [],
+          statuses: [],
+        },
+        {
+          key: 'stones',
+          title: 'Stones summary',
+          description: 'Stones.',
+          count: 4,
+          missing_dates: 0,
+          amounts: [],
+          statuses: [],
+        },
+        {
+          key: 'certificates',
+          title: 'Certificates summary',
+          description: 'Certificates.',
+          count: 6,
+          missing_dates: 0,
+          amounts: [],
+          statuses: [],
+        },
+      ],
+    }
+    mocks.fetch.mockResolvedValueOnce(operationalData)
     const operational = await renderPage({}, 'operational')
     await expect
       .element(operational.screen.getByText('Customer', { exact: true }))
+      .not.toBeInTheDocument()
+    await expect
+      .element(
+        operational.screen.getByRole('tab', { name: 'Full report' }).last()
+      )
       .toBeInTheDocument()
+    await expect
+      .element(
+        operational.screen
+          .getByRole('tab', { name: 'Summarized report' })
+          .last()
+      )
+      .toBeInTheDocument()
+    await operational.screen
+      .getByRole('tab', { name: 'Summarized report' })
+      .last()
+      .click()
+    await expect
+      .element(operational.screen.getByText('Orders summary'))
+      .toBeInTheDocument()
+    await expect
+      .element(operational.screen.getByText('Orders.'))
+      .not.toBeInTheDocument()
+    await expect
+      .element(
+        operational.screen.getByText('matching records', { exact: true })
+      )
+      .not.toBeInTheDocument()
+    await expect
+      .element(operational.screen.getByText('3', { exact: true }).last())
+      .toHaveClass(/text-5xl/)
+    for (const title of ['Stones summary', 'Certificates summary']) {
+      await expect
+        .element(operational.screen.getByText(title))
+        .toBeInTheDocument()
+    }
+    await expect
+      .element(operational.screen.getByText('Findings summary'))
+      .not.toBeInTheDocument()
     await expect
       .element(
         operational.screen.getByText('Payment provider', { exact: true })

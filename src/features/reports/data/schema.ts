@@ -50,7 +50,6 @@ export const reportSearchSchema = z.object({
   to: z.string().optional().catch(undefined),
   rangePreset: dateRangePresetSchema.optional().catch(undefined),
   section: z.string().optional().catch(undefined),
-  customer: z.coerce.number().int().positive().optional().catch(undefined),
   status: z.string().optional().catch(undefined),
   stoneType: z.coerce.number().int().positive().optional().catch(undefined),
   page: z.number().int().positive().optional().catch(1),
