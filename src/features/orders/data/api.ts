@@ -94,7 +94,7 @@ export async function restoreOrder(id: number): Promise<void> {
 /**
  * Record the identification of the next stone.
  *
- * A sub-resource rather than `POST /stones/`: the service owns the A/B/C label
+ * A sub-resource rather than `POST /stones/`: the service owns the stone-label
  * sequence and the cap at `order.stone_count`, and refuses with a 400 once the
  * order is full.
  *

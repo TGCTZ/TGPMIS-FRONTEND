@@ -29,6 +29,7 @@ import { isStoneLocked } from '@/features/stones/data/enums'
 import { type Stone } from '@/features/stones/data/schema'
 import { addStone, orderQuery } from '../data/api'
 import { type Order } from '../data/schema'
+import { stoneLabelAt } from '../data/stone-label'
 
 type AddStoneDialogProps = {
   open: boolean
@@ -50,10 +51,10 @@ type StoneCategoryOption = {
  * came in, so the desk sees the whole order at once rather than one stone at a
  * time - identified rows show their type, the rest are empty.
  *
- * **Empty rows unlock top-down.** The service allocates labels A, B, C… in
- * creation order, so a type picked on row D while C is still empty would be
- * filed as C. Only the next row in line is enabled; the one after it opens as
- * soon as that stone exists.
+ * **Empty rows unlock top-down.** The service allocates labels in creation
+ * order, so a type picked on row D while C is still empty would be filed as C.
+ * Only the next row in line is enabled; the one after it opens as soon as that
+ * stone exists.
  *
  * **Categorized rows stay editable until billing**, to correct a slip in place.
  * The category prices the bill, so a billed stone's row is locked. Exact types
@@ -89,12 +90,15 @@ export function AddStoneDialog({
   // Placeholders for the stones still to come. Labelled from the same list the
   // rows render, so a stone and its placeholder can never both claim a label
   // while one query has refetched and the other has not. Mirrors
-  // `next_stone_label` in `apps/orders/services/stone.py` (A + count); the
-  // label actually written is still the server's.
+  // `next_stone_label` in `apps/orders/services/stone.py`; the first placeholder
+  // comes from the server and later placeholders advance using the same style.
   const missing = Math.max(0, current.stone_count - stones.length)
-  const placeholders = Array.from({ length: missing }, (_, i) =>
-    String.fromCharCode(65 + stones.length + i)
-  )
+  const firstPlaceholder = current.next_stone_label
+  const placeholders = firstPlaceholder
+    ? Array.from({ length: missing }, (_, i) =>
+        stoneLabelAt(firstPlaceholder, i)
+      )
+    : []
   const nextLabel = placeholders[0]
 
   // One list, not identified rows followed by a separate list of placeholders:
