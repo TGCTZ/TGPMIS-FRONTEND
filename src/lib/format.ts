@@ -32,7 +32,8 @@ const DEFAULT_CURRENCY = 'TZS'
  */
 export function formatMoney(
   value: number | null | undefined,
-  currency: string = DEFAULT_CURRENCY
+  currency: string = DEFAULT_CURRENCY,
+  maximumFractionDigits = 2
 ): string {
   if (value === null || value === undefined) return '—'
 
@@ -40,10 +41,10 @@ export function formatMoney(
     return new Intl.NumberFormat(APP_LOCALE, {
       style: 'currency',
       currency,
-      maximumFractionDigits: 2,
+      maximumFractionDigits,
     }).format(value)
   } catch {
-    return `${currency} ${value.toFixed(2)}`
+    return `${currency} ${value.toFixed(maximumFractionDigits)}`
   }
 }
 

@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { formatMoney } from '@/lib/format'
 import { Progress } from '@/components/ui/progress'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
@@ -92,10 +93,25 @@ const ordersDataColumns: ColumnDef<Order>[] = [
         return <span className='text-xs text-muted-foreground'>Not billed</span>
       }
 
-      return order.control_number ? (
-        <span className='font-medium tabular-nums'>{order.control_number}</span>
-      ) : (
-        <StatusBadge tone='danger'>Awaiting number</StatusBadge>
+      return (
+        <div className='space-y-1'>
+          {order.control_number ? (
+            <div className='font-medium tabular-nums'>
+              {order.control_number}
+            </div>
+          ) : (
+            <StatusBadge tone='danger'>Awaiting number</StatusBadge>
+          )}
+          {order.bill_total_amount !== null && (
+            <StatusBadge tone='success' className='tabular-nums'>
+              {formatMoney(
+                Number(order.bill_total_amount),
+                order.bill_currency ?? undefined,
+                0
+              )}
+            </StatusBadge>
+          )}
+        </div>
       )
     },
   },
