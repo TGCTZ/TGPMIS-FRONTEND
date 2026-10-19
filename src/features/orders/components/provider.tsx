@@ -9,7 +9,6 @@ type OrdersDialogType =
   | 'restore'
   | 'add-stone'
   | 'generate-bill'
-  | 'hold'
   | 'release'
 
 type OrdersContextType = {

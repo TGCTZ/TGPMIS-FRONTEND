@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import { Can } from '@/components/can'
 import { DataTable, type TableQueryState } from '@/components/data-table'
 import { userStatusesQuery } from '../data/api'
 import { type User } from '../data/schema'
@@ -99,22 +100,24 @@ export function UsersTable({
         </SelectContent>
       </Select>
 
-      {/* Deletes are soft, so this is the only route back to a deleted account. */}
-      <div className='flex items-center gap-2'>
-        <Switch
-          id='users-show-deleted'
-          checked={Boolean(state.showDeleted)}
-          onCheckedChange={(checked) =>
-            onStateChange({ showDeleted: checked || undefined, page: 1 })
-          }
-        />
-        <Label
-          htmlFor='users-show-deleted'
-          className='text-sm font-normal whitespace-nowrap'
-        >
-          Show deleted
-        </Label>
-      </div>
+      <Can role={['admin', 'superadmin']}>
+        {/* Deletes are soft, so this is the route back to a deleted account. */}
+        <div className='flex items-center gap-2'>
+          <Switch
+            id='users-show-deleted'
+            checked={Boolean(state.showDeleted)}
+            onCheckedChange={(checked) =>
+              onStateChange({ showDeleted: checked || undefined, page: 1 })
+            }
+          />
+          <Label
+            htmlFor='users-show-deleted'
+            className='text-sm font-normal whitespace-nowrap'
+          >
+            Show deleted
+          </Label>
+        </div>
+      </Can>
 
       {hasFilters && (
         <Button

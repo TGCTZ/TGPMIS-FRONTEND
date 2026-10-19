@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { Can } from '@/components/can'
 import { DataTable, type TableQueryState } from '@/components/data-table'
 import { type Customer } from '../data/schema'
 import { customersColumns as columns } from './columns'
@@ -41,22 +42,24 @@ export function CustomersTable({
         className='h-8 w-full max-w-72'
       />
 
-      {/* Deletes are soft, so this is the only route back to a removed record. */}
-      <div className='flex items-center gap-2'>
-        <Switch
-          id='customers-show-deleted'
-          checked={Boolean(state.showDeleted)}
-          onCheckedChange={(checked) =>
-            onStateChange({ showDeleted: checked || undefined, page: 1 })
-          }
-        />
-        <Label
-          htmlFor='customers-show-deleted'
-          className='text-sm font-normal whitespace-nowrap'
-        >
-          Show deleted
-        </Label>
-      </div>
+      <Can role={['admin', 'superadmin']}>
+        {/* Deletes are soft, so this is the route back to a removed record. */}
+        <div className='flex items-center gap-2'>
+          <Switch
+            id='customers-show-deleted'
+            checked={Boolean(state.showDeleted)}
+            onCheckedChange={(checked) =>
+              onStateChange({ showDeleted: checked || undefined, page: 1 })
+            }
+          />
+          <Label
+            htmlFor='customers-show-deleted'
+            className='text-sm font-normal whitespace-nowrap'
+          >
+            Show deleted
+          </Label>
+        </div>
+      </Can>
 
       {hasFilters && (
         <Button
