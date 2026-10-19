@@ -104,7 +104,7 @@ export const sidebarData: SidebarData = {
     /* The bench: waiting and completed work share each resource page. */
     {
       title: 'Gemmology Lab',
-      permission: [PERMISSIONS.moduleIdentification, perm('stones', 'view')],
+      permission: PERMISSIONS.moduleIdentification,
       items: [
         {
           title: 'Identification',
