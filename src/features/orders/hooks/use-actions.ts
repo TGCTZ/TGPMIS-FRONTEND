@@ -1,7 +1,6 @@
 import {
   Eye,
   FileText,
-  PauseCircle,
   Pencil,
   PlayCircle,
   Plus,
@@ -35,7 +34,6 @@ export function useOrderActions(order: Order | null): RowAction[] {
       | 'restore'
       | 'add-stone'
       | 'generate-bill'
-      | 'hold'
       | 'release'
   ) {
     setCurrentRow(order)
@@ -91,14 +89,6 @@ export function useOrderActions(order: Order | null): RowAction[] {
       // order awaiting payment is already billed, and `Bill.order` is a
       // OneToOne, so a second attempt is refused by the API anyway.
       hidden: isDeleted || !isFull || isBilled(order) || isHeld(order),
-    },
-    {
-      label: 'Hold',
-      icon: PauseCircle,
-      permission: PERMISSIONS.holdOrder,
-      onSelect: () => select('hold'),
-      hidden: isDeleted || isHeld(order),
-      separatorBefore: true,
     },
     {
       label: 'Release',

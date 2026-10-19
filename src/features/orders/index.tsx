@@ -15,7 +15,6 @@ import { GeneralError } from '@/features/errors/general-error'
 import { AddStoneDialog } from './components/add-stone-dialog'
 import { OrderDeleteDialog } from './components/delete-dialog'
 import { GenerateBillDialog } from './components/generate-bill-dialog'
-import { HoldOrderDialog } from './components/hold-dialog'
 import { OrderMutateDialog } from './components/mutate-dialog'
 import { OrdersProvider, useOrders } from './components/provider'
 import { ReleaseOrderDialog } from './components/release-dialog'
@@ -161,16 +160,6 @@ function OrdersContent() {
       {currentRow && (
         <AddStoneDialog
           open={open === 'add-stone'}
-          onOpenChange={(isOpen) => {
-            if (!isOpen) setOpen(null)
-          }}
-          order={currentRow}
-        />
-      )}
-
-      {currentRow && (
-        <HoldOrderDialog
-          open={open === 'hold'}
           onOpenChange={(isOpen) => {
             if (!isOpen) setOpen(null)
           }}
