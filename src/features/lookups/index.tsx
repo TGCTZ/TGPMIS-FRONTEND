@@ -255,21 +255,23 @@ function LookupsContent({ config }: { config: LookupConfig }) {
         className='h-8 w-full max-w-56'
       />
 
-      <div className='flex items-center gap-2'>
-        <Switch
-          id='lookup-show-deleted'
-          checked={Boolean(state.showDeleted)}
-          onCheckedChange={(checked) =>
-            handleStateChange({ showDeleted: checked || undefined, page: 1 })
-          }
-        />
-        <Label
-          htmlFor='lookup-show-deleted'
-          className='text-sm font-normal whitespace-nowrap'
-        >
-          Show deleted
-        </Label>
-      </div>
+      <Can role={['admin', 'superadmin']}>
+        <div className='flex items-center gap-2'>
+          <Switch
+            id='lookup-show-deleted'
+            checked={Boolean(state.showDeleted)}
+            onCheckedChange={(checked) =>
+              handleStateChange({ showDeleted: checked || undefined, page: 1 })
+            }
+          />
+          <Label
+            htmlFor='lookup-show-deleted'
+            className='text-sm font-normal whitespace-nowrap'
+          >
+            Show deleted
+          </Label>
+        </div>
+      </Can>
 
       {(state.search || state.showDeleted) && (
         <Button

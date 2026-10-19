@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import { Can } from '@/components/can'
 import { DataTable, type TableQueryState } from '@/components/data-table'
 import { STONE_STATUS_LABELS } from '../data/enums'
 import { type Stone } from '../data/schema'
@@ -75,21 +76,23 @@ export function StonesTable({
         </SelectContent>
       </Select>
 
-      <div className='flex items-center gap-2'>
-        <Switch
-          id='stones-show-deleted'
-          checked={Boolean(state.showDeleted)}
-          onCheckedChange={(checked) =>
-            onStateChange({ showDeleted: checked || undefined, page: 1 })
-          }
-        />
-        <Label
-          htmlFor='stones-show-deleted'
-          className='text-sm font-normal whitespace-nowrap'
-        >
-          Show deleted
-        </Label>
-      </div>
+      <Can role={['admin', 'superadmin']}>
+        <div className='flex items-center gap-2'>
+          <Switch
+            id='stones-show-deleted'
+            checked={Boolean(state.showDeleted)}
+            onCheckedChange={(checked) =>
+              onStateChange({ showDeleted: checked || undefined, page: 1 })
+            }
+          />
+          <Label
+            htmlFor='stones-show-deleted'
+            className='text-sm font-normal whitespace-nowrap'
+          >
+            Show deleted
+          </Label>
+        </div>
+      </Can>
 
       {hasFilters && (
         <Button

@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import { Can } from '@/components/can'
 import { DataTable, type TableQueryState } from '@/components/data-table'
 import { ORDER_STAGE_LABELS, type Order } from '../data/schema'
 import { ordersColumns as columns } from './columns'
@@ -79,21 +80,23 @@ export function OrdersTable({
         </SelectContent>
       </Select>
 
-      <div className='flex items-center gap-2'>
-        <Switch
-          id='orders-show-deleted'
-          checked={Boolean(state.showDeleted)}
-          onCheckedChange={(checked) =>
-            onStateChange({ showDeleted: checked || undefined, page: 1 })
-          }
-        />
-        <Label
-          htmlFor='orders-show-deleted'
-          className='text-sm font-normal whitespace-nowrap'
-        >
-          Show deleted
-        </Label>
-      </div>
+      <Can role={['admin', 'superadmin']}>
+        <div className='flex items-center gap-2'>
+          <Switch
+            id='orders-show-deleted'
+            checked={Boolean(state.showDeleted)}
+            onCheckedChange={(checked) =>
+              onStateChange({ showDeleted: checked || undefined, page: 1 })
+            }
+          />
+          <Label
+            htmlFor='orders-show-deleted'
+            className='text-sm font-normal whitespace-nowrap'
+          >
+            Show deleted
+          </Label>
+        </div>
+      </Can>
 
       {hasFilters && (
         <Button
