@@ -46,14 +46,11 @@ const orderFormSchema = z
     customer: z.string().default(''),
 
     first_name: z.string().default(''),
-    middle_name: z.string().default(''),
     last_name: z.string().default(''),
     phone: z.string().default(''),
     email: z.string().default(''),
     company_name: z.string().default(''),
     region: z.string().default(''),
-    id_number: z.string().default(''),
-    address: z.string().default(''),
 
     received_date: z.string().min(1, 'Received date is required.'),
     stone_count: z.string().min(1, 'How many stones were submitted?'),
@@ -86,14 +83,11 @@ type FormValues = z.input<typeof orderFormSchema>
 /** Blank strings for every registration field, so a reset clears the block. */
 const BLANK_CUSTOMER = {
   first_name: '',
-  middle_name: '',
   last_name: '',
   phone: '',
   email: '',
   company_name: '',
   region: '',
-  id_number: '',
-  address: '',
 } as const
 
 /** Today in the `YYYY-MM-DD` shape a date input and the API both want. */
@@ -149,14 +143,11 @@ export function OrderMutateDialog({
           ? {
               customer_data: {
                 first_name: values.first_name,
-                middle_name: values.middle_name,
                 last_name: values.last_name,
                 phone: values.phone,
                 email: values.email,
                 company_name: values.company_name,
                 region: values.region,
-                id_number: values.id_number,
-                address: values.address,
               },
             }
           : { customer: Number(values.customer) }
