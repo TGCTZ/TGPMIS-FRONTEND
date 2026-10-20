@@ -7,7 +7,7 @@ export function SignIn() {
   const { redirect } = useSearch({ from: '/(auth)/sign-in' })
 
   return (
-    <AuthLayout>
+    <AuthLayout showLogo={false}>
       <Card className='brand-lines-white max-w-sm gap-4'>
         <CardHeader className='text-center'>
           <CardTitle className='text-lg tracking-tight'>Sign in</CardTitle>

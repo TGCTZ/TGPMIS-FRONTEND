@@ -26,12 +26,12 @@ export const TRANSPARENCIES: EnumOption[] = [
 /**
  * Optical behaviour under polarised light.
  *
- * The stored value is the lowercase code; the label carries the expansion the
- * printed report uses, so the two must stay together.
+ * The stored value is the lowercase code; the UI uses the concise lab code as
+ * its label.
  */
 export const OPTIC_CHARACTERS: EnumOption[] = [
-  { value: 'sr', label: 'SR — Singly refractive' },
-  { value: 'adr', label: 'ADR — Anomalous double refractive' },
-  { value: 'dr', label: 'DR — Double refractive' },
-  { value: 'agg', label: 'AGG — Aggregate' },
+  { value: 'sr', label: 'SR' },
+  { value: 'adr', label: 'ADR' },
+  { value: 'dr', label: 'DR' },
+  { value: 'agg', label: 'AGG' },
 ]
