@@ -48,6 +48,10 @@ describe('Orders control number column', () => {
     await expect
       .element(screen.getByText(formatMoney(125000, 'TZS', 0)))
       .toHaveClass(/bg-success-subtle/)
+    expect(
+      screen.getByText(formatMoney(125000, 'TZS', 0)).element().parentElement
+        ?.className
+    ).toContain('flex-col')
   })
 
   it('shows the bill total while awaiting a control number', async () => {
@@ -65,6 +69,10 @@ describe('Orders control number column', () => {
     await expect
       .element(screen.getByText(formatMoney(125000, 'TZS', 0)))
       .toBeInTheDocument()
+    expect(
+      screen.getByText(formatMoney(125000, 'TZS', 0)).element().parentElement
+        ?.className
+    ).toContain('flex-col')
   })
 
   it('shows no amount for an unbilled order', async () => {

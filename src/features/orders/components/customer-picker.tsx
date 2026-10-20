@@ -49,7 +49,7 @@ type CustomerPickerProps = {
  * customer can still be spotted and switched to halfway through.
  *
  * Writes two form fields: `mode` (`existing` | `new`) and either `customer` or
- * the flat `first_name`…`address` set. The order dialog maps those onto the
+ * the flat new-customer fields. The order dialog maps those onto the
  * API's `customer` / `customer_data`.
  */
 export function CustomerPicker({ allowCreate = true }: CustomerPickerProps) {
@@ -300,15 +300,10 @@ function NewCustomerFields() {
       <div className='grid gap-4 sm:grid-cols-2'>
         <TextField name='first_name' label='First name' required />
         <TextField name='last_name' label='Last name' required />
-        <TextField name='middle_name' label='Middle name' />
         <TextField name='phone' label='Phone' required />
         <TextField name='email' label='Email' />
         <TextField name='company_name' label='Company' />
         <RegionField name='region' />
-        <TextField name='id_number' label='ID number' />
-        <div className='sm:col-span-2'>
-          <TextField name='address' label='Address' />
-        </div>
       </div>
     </div>
   )
