@@ -49,6 +49,18 @@
   }
   body {
     @apply min-h-svh w-full bg-background text-foreground has-[div[data-variant='inset']]:bg-sidebar;
+    position: relative;
+    isolation: isolate;
+  }
+  body::before {
+    position: fixed;
+    z-index: -1;
+    background: url('../assets/institutional-watermark.png') center /
+      min(100vw, 90rem) auto no-repeat;
+    content: '';
+    inset: 0;
+    opacity: 0.12;
+    pointer-events: none;
   }
 
   /* Override Radix scroll locking for sticky headers */
@@ -85,6 +97,35 @@
   background-image: var(--brand-gradient-clean);
 }
 
+.auth-watermark {
+  position: relative;
+  isolation: isolate;
+  background-image: var(--brand-gradient-clean);
+}
+
+[data-slot='sidebar-inset'] {
+  isolation: isolate;
+}
+
+.auth-watermark::before,
+[data-slot='sidebar-inset']::before {
+  z-index: -1;
+  background: url('../assets/institutional-watermark.png') center /
+    min(100vw, 90rem) auto no-repeat;
+  content: '';
+  inset: 0;
+  opacity: 0.24;
+  pointer-events: none;
+}
+
+.auth-watermark::before {
+  position: absolute;
+}
+
+[data-slot='sidebar-inset']::before {
+  position: fixed;
+}
+
 .brand-gradient-lines {
   background-image:
     url('../assets/custom/brand-grid.svg'), var(--brand-gradient-clean);
@@ -97,6 +138,11 @@
 
 .dark .brand-gradient-clean,
 .dark .brand-gradient-lines {
+  background-image: none;
+}
+
+.dark .auth-watermark {
+  background-color: var(--background);
   background-image: none;
 }
 
