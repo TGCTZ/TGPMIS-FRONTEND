@@ -19,7 +19,10 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
     >
       <table
         data-slot='table'
-        className={cn('w-full caption-bottom text-sm', className)}
+        className={cn(
+          'w-full caption-bottom text-sm [&_td:not(:last-child)]:border-e [&_td:not(:last-child)]:border-border-strong [&_th:not(:last-child)]:border-e [&_th:not(:last-child)]:border-border-strong',
+          className
+        )}
         {...props}
       />
     </div>

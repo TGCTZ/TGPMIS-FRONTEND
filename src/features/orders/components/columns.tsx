@@ -94,7 +94,7 @@ const ordersDataColumns: ColumnDef<Order>[] = [
       }
 
       return (
-        <div className='space-y-1'>
+        <div className='flex flex-col items-start gap-1'>
           {order.control_number ? (
             <div className='font-medium tabular-nums'>
               {order.control_number}
