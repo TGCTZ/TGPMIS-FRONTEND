@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query'
 import { Check, Loader2, Search, UserPlus, X } from 'lucide-react'
 import { regionLabel } from '@/lib/regions'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   FormControl,
@@ -298,11 +297,6 @@ function ExistingCustomerSearch({
 function NewCustomerFields() {
   return (
     <div className='space-y-4 rounded-md border border-dashed p-3'>
-      <p className='flex items-center gap-2 text-xs text-muted-foreground'>
-        <Badge variant='secondary'>New</Badge>
-        These details are saved as a new customer record with the order.
-      </p>
-
       <div className='grid gap-4 sm:grid-cols-2'>
         <TextField name='first_name' label='First name' required />
         <TextField name='last_name' label='Last name' required />

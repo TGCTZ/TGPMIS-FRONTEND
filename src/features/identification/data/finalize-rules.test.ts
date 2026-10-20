@@ -34,10 +34,13 @@ describe('missingForFinalize', () => {
     expect(missingForFinalize(report())).toEqual([])
   })
 
+  it('does not require a stone type', () => {
+    expect(missingForFinalize(report({ stone_type_detail: null }))).toEqual([])
+  })
+
   it('names every unanswered field, not just the first', () => {
     const blank = report({
       species: null,
-      stone_type_detail: null,
       color: null,
       stone_weight: null,
       conclusion: '',
@@ -45,7 +48,6 @@ describe('missingForFinalize', () => {
 
     expect(missingForFinalize(blank)).toEqual([
       'Specie / Group',
-      'stone type',
       'colour',
       'weight',
       'comments',
@@ -71,7 +73,6 @@ describe('missingForFinalize', () => {
       'color',
       'conclusion',
       'species',
-      'stone_type',
       'weight',
     ])
   })

@@ -110,8 +110,10 @@ export function InstrumentsPanel({
   ]
 
   return (
-    <div className='space-y-3'>
-      <h3 className='text-sm font-medium'>Instruments used</h3>
+    <div className='space-y-3 rounded-xl border bg-card p-4 shadow-sm'>
+      <h3 className='border-b pb-2 text-base font-semibold tracking-tight'>
+        Instruments used
+      </h3>
 
       {(options.isPending || rows.isPending) && (
         <Skeleton className='h-16 w-full' />

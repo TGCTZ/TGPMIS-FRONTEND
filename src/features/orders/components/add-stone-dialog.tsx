@@ -127,10 +127,7 @@ export function AddStoneDialog({
       <DialogContent className='flex max-h-[90dvh] flex-col overflow-y-auto sm:max-w-md'>
         <DialogHeader className='text-start'>
           <DialogTitle>Identify stones</DialogTitle>
-          <DialogDescription>
-            {current.reference_number} · Saves on selection; labels are assigned
-            in order and cannot be changed.
-          </DialogDescription>
+          <DialogDescription>{current.reference_number}</DialogDescription>
         </DialogHeader>
 
         <div className='space-y-1.5'>
