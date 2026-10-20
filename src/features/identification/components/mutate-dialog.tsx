@@ -16,7 +16,6 @@ import { PERMISSIONS, perm, type PermissionResource } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@/lib/zod-resolver'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Command,
   CommandEmpty,
@@ -28,7 +27,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -55,7 +53,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { DialogBody } from '@/components/dialog-body'
 import { StatusBadge } from '@/components/status-badge'
@@ -182,13 +179,6 @@ const RELATED: {
   creatable?: boolean
 }[] = [
   {
-    name: 'stone_type',
-    label: 'Stone type',
-    resource: 'stone-types',
-    searchable: true,
-    creatable: true,
-  },
-  {
     name: 'species',
     label: 'Specie / Group',
     resource: 'species',
@@ -241,7 +231,6 @@ const RELATED: {
 const reportFormSchema = z.object({
   stone: z.string().min(1, 'Stone is required.'),
 
-  stone_type: z.string().optional(),
   species: z.string().optional(),
   variety: z.string().optional(),
   color: z.string().optional(),
@@ -257,7 +246,6 @@ const reportFormSchema = z.object({
   specific_gravity: z.string().optional(),
   weight: z.string().optional(),
   weight_unit: z.string().default('carat'),
-  is_polished: z.boolean().default(false),
   conclusion: z.string().optional(),
 })
 
@@ -275,8 +263,7 @@ type ReportMutateDialogProps = {
   /**
    * Preselected stone, when the dialog is opened from the findings queue.
    *
-   * Only meaningful while creating; the select still renders, so the choice
-   * stays visible and changeable.
+   * Only meaningful while creating; the selected stone is shown read-only.
    */
   initialStone?: number
 }
@@ -357,7 +344,7 @@ export function ReportMutateDialog({
 
   const form = useForm<FormValues>({
     resolver: zodResolver(reportFormSchema),
-    defaultValues: { stone: '', is_polished: false },
+    defaultValues: { stone: '' },
   })
 
   /**
@@ -373,21 +360,20 @@ export function ReportMutateDialog({
   const selectedIntakeStone = selectable.find(
     (stone) => stone.id === selectedStone
   )
-  const selectedCategory = row
-    ? row.stone_category_detail?.id
-    : selectedIntakeStone?.stone_category
-  const selectedCategoryName = row
-    ? row.stone_category_detail?.name
-    : selectedIntakeStone?.stone_category_detail?.name
+  const stoneReference = row
+    ? formatStoneReference(row.order_reference, row.stone_label)
+    : selectedIntakeStone
+      ? formatStoneReference(
+          selectedIntakeStone.order_reference,
+          selectedIntakeStone.label
+        )
+      : ''
 
   useEffect(() => {
     if (!open) return
 
     form.reset({
       stone: row ? String(row.stone) : initialStone ? String(initialStone) : '',
-      stone_type: row?.stone_type_detail
-        ? String(row.stone_type_detail.id)
-        : '',
       species: row?.species ? String(row.species) : '',
       variety: row?.variety ? String(row.variety) : '',
       color: row?.color ? String(row.color) : '',
@@ -401,7 +387,6 @@ export function ReportMutateDialog({
       specific_gravity: row?.specific_gravity ?? '',
       weight: row?.stone_weight ?? '',
       weight_unit: row?.stone_weight_unit ?? 'carat',
-      is_polished: row?.is_polished ?? false,
       conclusion: row?.conclusion ?? '',
     })
   }, [open, row, initialStone, form])
@@ -409,7 +394,6 @@ export function ReportMutateDialog({
   const mutation = useMutation({
     mutationFn: (values: FormValues) => {
       const payload = {
-        stone_type: idOrNull(values.stone_type),
         species: idOrNull(values.species),
         variety: idOrNull(values.variety),
         color: idOrNull(values.color),
@@ -430,7 +414,6 @@ export function ReportMutateDialog({
         // Applied to the stone by the service, not stored on the report.
         weight: values.weight?.trim() ? values.weight.trim() : null,
         weight_unit: values.weight_unit,
-        is_polished: values.is_polished,
         conclusion: values.conclusion ?? '',
       }
 
@@ -490,7 +473,10 @@ export function ReportMutateDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='flex max-h-[90dvh] flex-col overflow-hidden sm:max-w-3xl'>
+      <DialogContent
+        aria-describedby={undefined}
+        className='flex max-h-[90dvh] flex-col overflow-hidden sm:max-w-3xl'
+      >
         <DialogHeader className='text-start'>
           <DialogTitle className='flex items-center gap-2'>
             {isEdit ? `Edit ${row?.report_number}` : 'Record findings'}
@@ -498,11 +484,6 @@ export function ReportMutateDialog({
               <StatusBadge tone='success'>Finalized</StatusBadge>
             )}
           </DialogTitle>
-          <DialogDescription>
-            {row
-              ? `Stone ${formatStoneReference(row.order_reference, row.stone_label)}`
-              : 'Select a paid stone awaiting findings.'}
-          </DialogDescription>
         </DialogHeader>
 
         <DialogBody>
@@ -513,77 +494,30 @@ export function ReportMutateDialog({
               className='px-1'
             >
               {/* One fieldset disables every control, Radix triggers included. */}
-              <fieldset disabled={isLocked} className='space-y-6'>
-                <section className='space-y-4'>
-                  <h3 className='text-sm font-medium'>Subject</h3>
+              <fieldset disabled={isLocked} className='space-y-4'>
+                <section className='rounded-xl border border-institutional bg-institutional p-4 text-institutional-foreground shadow-sm'>
                   <FormField
                     control={form.control}
                     name='stone'
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Stone</FormLabel>
-                        {isEdit ? (
-                          <FormControl>
-                            <Input
-                              readOnly
-                              value={formatStoneReference(
-                                row?.order_reference,
-                                row?.stone_label
-                              )}
-                            />
-                          </FormControl>
-                        ) : (
-                          <Select
-                            value={field.value || undefined}
-                            onValueChange={(value) => {
-                              field.onChange(value)
-                              form.setValue('stone_type', '')
-                            }}
-                          >
-                            <FormControl>
-                              <SelectTrigger className='w-full'>
-                                <SelectValue placeholder='Select a stone with no findings yet' />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {selectable.map((stone) => (
-                                <SelectItem
-                                  key={stone.id}
-                                  value={String(stone.id)}
-                                >
-                                  {formatStoneReference(
-                                    stone.order_reference,
-                                    stone.label
-                                  )}{' '}
-                                  ·{' '}
-                                  {stone.stone_category_detail?.name ??
-                                    'Uncategorized'}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )}
-                        {isEdit ? (
-                          <FormDescription>
-                            A report stays linked to its stone.
-                          </FormDescription>
-                        ) : (
-                          worklist.length === 0 && (
-                            <FormDescription>
-                              Paid stones appear here when ready for findings.
-                            </FormDescription>
-                          )
-                        )}
+                      <FormItem className='space-y-1'>
+                        <input type='hidden' {...field} />
+                        <div className='flex min-h-12 items-center justify-center text-center'>
+                          <span className='font-mono text-xl font-semibold tracking-tight sm:text-2xl'>
+                            {stoneReference ||
+                              (initialStone ? 'Loading…' : '—')}
+                          </span>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </section>
 
-                <Separator />
-
-                <section className='space-y-4'>
-                  <h3 className='text-sm font-medium'>Classification</h3>
+                <section className='space-y-4 rounded-xl border bg-card p-4 shadow-sm'>
+                  <h3 className='border-b pb-2 text-base font-semibold tracking-tight'>
+                    Classification
+                  </h3>
                   <div className='grid gap-4 sm:grid-cols-2'>
                     {RELATED.map((entry, index) => {
                       const lookupRows = related[index]?.data ?? []
@@ -593,10 +527,8 @@ export function ReportMutateDialog({
                       const options = lookupRows
                         .filter(
                           (lookupRow) =>
-                            (entry.name !== 'variety' ||
-                              lookupRow.species === selectedSpecies) &&
-                            (entry.name !== 'stone_type' ||
-                              lookupRow.category === selectedCategory)
+                            entry.name !== 'variety' ||
+                            lookupRow.species === selectedSpecies
                         )
                         .map((row) => ({
                           value: String(row.id),
@@ -618,34 +550,14 @@ export function ReportMutateDialog({
                           control={form.control}
                           name={entry.name}
                           label={entry.label}
-                          labelSuffix={
-                            entry.name === 'stone_type' && selectedCategoryName
-                              ? `(Category: ${selectedCategoryName})`
-                              : undefined
-                          }
                           options={options}
                           searchable={entry.searchable}
                           resource={entry.resource}
                           creatable={entry.creatable}
-                          searchFilters={
-                            entry.name === 'stone_type' && selectedCategory
-                              ? { category: selectedCategory }
-                              : undefined
-                          }
-                          disabled={
-                            entry.name === 'stone_type' && !selectedCategory
-                          }
-                          disabledMessage={
-                            entry.name === 'stone_type' && !selectedCategory
-                              ? 'Select a stone first to load types in its category.'
-                              : undefined
-                          }
                           createExtra={
                             entry.name === 'variety'
                               ? { species: selectedSpecies }
-                              : entry.name === 'stone_type' && selectedCategory
-                                ? { category: selectedCategory }
-                                : undefined
+                              : undefined
                           }
                           onSelection={
                             entry.name === 'species'
@@ -683,10 +595,10 @@ export function ReportMutateDialog({
                   </div>
                 </section>
 
-                <Separator />
-
-                <section className='space-y-4'>
-                  <h3 className='text-sm font-medium'>Measurements</h3>
+                <section className='space-y-4 rounded-xl border bg-card p-4 shadow-sm'>
+                  <h3 className='border-b pb-2 text-base font-semibold tracking-tight'>
+                    Measurements
+                  </h3>
                   <div className='grid gap-4 sm:grid-cols-2'>
                     {/* Weight is the one measurement stored on the stone rather
                         than the report — the certificate snapshots the stone.
@@ -771,30 +683,13 @@ export function ReportMutateDialog({
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name='is_polished'
-                      render={({ field }) => (
-                        <FormItem className='flex flex-row items-center gap-3 rounded-md border p-3'>
-                          <FormControl>
-                            <Checkbox
-                              checked={Boolean(field.value)}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <FormLabel className='!mt-0'>
-                            Stone is polished
-                          </FormLabel>
-                        </FormItem>
-                      )}
-                    />
                   </div>
                 </section>
 
-                <Separator />
-
-                <section className='space-y-4'>
-                  <h3 className='text-sm font-medium'>Comments</h3>
+                <section className='space-y-4 rounded-xl border bg-card p-4 shadow-sm'>
+                  <h3 className='border-b pb-2 text-base font-semibold tracking-tight'>
+                    Comments
+                  </h3>
                   <FormField
                     control={form.control}
                     name='conclusion'
@@ -831,21 +726,15 @@ export function ReportMutateDialog({
             - which is why a create adopts what the server returns rather than
             closing. */}
           {selectedStone && (
-            <>
-              <Separator className='my-6' />
-              <div className='px-1'>
-                <StonePhotoPanel stoneId={selectedStone} readOnly={isLocked} />
-              </div>
-            </>
+            <div className='px-1 pt-4'>
+              <StonePhotoPanel stoneId={selectedStone} readOnly={isLocked} />
+            </div>
           )}
 
           {row && (
-            <>
-              <Separator className='my-6' />
-              <div className='px-1'>
-                <InstrumentsPanel reportId={row.id} readOnly={isLocked} />
-              </div>
-            </>
+            <div className='px-1 pt-4'>
+              <InstrumentsPanel reportId={row.id} readOnly={isLocked} />
+            </div>
           )}
         </DialogBody>
 
@@ -862,7 +751,7 @@ export function ReportMutateDialog({
           <Button
             type='submit'
             form='report-form'
-            disabled={isLocked || mutation.isPending}
+            disabled={isLocked || mutation.isPending || !selectedStone}
           >
             {mutation.isPending ? 'Saving...' : 'Save'}
           </Button>

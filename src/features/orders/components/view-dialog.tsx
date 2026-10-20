@@ -150,7 +150,8 @@ export function OrderViewDialog({
           <ViewFooterActions
             actions={actions}
             primary={
-              onRequestEdit && (
+              onRequestEdit &&
+              !order.bill_number && (
                 <Can permission={perm('orders', 'change')}>
                   <Button onClick={onRequestEdit}>
                     <Pencil className='me-1 size-4' />

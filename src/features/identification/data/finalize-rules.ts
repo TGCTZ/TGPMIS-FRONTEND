@@ -9,14 +9,13 @@ import { type IdentificationReport } from './schema'
  * the findings are being recorded, and so Finalize can refuse before spending a
  * round trip on a rejection.
  *
- * Deliberately short: a certificate quotes these five — what the stone is, what
+ * Deliberately short: a certificate quotes these four — what the stone is, what
  * it looks like, how big it is, and the verdict. Everything else is situational,
  * because a stone may legitimately defeat a test and still deserve a
  * certificate, which is why the form itself stays permissive.
  */
 const FINALIZE_REQUIRED_FIELDS = [
   { name: 'species', label: 'Specie / Group' },
-  { name: 'stone_type', label: 'stone type' },
   { name: 'color', label: 'colour' },
   { name: 'weight', label: 'weight' },
   { name: 'conclusion', label: 'comments' },
@@ -37,7 +36,6 @@ export const FINALIZE_REQUIRED_NAMES: ReadonlySet<string> = new Set(
 export function missingForFinalize(report: IdentificationReport): string[] {
   const answered: Record<string, unknown> = {
     species: report.species,
-    stone_type: report.stone_type_detail?.id,
     color: report.color,
     weight: report.stone_weight,
     conclusion: report.conclusion.trim(),

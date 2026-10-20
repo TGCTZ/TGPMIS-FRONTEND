@@ -82,14 +82,13 @@ export function StonePhotoPanel({
   const shown = preview ?? stone?.photo ?? null
 
   return (
-    <div className='space-y-3'>
-      <div className='flex flex-wrap items-center justify-between gap-2'>
-        <div>
-          <h3 className='text-sm font-medium'>Photograph</h3>
-          <p className='text-xs text-muted-foreground'>
-            Required before findings can be finalized. Printed on the
-            certificate and saved as soon as you choose it.
-          </p>
+    <div className='space-y-3 rounded-xl border bg-card p-4 shadow-sm'>
+      <div className='flex flex-wrap items-center justify-between gap-2 border-b pb-3'>
+        <div className='flex items-center gap-2'>
+          <h3 className='text-base font-semibold tracking-tight'>Photograph</h3>
+          <span className='rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold text-destructive'>
+            Required
+          </span>
         </div>
 
         {!readOnly && (
@@ -97,7 +96,7 @@ export function StonePhotoPanel({
             <Button
               type='button'
               size='sm'
-              variant='outline'
+              variant='default'
               disabled={mutation.isPending}
               onClick={() => inputRef.current?.click()}
             >
@@ -106,7 +105,7 @@ export function StonePhotoPanel({
               ) : (
                 <ImageUp className='me-1 size-4' />
               )}
-              {shown ? 'Replace' : 'Add photo'}
+              {shown ? 'Replace' : 'Upload photo'}
             </Button>
 
             {shown && (
