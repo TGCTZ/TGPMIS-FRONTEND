@@ -70,3 +70,15 @@ export const reportSearchSchema = z.object({
   pageSize: z.number().int().min(1).max(100).optional().catch(10),
 })
 export type ReportSearch = z.infer<typeof reportSearchSchema>
+
+/** The combined page keeps only filters that affect its summary cards. */
+export const reportHighlightsSearchSchema = reportSearchSchema.pick({
+  from: true,
+  to: true,
+  rangePreset: true,
+  status: true,
+  stoneType: true,
+})
+export type ReportHighlightsSearch = z.infer<
+  typeof reportHighlightsSearchSchema
+>

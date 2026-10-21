@@ -27,6 +27,11 @@ describe('resolveBreadcrumbs', () => {
       'Reports',
       'Financial reports',
     ])
+    expect(labels('/reports/highlights')).toEqual([
+      'Home',
+      'Reports',
+      'Highlights',
+    ])
     expect(labels('/reports/operational')).toEqual([
       'Home',
       'Reports',

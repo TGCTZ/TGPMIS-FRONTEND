@@ -3,23 +3,10 @@ import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
 import { Download } from 'lucide-react'
 import { toast } from 'sonner'
-import { formatMoney } from '@/lib/format'
 import { serverMessageOr } from '@/lib/handle-server-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { brandPanelClassName } from '@/components/layout/brand-panel'
 import { Header } from '@/components/layout/header'
@@ -28,22 +15,13 @@ import { PageHeading } from '@/components/page-heading'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { FilterSelect } from './components/filter-select'
+import { ReportPeriodControls } from './components/period-controls'
 import { ReportSectionCard } from './components/section'
 import { downloadReport, reportsQuery } from './data/api'
 import { reportConfigs, type ReportKind } from './data/config'
-import { formatReportBadgeMoney } from './data/format'
-import {
-  dateRangePresets,
-  defaultPeriod,
-  periodForPreset,
-  periodPresetForRange,
-  periodProblem,
-} from './data/period'
-import {
-  type ReportResult,
-  type ReportSearch,
-  type ReportSection,
-} from './data/schema'
+import { defaultPeriod, periodProblem } from './data/period'
+import { type ReportResult, type ReportSearch } from './data/schema'
 
 const financialRoute = getRouteApi('/_authenticated/reports/financial/')
 const operationalRoute = getRouteApi('/_authenticated/reports/operational/')
@@ -168,91 +146,6 @@ export function ReportsPage({ kind, search, onChange }: Props) {
     />
   )
 
-  const summaryReport = data && (
-    <div className='grid gap-4 sm:grid-cols-12'>
-      {data.sections.map((section) => (
-        <Card
-          key={section.key}
-          className={`${brandPanelClassName} dark:bg-card dark:text-card-foreground ${section.key === 'orders' ? 'sm:col-span-4' : section.key === 'stones' || section.key === 'certificates' ? 'sm:col-span-8' : 'sm:col-span-6'}`}
-        >
-          <CardHeader>
-            <CardTitle>{section.title}</CardTitle>
-          </CardHeader>
-          <CardContent className='space-y-4'>
-            <div>
-              <p className='text-5xl font-bold tabular-nums'>
-                {section.count.toLocaleString('en-TZ')}
-              </p>
-            </div>
-            <div className='flex flex-wrap gap-x-6 gap-y-2 text-sm'>
-              {section.amounts.map((amount) =>
-                kind === 'financial' ? (
-                  <Badge
-                    key={amount.currency}
-                    className='border-emerald-300 bg-emerald-100 px-3 py-1 text-base font-bold text-emerald-800 shadow-sm dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200'
-                  >
-                    {kind === 'financial'
-                      ? formatReportBadgeMoney(
-                          Number(amount.amount),
-                          amount.currency
-                        )
-                      : formatMoney(Number(amount.amount), amount.currency)}
-                  </Badge>
-                ) : (
-                  <p
-                    key={amount.currency}
-                    className='font-semibold tabular-nums'
-                  >
-                    {formatMoney(Number(amount.amount), amount.currency)}
-                  </p>
-                )
-              )}
-              {section.statuses.map((status) => (
-                <p
-                  key={status.status}
-                  className='text-primary-foreground/80 dark:text-muted-foreground'
-                >
-                  {status.status.replace(/_/g, ' ')}: {status.count}
-                </p>
-              ))}
-              {section.categories.length > 0 && (
-                <div className='basis-full space-y-3 rounded-xl border border-amber-300/70 bg-gradient-to-br from-amber-50 to-orange-100/70 p-4 shadow-sm dark:border-amber-800 dark:from-amber-950/60 dark:to-orange-950/30'>
-                  <div className='flex items-center gap-2'>
-                    <span className='size-2 rounded-full bg-amber-500 shadow-[0_0_0_4px_rgb(245_158_11_/_0.15)] dark:bg-amber-400' />
-                    <p className='text-xs font-bold tracking-[0.16em] text-amber-950 uppercase dark:text-amber-200'>
-                      Stone categories
-                    </p>
-                  </div>
-                  <GroupedSummaryTable rows={section.categories} />
-                </div>
-              )}
-              {section.varieties.length > 0 && (
-                <div className='basis-full space-y-3 rounded-xl border border-amber-300/70 bg-gradient-to-br from-amber-50 to-orange-100/70 p-4 shadow-sm dark:border-amber-800 dark:from-amber-950/60 dark:to-orange-950/30'>
-                  <div className='flex items-center gap-2'>
-                    <span className='size-2 rounded-full bg-amber-500 shadow-[0_0_0_4px_rgb(245_158_11_/_0.15)] dark:bg-amber-400' />
-                    <p className='text-xs font-bold tracking-[0.16em] text-amber-950 uppercase dark:text-amber-200'>
-                      Varieties
-                    </p>
-                  </div>
-                  <GroupedSummaryTable rows={section.varieties} />
-                </div>
-              )}
-            </div>
-            {section.missing_dates > 0 && (
-              <Alert>
-                <AlertTitle>Records without an event date</AlertTitle>
-                <AlertDescription>
-                  {section.missing_dates} records have no event date and are
-                  excluded from the selected period.
-                </AlertDescription>
-              </Alert>
-            )}
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  )
-
   return (
     <>
       <Header fixed>
@@ -295,73 +188,16 @@ export function ReportsPage({ kind, search, onChange }: Props) {
             </Button>
           </div>
         </PageHeading>
-        <Tabs defaultValue='full' className='space-y-4'>
+        <div className='space-y-4'>
           <div
             className={`${brandPanelClassName} flex flex-wrap items-end gap-3 p-4 dark:bg-card dark:text-card-foreground`}
           >
-            <div className='space-y-2'>
-              <Label htmlFor='report-from'>From</Label>
-              <Input
-                id='report-from'
-                type='date'
-                value={state.from}
-                onChange={(event) =>
-                  changeFilters({
-                    from: event.target.value,
-                    rangePreset: undefined,
-                  })
-                }
-              />
-            </div>
-            <div className='space-y-2'>
-              <Label htmlFor='report-to'>To</Label>
-              <Input
-                id='report-to'
-                type='date'
-                value={state.to}
-                onChange={(event) =>
-                  changeFilters({
-                    to: event.target.value,
-                    rangePreset: undefined,
-                  })
-                }
-              />
-            </div>
-            <div className='min-w-48 space-y-2'>
-              <Label htmlFor='report-date-range'>Date range</Label>
-              <Select
-                value={periodPresetForRange(
-                  state.from,
-                  state.to,
-                  new Date(),
-                  preferredRangePreset
-                )}
-                onValueChange={(value) => {
-                  const preset = dateRangePresets.find(
-                    (option) => option.value === value
-                  )
-                  if (preset)
-                    changeFilters({
-                      ...periodForPreset(preset.value),
-                      rangePreset: preset.value,
-                    })
-                }}
-              >
-                <SelectTrigger id='report-date-range'>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='custom' disabled>
-                    Custom range
-                  </SelectItem>
-                  {dateRangePresets.map((preset) => (
-                    <SelectItem key={preset.value} value={preset.value}>
-                      {preset.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <ReportPeriodControls
+              from={state.from}
+              to={state.to}
+              preferredRangePreset={preferredRangePreset}
+              onChange={changeFilters}
+            />
             {kind === 'financial' ? (
               <>
                 {data?.sections.some((section) =>
@@ -396,96 +232,16 @@ export function ReportsPage({ kind, search, onChange }: Props) {
                 }
               />
             )}
-            <TabsList className='ml-auto'>
-              <TabsTrigger value='full'>Full report</TabsTrigger>
-              <TabsTrigger value='summary'>Summarized report</TabsTrigger>
-            </TabsList>
           </div>
           {query.isPlaceholderData && (
             <p role='status' className='text-sm text-muted-foreground'>
               Updating report...
             </p>
           )}
-          <TabsContent value='full' className='space-y-4'>
-            {reportFallback ?? fullReport}
-          </TabsContent>
-          <TabsContent value='summary' className='space-y-4'>
-            {reportFallback ?? summaryReport}
-          </TabsContent>
-        </Tabs>
+          <div className='space-y-4'>{reportFallback ?? fullReport}</div>
+        </div>
       </Main>
     </>
-  )
-}
-
-function GroupedSummaryTable({ rows }: { rows: ReportSection['categories'] }) {
-  const rowTone = 'border-amber-200/70 dark:border-amber-800/70'
-  const currencies = Array.from(
-    new Set(rows.flatMap((row) => row.amounts.map((amount) => amount.currency)))
-  ).sort()
-
-  return (
-    <div className='overflow-x-auto rounded-lg border border-white/60 bg-white dark:border-white/10 dark:bg-slate-950/80'>
-      <table className='w-full min-w-[28rem] text-left text-sm text-slate-950 dark:text-slate-50'>
-        <thead
-          className={`border-b text-xs text-slate-700 uppercase dark:text-slate-200 ${rowTone}`}
-        >
-          <tr>
-            <th scope='col' className='px-3 py-2 font-semibold'>
-              Name
-            </th>
-            <th scope='col' className='px-3 py-2 text-center font-bold'>
-              Count
-            </th>
-            <th scope='col' className='px-3 py-2 text-right font-semibold'>
-              Amount{currencies.length ? ` (${currencies.join(', ')})` : ''}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.name} className={`border-b last:border-0 ${rowTone}`}>
-              <th scope='row' className='px-3 py-2 font-medium'>
-                {row.name || 'Unspecified'}
-              </th>
-              <td className='px-3 py-2 text-center font-bold tabular-nums'>
-                {row.count.toLocaleString('en-TZ')}
-              </td>
-              <td className='px-3 py-2 text-right font-semibold tabular-nums'>
-                {currencies.length ? (
-                  <div className='flex flex-wrap justify-end gap-2'>
-                    {currencies.map((currency) => {
-                      const amount = row.amounts.find(
-                        (item) => item.currency === currency
-                      )
-                      return amount ? (
-                        <Badge
-                          key={currency}
-                          className='border-emerald-300 bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-800 shadow-sm dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200'
-                        >
-                          {Math.round(Number(amount.amount)).toLocaleString(
-                            'en-TZ'
-                          )}
-                        </Badge>
-                      ) : (
-                        <span
-                          key={currency}
-                          className='text-slate-500 dark:text-slate-400'
-                        >
-                          —
-                        </span>
-                      )
-                    })}
-                  </div>
-                ) : (
-                  '—'
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
   )
 }
 
@@ -530,38 +286,6 @@ function FullReport({
           }
         />
       ))}
-    </div>
-  )
-}
-
-type FilterProps = {
-  label: string
-  value?: string
-  choices: { id: string | number; label: string }[]
-  onChange: (value: string | undefined) => void
-}
-
-function FilterSelect({ label, value, choices, onChange }: FilterProps) {
-  const id = `report-${label.toLowerCase().replace(/ /g, '-')}`
-  return (
-    <div className='min-w-44 space-y-2'>
-      <Label htmlFor={id}>{label}</Label>
-      <Select
-        value={value ?? 'all'}
-        onValueChange={(next) => onChange(next === 'all' ? undefined : next)}
-      >
-        <SelectTrigger id={id}>
-          <SelectValue placeholder={`All ${label.toLowerCase()}s`} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value='all'>All</SelectItem>
-          {choices.map((choice) => (
-            <SelectItem key={choice.id} value={String(choice.id)}>
-              {choice.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
     </div>
   )
 }

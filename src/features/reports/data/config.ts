@@ -32,13 +32,17 @@ export function canAccessReport(permissions: string[], kind: ReportKind) {
   )
 }
 
+export function canAccessHighlights(permissions: string[]) {
+  return (
+    canAccessReport(permissions, 'financial') ||
+    canAccessReport(permissions, 'operational')
+  )
+}
+
 /** Used by the root and /reports redirects after the auth guard has loaded permissions. */
 export function firstReportPath(permissions: string[]) {
-  if (canAccessReport(permissions, 'financial')) {
-    return '/reports/financial' as const
-  }
-  if (canAccessReport(permissions, 'operational')) {
-    return '/reports/operational' as const
+  if (canAccessHighlights(permissions)) {
+    return '/reports/highlights' as const
   }
   return '/403' as const
 }

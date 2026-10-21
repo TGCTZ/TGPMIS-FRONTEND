@@ -35,6 +35,7 @@ import { Route as AuthenticatedAuditLogsIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedReportsOperationalIndexRouteImport } from './routes/_authenticated/reports/operational/index'
+import { Route as AuthenticatedReportsHighlightsIndexRouteImport } from './routes/_authenticated/reports/highlights/index'
 import { Route as AuthenticatedReportsFinancialIndexRouteImport } from './routes/_authenticated/reports/financial/index'
 import { Route as AuthenticatedLookupsSlugIndexRouteImport } from './routes/_authenticated/lookups/$slug/index'
 
@@ -181,6 +182,12 @@ const AuthenticatedReportsOperationalIndexRoute =
     path: '/reports/operational/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedReportsHighlightsIndexRoute =
+  AuthenticatedReportsHighlightsIndexRouteImport.update({
+    id: '/reports/highlights/',
+    path: '/reports/highlights/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedReportsFinancialIndexRoute =
   AuthenticatedReportsFinancialIndexRouteImport.update({
     id: '/reports/financial/',
@@ -221,6 +228,7 @@ export interface FileRoutesByFullPath {
   '/users/': typeof AuthenticatedUsersIndexRoute
   '/lookups/$slug/': typeof AuthenticatedLookupsSlugIndexRoute
   '/reports/financial/': typeof AuthenticatedReportsFinancialIndexRoute
+  '/reports/highlights/': typeof AuthenticatedReportsHighlightsIndexRoute
   '/reports/operational/': typeof AuthenticatedReportsOperationalIndexRoute
 }
 export interface FileRoutesByTo {
@@ -249,6 +257,7 @@ export interface FileRoutesByTo {
   '/users': typeof AuthenticatedUsersIndexRoute
   '/lookups/$slug': typeof AuthenticatedLookupsSlugIndexRoute
   '/reports/financial': typeof AuthenticatedReportsFinancialIndexRoute
+  '/reports/highlights': typeof AuthenticatedReportsHighlightsIndexRoute
   '/reports/operational': typeof AuthenticatedReportsOperationalIndexRoute
 }
 export interface FileRoutesById {
@@ -280,6 +289,7 @@ export interface FileRoutesById {
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/lookups/$slug/': typeof AuthenticatedLookupsSlugIndexRoute
   '/_authenticated/reports/financial/': typeof AuthenticatedReportsFinancialIndexRoute
+  '/_authenticated/reports/highlights/': typeof AuthenticatedReportsHighlightsIndexRoute
   '/_authenticated/reports/operational/': typeof AuthenticatedReportsOperationalIndexRoute
 }
 export interface FileRouteTypes {
@@ -311,6 +321,7 @@ export interface FileRouteTypes {
     | '/users/'
     | '/lookups/$slug/'
     | '/reports/financial/'
+    | '/reports/highlights/'
     | '/reports/operational/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -339,6 +350,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/lookups/$slug'
     | '/reports/financial'
+    | '/reports/highlights'
     | '/reports/operational'
   id:
     | '__root__'
@@ -369,6 +381,7 @@ export interface FileRouteTypes {
     | '/_authenticated/users/'
     | '/_authenticated/lookups/$slug/'
     | '/_authenticated/reports/financial/'
+    | '/_authenticated/reports/highlights/'
     | '/_authenticated/reports/operational/'
   fileRoutesById: FileRoutesById
 }
@@ -567,6 +580,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportsOperationalIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reports/highlights/': {
+      id: '/_authenticated/reports/highlights/'
+      path: '/reports/highlights'
+      fullPath: '/reports/highlights/'
+      preLoaderRoute: typeof AuthenticatedReportsHighlightsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/reports/financial/': {
       id: '/_authenticated/reports/financial/'
       path: '/reports/financial'
@@ -619,6 +639,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedLookupsSlugIndexRoute: typeof AuthenticatedLookupsSlugIndexRoute
   AuthenticatedReportsFinancialIndexRoute: typeof AuthenticatedReportsFinancialIndexRoute
+  AuthenticatedReportsHighlightsIndexRoute: typeof AuthenticatedReportsHighlightsIndexRoute
   AuthenticatedReportsOperationalIndexRoute: typeof AuthenticatedReportsOperationalIndexRoute
 }
 
@@ -641,6 +662,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLookupsSlugIndexRoute: AuthenticatedLookupsSlugIndexRoute,
   AuthenticatedReportsFinancialIndexRoute:
     AuthenticatedReportsFinancialIndexRoute,
+  AuthenticatedReportsHighlightsIndexRoute:
+    AuthenticatedReportsHighlightsIndexRoute,
   AuthenticatedReportsOperationalIndexRoute:
     AuthenticatedReportsOperationalIndexRoute,
 }
