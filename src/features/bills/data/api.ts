@@ -71,3 +71,8 @@ export async function simulateBillPayment(
   )
   return billSchema.parse(res.data)
 }
+
+/** Delete an unpaid bill; the server cancels a submitted GePG bill first. */
+export async function deleteBill(id: number): Promise<void> {
+  await api.delete(`/bills/${id}`)
+}

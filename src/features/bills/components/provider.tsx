@@ -8,7 +8,7 @@ import { type Bill } from '../data/schema'
  * `simulate-payment` is the exception, and a development-only one: it exists
  * only where the server reports simulation is on.
  */
-type BillsDialogType = 'view' | 'simulate-payment'
+type BillsDialogType = 'view' | 'simulate-payment' | 'delete'
 
 type BillsContextType = {
   open: BillsDialogType | null

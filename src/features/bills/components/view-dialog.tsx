@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { formatDateTime, formatMoney } from '@/lib/format'
-import { Badge } from '@/components/ui/badge'
 import {
   Dialog,
   DialogContent,
@@ -15,7 +14,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { type RowAction } from '@/components/data-table'
 import { DefinitionList } from '@/components/definition-list'
 import { DialogBody } from '@/components/dialog-body'
-import { StatusBadge } from '@/components/status-badge'
 import { ViewFooterActions } from '@/components/view-footer-actions'
 import { billPaymentsQuery } from '@/features/payments/data/api'
 import { type Bill } from '../data/schema'
@@ -163,34 +161,6 @@ export function BillViewDialog({
                 ))}
               </ul>
             )}
-          </div>
-
-          <Separator />
-
-          <div className='space-y-3'>
-            <h3 className='text-sm font-medium'>Gateway</h3>
-            <DefinitionList
-              items={[
-                {
-                  label: 'Submitted to GePG',
-                  value: bill.is_gepg_submitted ? (
-                    <Badge variant='outline'>
-                      {formatDateTime(bill.gepg_submitted_at)}
-                    </Badge>
-                  ) : (
-                    <StatusBadge tone='danger'>Not submitted</StatusBadge>
-                  ),
-                },
-                { label: 'Status code', value: bill.status_code },
-                {
-                  label: 'Status message',
-                  value: bill.status_desc,
-                  wide: true,
-                },
-                { label: 'Bill type', value: bill.bill_type },
-                { label: 'Pay type', value: bill.pay_type },
-              ]}
-            />
           </div>
         </DialogBody>
 

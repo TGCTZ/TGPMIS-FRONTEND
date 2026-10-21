@@ -28,6 +28,7 @@ import {
   workflowFeedQuery,
   type WorkflowRow,
 } from '@/features/workflow-feed/data/api'
+import { BillDeleteDialog } from './components/delete-dialog'
 import { BillsProvider, useBills } from './components/provider'
 import { BillsRowActions } from './components/row-actions'
 import { SimulatePaymentDialog } from './components/simulate-payment-dialog'
@@ -248,6 +249,18 @@ function BillsContent() {
           }}
           bill={currentRow}
           actions={actions}
+        />
+      )}
+      {currentRow && (
+        <BillDeleteDialog
+          open={open === 'delete'}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setOpen(null)
+              setCurrentRow(null)
+            }
+          }}
+          bill={currentRow}
         />
       )}
     </>
