@@ -55,8 +55,16 @@
   body::before {
     position: fixed;
     z-index: -1;
-    background: url('../assets/institutional-watermark.png') center /
-      min(100vw, 90rem) auto no-repeat;
+    background-image:
+      url('../assets/institutional-watermark-logo.png'),
+      url('../assets/institutional-watermark-coat.png');
+    background-position:
+      right center,
+      max(0px, calc(50vw - 45rem)) center;
+    background-repeat: no-repeat;
+    background-size:
+      min(35.6vw, 32rem) auto,
+      min(32.2vw, 29rem) auto;
     content: '';
     inset: 0;
     opacity: 0.12;
@@ -110,8 +118,16 @@
 .auth-watermark::before,
 [data-slot='sidebar-inset']::before {
   z-index: -1;
-  background: url('../assets/institutional-watermark.png') center /
-    min(100vw, 90rem) auto no-repeat;
+  background-image:
+    url('../assets/institutional-watermark-logo.png'),
+    url('../assets/institutional-watermark-coat.png');
+  background-position:
+    right center,
+    max(0px, calc(50vw - 45rem)) center;
+  background-repeat: no-repeat;
+  background-size:
+    min(35.6vw, 32rem) auto,
+    min(32.2vw, 29rem) auto;
   content: '';
   inset: 0;
   opacity: 0.24;
