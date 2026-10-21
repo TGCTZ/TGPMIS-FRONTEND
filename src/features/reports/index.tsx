@@ -211,6 +211,54 @@ export function ReportsPage({ kind, search, onChange }: Props) {
                   {status.status.replace(/_/g, ' ')}: {status.count}
                 </p>
               ))}
+              {section.categories.length > 0 && (
+                <div className='basis-full space-y-3 rounded-xl border border-amber-300/70 bg-gradient-to-br from-amber-50 to-orange-100/70 p-4 shadow-sm dark:border-amber-800 dark:from-amber-950/60 dark:to-orange-950/30'>
+                  <div className='flex items-center gap-2'>
+                    <span className='size-2 rounded-full bg-amber-500 shadow-[0_0_0_4px_rgb(245_158_11_/_0.15)] dark:bg-amber-400' />
+                    <p className='text-xs font-bold tracking-[0.16em] text-amber-950 uppercase dark:text-amber-200'>
+                      Stone categories
+                    </p>
+                  </div>
+                  <div className='flex flex-wrap gap-2'>
+                    {section.categories.map((category) => (
+                      <Badge
+                        key={category.name}
+                        variant='outline'
+                        className='gap-2 rounded-full border-amber-300 bg-white/80 px-3 py-1.5 text-sm font-semibold text-amber-950 shadow-sm dark:border-amber-700 dark:bg-amber-950/70 dark:text-amber-100'
+                      >
+                        <span>{category.name}</span>
+                        <span className='rounded-full bg-amber-700 px-2 py-0.5 text-xs font-bold text-white tabular-nums dark:bg-amber-700'>
+                          {category.count.toLocaleString('en-TZ')}
+                        </span>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {section.varieties.length > 0 && (
+                <div className='basis-full space-y-3 rounded-xl border border-violet-300/70 bg-gradient-to-br from-violet-50 to-fuchsia-100/70 p-4 shadow-sm dark:border-violet-800 dark:from-violet-950/60 dark:to-fuchsia-950/30'>
+                  <div className='flex items-center gap-2'>
+                    <span className='size-2 rounded-full bg-violet-500 shadow-[0_0_0_4px_rgb(139_92_246_/_0.15)] dark:bg-violet-400' />
+                    <p className='text-xs font-bold tracking-[0.16em] text-violet-950 uppercase dark:text-violet-200'>
+                      Varieties
+                    </p>
+                  </div>
+                  <div className='flex flex-wrap gap-2'>
+                    {section.varieties.map((variety) => (
+                      <Badge
+                        key={variety.name}
+                        variant='outline'
+                        className='gap-2 rounded-full border-violet-300 bg-white/80 px-3 py-1.5 text-sm font-semibold text-violet-950 shadow-sm dark:border-violet-700 dark:bg-violet-950/70 dark:text-violet-100'
+                      >
+                        <span>{variety.name || 'Unspecified'}</span>
+                        <span className='rounded-full bg-violet-600 px-2 py-0.5 text-xs font-bold text-white tabular-nums dark:bg-violet-700'>
+                          {variety.count.toLocaleString('en-TZ')}
+                        </span>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             {section.missing_dates > 0 && (
               <Alert>
