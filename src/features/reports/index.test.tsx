@@ -172,7 +172,13 @@ describe('Financial reports page', () => {
           missing_dates: 0,
           amounts: [],
           statuses: [],
-          categories: [{ name: 'Precious', count: 3 }],
+          categories: [
+            {
+              name: 'Precious',
+              count: 3,
+              amounts: [{ currency: 'TZS', amount: '120.00' }],
+            },
+          ],
           varieties: [],
         },
         {
@@ -184,7 +190,13 @@ describe('Financial reports page', () => {
           amounts: [],
           statuses: [],
           categories: [],
-          varieties: [{ name: 'Ruby', count: 4 }],
+          varieties: [
+            {
+              name: 'Ruby',
+              count: 4,
+              amounts: [{ currency: 'USD', amount: '45.00' }],
+            },
+          ],
         },
       ],
     }
@@ -239,6 +251,24 @@ describe('Financial reports page', () => {
       .toBeInTheDocument()
     await expect
       .element(operational.screen.getByText('Ruby'))
+      .toBeInTheDocument()
+    await expect
+      .element(operational.screen.getByText('Name', { exact: true }).first())
+      .toBeInTheDocument()
+    await expect
+      .element(operational.screen.getByText('Count', { exact: true }).first())
+      .toBeInTheDocument()
+    await expect
+      .element(operational.screen.getByText('Amount (TZS)', { exact: true }))
+      .toBeInTheDocument()
+    await expect
+      .element(operational.screen.getByText('Amount (USD)', { exact: true }))
+      .toBeInTheDocument()
+    await expect
+      .element(operational.screen.getByText('120', { exact: true }))
+      .toBeInTheDocument()
+    await expect
+      .element(operational.screen.getByText('45', { exact: true }))
       .toBeInTheDocument()
     await expect
       .element(operational.screen.getByText('Findings summary'))
