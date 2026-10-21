@@ -39,7 +39,11 @@ import {
   periodPresetForRange,
   periodProblem,
 } from './data/period'
-import { type ReportResult, type ReportSearch } from './data/schema'
+import {
+  type ReportResult,
+  type ReportSearch,
+  type ReportSection,
+} from './data/schema'
 
 const financialRoute = getRouteApi('/_authenticated/reports/financial/')
 const operationalRoute = getRouteApi('/_authenticated/reports/operational/')
@@ -165,11 +169,11 @@ export function ReportsPage({ kind, search, onChange }: Props) {
   )
 
   const summaryReport = data && (
-    <div className='grid gap-4 sm:grid-cols-2'>
+    <div className='grid gap-4 sm:grid-cols-12'>
       {data.sections.map((section) => (
         <Card
           key={section.key}
-          className={`${brandPanelClassName} dark:bg-card dark:text-card-foreground`}
+          className={`${brandPanelClassName} dark:bg-card dark:text-card-foreground ${section.key === 'orders' ? 'sm:col-span-4' : section.key === 'stones' || section.key === 'certificates' ? 'sm:col-span-8' : 'sm:col-span-6'}`}
         >
           <CardHeader>
             <CardTitle>{section.title}</CardTitle>
@@ -219,44 +223,18 @@ export function ReportsPage({ kind, search, onChange }: Props) {
                       Stone categories
                     </p>
                   </div>
-                  <div className='flex flex-wrap gap-2'>
-                    {section.categories.map((category) => (
-                      <Badge
-                        key={category.name}
-                        variant='outline'
-                        className='gap-2 rounded-full border-amber-300 bg-white/80 px-3 py-1.5 text-sm font-semibold text-amber-950 shadow-sm dark:border-amber-700 dark:bg-amber-950/70 dark:text-amber-100'
-                      >
-                        <span>{category.name}</span>
-                        <span className='rounded-full bg-amber-700 px-2 py-0.5 text-xs font-bold text-white tabular-nums dark:bg-amber-700'>
-                          {category.count.toLocaleString('en-TZ')}
-                        </span>
-                      </Badge>
-                    ))}
-                  </div>
+                  <GroupedSummaryTable rows={section.categories} />
                 </div>
               )}
               {section.varieties.length > 0 && (
-                <div className='basis-full space-y-3 rounded-xl border border-violet-300/70 bg-gradient-to-br from-violet-50 to-fuchsia-100/70 p-4 shadow-sm dark:border-violet-800 dark:from-violet-950/60 dark:to-fuchsia-950/30'>
+                <div className='basis-full space-y-3 rounded-xl border border-amber-300/70 bg-gradient-to-br from-amber-50 to-orange-100/70 p-4 shadow-sm dark:border-amber-800 dark:from-amber-950/60 dark:to-orange-950/30'>
                   <div className='flex items-center gap-2'>
-                    <span className='size-2 rounded-full bg-violet-500 shadow-[0_0_0_4px_rgb(139_92_246_/_0.15)] dark:bg-violet-400' />
-                    <p className='text-xs font-bold tracking-[0.16em] text-violet-950 uppercase dark:text-violet-200'>
+                    <span className='size-2 rounded-full bg-amber-500 shadow-[0_0_0_4px_rgb(245_158_11_/_0.15)] dark:bg-amber-400' />
+                    <p className='text-xs font-bold tracking-[0.16em] text-amber-950 uppercase dark:text-amber-200'>
                       Varieties
                     </p>
                   </div>
-                  <div className='flex flex-wrap gap-2'>
-                    {section.varieties.map((variety) => (
-                      <Badge
-                        key={variety.name}
-                        variant='outline'
-                        className='gap-2 rounded-full border-violet-300 bg-white/80 px-3 py-1.5 text-sm font-semibold text-violet-950 shadow-sm dark:border-violet-700 dark:bg-violet-950/70 dark:text-violet-100'
-                      >
-                        <span>{variety.name || 'Unspecified'}</span>
-                        <span className='rounded-full bg-violet-600 px-2 py-0.5 text-xs font-bold text-white tabular-nums dark:bg-violet-700'>
-                          {variety.count.toLocaleString('en-TZ')}
-                        </span>
-                      </Badge>
-                    ))}
-                  </div>
+                  <GroupedSummaryTable rows={section.varieties} />
                 </div>
               )}
             </div>
@@ -437,6 +415,77 @@ export function ReportsPage({ kind, search, onChange }: Props) {
         </Tabs>
       </Main>
     </>
+  )
+}
+
+function GroupedSummaryTable({ rows }: { rows: ReportSection['categories'] }) {
+  const rowTone = 'border-amber-200/70 dark:border-amber-800/70'
+  const currencies = Array.from(
+    new Set(rows.flatMap((row) => row.amounts.map((amount) => amount.currency)))
+  ).sort()
+
+  return (
+    <div className='overflow-x-auto rounded-lg border border-white/60 bg-white dark:border-white/10 dark:bg-slate-950/80'>
+      <table className='w-full min-w-[28rem] text-left text-sm text-slate-950 dark:text-slate-50'>
+        <thead
+          className={`border-b text-xs text-slate-700 uppercase dark:text-slate-200 ${rowTone}`}
+        >
+          <tr>
+            <th scope='col' className='px-3 py-2 font-semibold'>
+              Name
+            </th>
+            <th scope='col' className='px-3 py-2 text-center font-bold'>
+              Count
+            </th>
+            <th scope='col' className='px-3 py-2 text-right font-semibold'>
+              Amount{currencies.length ? ` (${currencies.join(', ')})` : ''}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.name} className={`border-b last:border-0 ${rowTone}`}>
+              <th scope='row' className='px-3 py-2 font-medium'>
+                {row.name || 'Unspecified'}
+              </th>
+              <td className='px-3 py-2 text-center font-bold tabular-nums'>
+                {row.count.toLocaleString('en-TZ')}
+              </td>
+              <td className='px-3 py-2 text-right font-semibold tabular-nums'>
+                {currencies.length ? (
+                  <div className='flex flex-wrap justify-end gap-2'>
+                    {currencies.map((currency) => {
+                      const amount = row.amounts.find(
+                        (item) => item.currency === currency
+                      )
+                      return amount ? (
+                        <Badge
+                          key={currency}
+                          className='border-emerald-300 bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-800 shadow-sm dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200'
+                        >
+                          {Math.round(Number(amount.amount)).toLocaleString(
+                            'en-TZ'
+                          )}
+                        </Badge>
+                      ) : (
+                        <span
+                          key={currency}
+                          className='text-slate-500 dark:text-slate-400'
+                        >
+                          —
+                        </span>
+                      )
+                    })}
+                  </div>
+                ) : (
+                  '—'
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 
