@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Eye, FlaskConical } from 'lucide-react'
+import { Eye, FlaskConical, Trash2 } from 'lucide-react'
 import { appConfigQuery } from '@/lib/app-config-query'
 import { PERMISSIONS, perm } from '@/lib/permissions'
 import { type RowAction } from '@/components/data-table'
@@ -7,10 +7,7 @@ import { useBills } from '../components/provider'
 import { type Bill } from '../data/schema'
 
 /**
- * What a user can do with a bill: look at it — and, in development, pay it.
- *
- * No Edit, Delete or Restore — a bill is written once by the billing service
- * and thereafter only by the gateway, and the API refuses everything else.
+ * Available bill actions. Bills are immutable except for guarded admin deletion.
  *
  * "Simulate payment" is gated on what the *server* reports rather than on a
  * build-time flag, so the UI cannot disagree with it about whether the endpoint
@@ -20,7 +17,7 @@ export function useBillActions(bill: Bill | null): RowAction[] {
   const { data: config } = useQuery(appConfigQuery())
   const { setOpen, setCurrentRow } = useBills()
 
-  function select(dialog: 'view' | 'simulate-payment') {
+  function select(dialog: 'view' | 'simulate-payment' | 'delete') {
     setCurrentRow(bill)
     setOpen(dialog)
   }
@@ -44,6 +41,18 @@ export function useBillActions(bill: Bill | null): RowAction[] {
       permission: PERMISSIONS.generateBill,
       onSelect: () => select('simulate-payment'),
       hidden: !config?.simulate_payments || bill.status === 'paid',
+      separatorBefore: true,
+    },
+    {
+      label: 'Delete',
+      icon: Trash2,
+      tone: 'destructive',
+      permission: perm('bills', 'delete'),
+      onSelect: () => select('delete'),
+      hidden:
+        bill.status === 'paid' ||
+        bill.status === 'partially_paid' ||
+        Number(bill.amount_paid ?? 0) > 0,
       separatorBefore: true,
     },
   ]
