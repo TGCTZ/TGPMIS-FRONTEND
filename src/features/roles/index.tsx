@@ -168,7 +168,7 @@ export function Roles() {
         {isError ? (
           <GeneralError minimal className='h-auto py-12' />
         ) : (
-          <div className='overflow-hidden rounded-md border'>
+          <div className='overflow-hidden rounded-md border bg-card text-card-foreground dark:bg-transparent dark:text-foreground'>
             <Table>
               <TableHeader>
                 <TableRow>
