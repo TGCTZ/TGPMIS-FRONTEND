@@ -1,4 +1,5 @@
 import { hasAnyPermission } from '@/lib/authz'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
 /**
@@ -90,7 +91,13 @@ function visibleActions(actions: RowAction[]) {
  * capability in one place, and so the same list can be reused by the record's
  * view dialog via `RowActionButtons`.
  */
-export function DataTableRowActions({ actions }: { actions: RowAction[] }) {
+export function DataTableRowActions({
+  actions,
+  align = 'end',
+}: {
+  actions: RowAction[]
+  align?: 'center' | 'end'
+}) {
   const visible = visibleActions(actions)
 
   // An empty cell beats a "no actions" placeholder repeated down every row.
@@ -100,7 +107,12 @@ export function DataTableRowActions({ actions }: { actions: RowAction[] }) {
     // The max-width is what makes `flex-wrap` mean anything. A table cell sizes
     // to its content, so without a cap the buttons would sit on one ever-wider
     // line and push the whole table into horizontal scroll instead of wrapping.
-    <div className='ms-auto flex max-w-80 flex-wrap items-center justify-end gap-1'>
+    <div
+      className={cn(
+        'flex max-w-80 flex-wrap items-center gap-1',
+        align === 'center' ? 'mx-auto justify-center' : 'ms-auto justify-end'
+      )}
+    >
       {visible.map((action, index) => (
         <div key={action.label} className='flex items-center'>
           {/* Never lead with a divider, however the list filtered down. */}

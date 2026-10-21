@@ -58,6 +58,7 @@ export const usersColumns: ColumnDef<User>[] = [
   },
   {
     id: 'roles',
+    meta: { align: 'center' },
     header: () => <span>Roles</span>,
     cell: ({ row }) => {
       const roles = row.original.roles
@@ -80,6 +81,7 @@ export const usersColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: 'is_active',
+    meta: { align: 'center' },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Active' />
     ),
@@ -92,6 +94,7 @@ export const usersColumns: ColumnDef<User>[] = [
   },
   {
     id: 'actions',
+    meta: { align: 'center' },
     cell: ({ row }) => <UsersRowActions user={row.original} />,
   },
 ]

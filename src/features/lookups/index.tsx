@@ -231,6 +231,7 @@ function LookupsContent({ config }: { config: LookupConfig }) {
     })),
     {
       accessorKey: 'is_active',
+      meta: { align: 'center' },
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title='Active' />
       ),
@@ -238,10 +239,9 @@ function LookupsContent({ config }: { config: LookupConfig }) {
     },
     {
       id: 'actions',
+      meta: { align: 'center' },
       cell: ({ row }) => (
-        <div className='flex justify-end'>
-          <DataTableRowActions actions={rowActions(row.original)} />
-        </div>
+        <DataTableRowActions actions={rowActions(row.original)} />
       ),
     },
   ]

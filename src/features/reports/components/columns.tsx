@@ -12,6 +12,7 @@ export function reportColumns(
 ): ColumnDef<ReportRow>[] {
   return columns.map((column) => ({
     accessorKey: column.key,
+    ...(column.kind === 'date' ? { meta: { align: 'center' as const } } : {}),
     header: column.label,
     enableSorting: false,
     cell: ({ row }) => {

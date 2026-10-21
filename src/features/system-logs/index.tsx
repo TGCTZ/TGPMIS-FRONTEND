@@ -117,6 +117,7 @@ export function SystemLogs() {
     },
     {
       accessorKey: 'level',
+      meta: { align: 'center' },
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title='Level' />
       ),
@@ -153,6 +154,7 @@ export function SystemLogs() {
     },
     {
       id: 'copy',
+      meta: { align: 'center' },
       header: () => <span className='sr-only'>Copy log</span>,
       enableSorting: false,
       cell: ({ row }) => (
