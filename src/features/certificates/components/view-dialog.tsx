@@ -14,6 +14,7 @@ import { DefinitionList } from '@/components/definition-list'
 import { DialogBody } from '@/components/dialog-body'
 import { ViewFooterActions } from '@/components/view-footer-actions'
 import { WEIGHT_UNIT_SYMBOLS } from '@/features/stones/data/enums'
+import { formatCertificateMeasurement } from '../data/format'
 import { type Certificate } from '../data/schema'
 import { CertificateStatusBadge } from './status-badge'
 
@@ -78,7 +79,7 @@ export function CertificateViewDialog({
                 { label: 'Stone type', value: certificate.stone_type_snapshot },
                 {
                   label: 'Weight',
-                  value: `${certificate.weight_snapshot} ${weightUnit}`,
+                  value: `${formatCertificateMeasurement(certificate.weight_snapshot) ?? ''} ${weightUnit}`,
                 },
                 { label: 'Species', value: certificate.species_snapshot },
                 { label: 'Variety', value: certificate.variety_snapshot },
@@ -101,7 +102,9 @@ export function CertificateViewDialog({
                 },
                 {
                   label: 'Specific gravity',
-                  value: certificate.specific_gravity_snapshot,
+                  value: formatCertificateMeasurement(
+                    certificate.specific_gravity_snapshot
+                  ),
                 },
                 { label: 'Gemmologist 1', value: certificate.gemmologist },
                 { label: 'Gemmologist 2', value: certificate.gemmologist_two },

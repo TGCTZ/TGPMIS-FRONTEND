@@ -47,6 +47,8 @@ function result() {
         missing_dates: 0,
         amounts: [{ currency: 'TZS', amount: '300.00' }],
         statuses: [],
+        categories: [],
+        varieties: [],
       },
     ],
     columns: [
@@ -159,6 +161,8 @@ describe('Financial reports page', () => {
           missing_dates: 0,
           amounts: [],
           statuses: [],
+          categories: [],
+          varieties: [],
         },
         {
           key: 'stones',
@@ -168,6 +172,8 @@ describe('Financial reports page', () => {
           missing_dates: 0,
           amounts: [],
           statuses: [],
+          categories: [{ name: 'Precious', count: 3 }],
+          varieties: [],
         },
         {
           key: 'certificates',
@@ -177,6 +183,8 @@ describe('Financial reports page', () => {
           missing_dates: 0,
           amounts: [],
           statuses: [],
+          categories: [],
+          varieties: [{ name: 'Ruby', count: 4 }],
         },
       ],
     }
@@ -213,13 +221,25 @@ describe('Financial reports page', () => {
       )
       .not.toBeInTheDocument()
     await expect
-      .element(operational.screen.getByText('3', { exact: true }).last())
-      .toHaveClass(/text-5xl/)
+      .element(operational.screen.getByText('3', { exact: true }).first())
+      .toBeInTheDocument()
     for (const title of ['Stones summary', 'Certificates summary']) {
       await expect
         .element(operational.screen.getByText(title))
         .toBeInTheDocument()
     }
+    await expect
+      .element(operational.screen.getByText('Stone categories'))
+      .toBeInTheDocument()
+    await expect
+      .element(operational.screen.getByText('Precious'))
+      .toBeInTheDocument()
+    await expect
+      .element(operational.screen.getByText('Varieties'))
+      .toBeInTheDocument()
+    await expect
+      .element(operational.screen.getByText('Ruby'))
+      .toBeInTheDocument()
     await expect
       .element(operational.screen.getByText('Findings summary'))
       .not.toBeInTheDocument()
