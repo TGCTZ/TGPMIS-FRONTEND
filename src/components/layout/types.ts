@@ -14,6 +14,8 @@ type BaseNavItem = {
    * list the API enforces, so the sidebar never offers a page that would 403.
    */
   permission?: string | string[]
+  /** For pages whose access combines multiple gates and source permissions. */
+  visibleWhen?: (granted: string[]) => boolean
   /** Additional permission required alongside one of `permission`. */
   gate?: string
   /**

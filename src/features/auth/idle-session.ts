@@ -1,5 +1,5 @@
 /** Browser interaction time shared by tabs in this login. API traffic does not touch it. */
-export const IDLE_TIMEOUT_MS = 30 * 60 * 1000
+export const IDLE_TIMEOUT_MS = 60 * 60 * 1000
 export const LAST_INTERACTION_KEY = 'tgc_last_interaction_at'
 let memoryLastInteraction: number | null = null
 

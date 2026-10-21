@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { PERMISSIONS } from '@/lib/permissions'
 import { filterNavGroups } from '@/components/layout/data/filter-nav'
 import { sidebarData } from '@/components/layout/data/sidebar-data'
-import { firstReportPath } from './config'
+import { canAccessHighlights, firstReportPath } from './config'
 import {
   dateRangePresets,
   defaultPeriod,
@@ -18,13 +18,13 @@ describe('report navigation', () => {
     const financial = PERMISSIONS.financialReports
     const operational = PERMISSIONS.operationalReports
     expect(firstReportPath([reports, financial, 'billing.view_bill'])).toBe(
-      '/reports/financial'
+      '/reports/highlights'
     )
     expect(firstReportPath([reports, financial, 'billing.view_payment'])).toBe(
-      '/reports/financial'
+      '/reports/highlights'
     )
     expect(firstReportPath([reports, operational, 'orders.view_order'])).toBe(
-      '/reports/operational'
+      '/reports/highlights'
     )
     expect(
       firstReportPath([
@@ -34,16 +34,20 @@ describe('report navigation', () => {
         'orders.view_order',
         'billing.view_payment',
       ])
-    ).toBe('/reports/financial')
+    ).toBe('/reports/highlights')
+    expect(canAccessHighlights([reports, financial, 'orders.view_order'])).toBe(
+      false
+    )
     expect(firstReportPath(['billing.view_bill'])).toBe('/403')
     expect(firstReportPath([])).toBe('/403')
   })
 
-  it('shows exactly two report items, filters them, and retires Overview and Dashboard', () => {
+  it('shows Highlights first and filters report links by their actual access', () => {
     const reports = sidebarData.navGroups.find(
       (group) => group.title === 'Reports'
     )!
     expect(reports.items.map((item) => item.title)).toEqual([
+      'Highlights',
       'Financial reports',
       'Operational reports',
     ])
@@ -65,7 +69,17 @@ describe('report navigation', () => {
           'orders.view_stone',
         ]
       )[0].items.map((item) => item.title)
-    ).toEqual(['Operational reports'])
+    ).toEqual(['Highlights', 'Operational reports'])
+    expect(
+      filterNavGroups(
+        [reports],
+        [
+          PERMISSIONS.moduleReports,
+          PERMISSIONS.financialReports,
+          'orders.view_order',
+        ]
+      )
+    ).toEqual([])
     const mainPageBadges = sidebarData.navGroups
       .flatMap((group) => group.items)
       .filter((item) => item.count)

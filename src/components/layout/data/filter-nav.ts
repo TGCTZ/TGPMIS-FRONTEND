@@ -31,15 +31,19 @@ export function filterNavGroups(
       items: group.items
         .filter(
           (item) =>
-            isVisible(item.permission, granted) && isVisible(item.gate, granted)
+            isVisible(item.permission, granted) &&
+            isVisible(item.gate, granted) &&
+            (item.visibleWhen?.(granted) ?? true)
         )
         .map((item) => {
           if (!('items' in item) || !item.items) return item
 
           return {
             ...item,
-            items: item.items.filter((child) =>
-              isVisible(child.permission, granted)
+            items: item.items.filter(
+              (child) =>
+                isVisible(child.permission, granted) &&
+                (child.visibleWhen?.(granted) ?? true)
             ),
           }
         })

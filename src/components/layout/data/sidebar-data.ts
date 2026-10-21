@@ -4,6 +4,7 @@ import {
   ClipboardList,
   Contact,
   FlaskConical,
+  LayoutDashboard,
   Microscope,
   Receipt,
   ScrollText,
@@ -16,7 +17,10 @@ import {
 import { countQuery } from '@/lib/count-query'
 import { PERMISSIONS, perm } from '@/lib/permissions'
 import { allLookupConfigs } from '@/features/lookups/data/config'
-import { reportConfigs } from '@/features/reports/data/config'
+import {
+  canAccessHighlights,
+  reportConfigs,
+} from '@/features/reports/data/config'
 import { type NavLink, type SidebarData } from '../types'
 
 /**
@@ -64,6 +68,12 @@ export const sidebarData: SidebarData = {
       title: 'Reports',
       permission: PERMISSIONS.moduleReports,
       items: [
+        {
+          title: 'Highlights',
+          url: '/reports/highlights',
+          icon: LayoutDashboard,
+          visibleWhen: canAccessHighlights,
+        },
         {
           title: 'Financial reports',
           url: '/reports/financial',
