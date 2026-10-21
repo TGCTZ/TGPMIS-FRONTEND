@@ -51,12 +51,14 @@ export const customersColumns: ColumnDef<Customer>[] = [
   },
   {
     accessorKey: 'region',
+    meta: { align: 'center' },
     header: () => <span>Region</span>,
     enableSorting: false,
     cell: ({ row }) => orDash(regionLabel(row.original.region)),
   },
   {
     id: 'actions',
+    meta: { align: 'center' },
     cell: ({ row }) => <CustomersRowActions customer={row.original} />,
   },
 ]

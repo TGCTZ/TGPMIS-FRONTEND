@@ -173,14 +173,14 @@ export function Roles() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Role</TableHead>
-                  <TableHead>Permissions</TableHead>
-                  <TableHead>Users</TableHead>
+                  <TableHead className='text-center'>Permissions</TableHead>
+                  <TableHead className='text-center'>Users</TableHead>
                   {/*
                     No fixed width: the actions cell is a wrapping flex row, so
                     pinning the column narrow (it was `w-1`) forced the icons
                     to stack vertically. Auto layout sizes it to its content.
                   */}
-                  <TableHead />
+                  <TableHead className='text-center' />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -237,15 +237,18 @@ export function Roles() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className='tabular-nums'>
+                      <TableCell className='text-center tabular-nums'>
                         {role.permissions.length}
                       </TableCell>
-                      <TableCell className='tabular-nums'>
+                      <TableCell className='text-center tabular-nums'>
                         {role.user_count}
                       </TableCell>
-                      <TableCell>
-                        <div className='flex justify-end'>
-                          <DataTableRowActions actions={rowActions(role)} />
+                      <TableCell className='text-center'>
+                        <div className='flex justify-center'>
+                          <DataTableRowActions
+                            actions={rowActions(role)}
+                            align='center'
+                          />
                         </div>
                       </TableCell>
                     </TableRow>

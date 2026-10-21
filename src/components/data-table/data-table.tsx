@@ -212,7 +212,14 @@ export function DataTable<T extends { id: number }>({
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      className={cn(
+                        header.column.columnDef.meta?.align === 'center' &&
+                          'text-center'
+                      )}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -249,7 +256,13 @@ export function DataTable<T extends { id: number }>({
                     onClick={(event) => handleRowClick(event, row.original)}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell
+                        key={cell.id}
+                        className={cn(
+                          cell.column.columnDef.meta?.align === 'center' &&
+                            'text-center [&_.ms-auto]:mx-auto [&_.ms-auto]:justify-center [&>*]:mx-auto [&>*]:items-center [&>*]:justify-center'
+                        )}
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()

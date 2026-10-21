@@ -72,6 +72,7 @@ export function WorkflowFeedTable({
         ? [
             {
               id: 'progress',
+              meta: { align: 'center' },
               header: progressHeader,
               cell: ({ row }: { row: { original: WorkflowRow } }) =>
                 renderProgress(row.original),
@@ -80,6 +81,7 @@ export function WorkflowFeedTable({
         : []),
       {
         accessorKey: 'status',
+        meta: { align: 'center' },
         header: 'Status',
         cell: ({ row }) =>
           renderStatus ? renderStatus(row.original) : row.original.status,
@@ -88,6 +90,7 @@ export function WorkflowFeedTable({
         ? [
             {
               id: 'control_number',
+              meta: { align: 'center' },
               header: 'Control number',
               cell: ({ row }: { row: { original: WorkflowRow } }) =>
                 renderControlNumber(row.original),
@@ -98,6 +101,7 @@ export function WorkflowFeedTable({
         ? [
             {
               accessorKey: 'date',
+              meta: { align: 'center' },
               header: 'Date',
               cell: ({ row }) =>
                 row.original.date ? formatDate(row.original.date) : '—',
@@ -106,6 +110,7 @@ export function WorkflowFeedTable({
         : []),
       {
         id: 'action',
+        meta: { align: 'center' },
         header: 'Action',
         enableSorting: false,
         cell: ({ row }) => {

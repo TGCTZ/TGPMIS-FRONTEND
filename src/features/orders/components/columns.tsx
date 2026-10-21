@@ -81,6 +81,7 @@ const ordersDataColumns: ColumnDef<Order>[] = [
   },
   {
     id: 'control_number',
+    meta: { align: 'center' },
     header: () => <span>Control number</span>,
     enableSorting: false,
     cell: ({ row }) => {
@@ -117,6 +118,7 @@ const ordersDataColumns: ColumnDef<Order>[] = [
   },
   {
     id: 'stage',
+    meta: { align: 'center' },
     header: () => <span>Status</span>,
     enableSorting: false,
     cell: ({ row }) => {
@@ -144,6 +146,7 @@ export const ordersColumns: ColumnDef<Order>[] = [
   ...ordersDataColumns,
   {
     id: 'actions',
+    meta: { align: 'center' },
     cell: ({ row }) => <OrdersRowActions order={row.original} />,
   },
 ]

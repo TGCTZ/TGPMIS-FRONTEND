@@ -57,6 +57,7 @@ export const auditLogsColumns: ColumnDef<ActivityLog>[] = [
   },
   {
     accessorKey: 'event',
+    meta: { align: 'center' },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Event' />
     ),

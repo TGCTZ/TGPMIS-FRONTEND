@@ -54,6 +54,7 @@ const stonesDataColumns: ColumnDef<Stone>[] = [
   },
   {
     id: 'stone_category',
+    meta: { align: 'center' },
     header: () => <span>Category</span>,
     enableSorting: false,
     cell: ({ row }) =>
@@ -63,6 +64,7 @@ const stonesDataColumns: ColumnDef<Stone>[] = [
   },
   {
     id: 'stone_type',
+    meta: { align: 'center' },
     header: () => <span>Type</span>,
     enableSorting: false,
     cell: ({ row }) =>
@@ -79,6 +81,7 @@ const stonesDataColumns: ColumnDef<Stone>[] = [
   },
   {
     accessorKey: 'status',
+    meta: { align: 'center' },
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Status' />
     ),
@@ -90,6 +93,7 @@ export const stonesColumns: ColumnDef<Stone>[] = [
   ...stonesDataColumns,
   {
     id: 'actions',
+    meta: { align: 'center' },
     cell: ({ row }) => <StonesRowActions stone={row.original} />,
   },
 ]

@@ -68,6 +68,7 @@ export const paymentsColumns: ColumnDef<Payment>[] = [
   },
   {
     id: 'actions',
+    meta: { align: 'center' },
     cell: ({ row }) => <PaymentsRowActions payment={row.original} />,
   },
 ]

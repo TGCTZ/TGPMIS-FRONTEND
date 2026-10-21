@@ -41,12 +41,24 @@ export function DataTableColumnHeader<TData, TValue>({
   title,
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
+  const isCentered = column.columnDef.meta?.align === 'center'
+
   if (!column.getCanSort()) {
-    return <div className={cn(className)}>{title}</div>
+    return (
+      <div className={cn(isCentered && 'w-full text-center', className)}>
+        {title}
+      </div>
+    )
   }
 
   return (
-    <div className={cn('flex items-center space-x-2', className)}>
+    <div
+      className={cn(
+        'flex items-center space-x-2',
+        isCentered && 'w-full justify-center',
+        className
+      )}
+    >
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -58,7 +70,10 @@ export function DataTableColumnHeader<TData, TValue>({
             // on button, and an explicit declaration beats inheritance.
             // `-ms-3` cancels the button's padding so sortable and plain
             // headers start on the same vertical line.
-            className='-ms-3 h-8 text-xs font-semibold tracking-wider uppercase data-[state=open]:bg-accent'
+            className={cn(
+              '-ms-3 h-8 text-xs font-semibold tracking-wider uppercase data-[state=open]:bg-accent',
+              isCentered && 'ms-0'
+            )}
           >
             <span>{title}</span>
             {column.getIsSorted() === 'desc' ? (
