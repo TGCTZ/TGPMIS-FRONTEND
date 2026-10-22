@@ -48,7 +48,9 @@ export function useIdleLogout() {
       if (idle) {
         // A sleeping tab may wake after the server has already expired the session.
         void logout().catch(() => undefined)
-        toast.info('Signed out after 30 minutes of inactivity.')
+        toast.info(
+          `Signed out after ${IDLE_TIMEOUT_MS / 60_000} minutes of inactivity.`
+        )
         void navigate({ to: '/sign-in', replace: true })
       } else {
         // Another tab already revoked the shared refresh token.
