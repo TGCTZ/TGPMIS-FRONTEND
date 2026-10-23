@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { saveBlob } from '@/lib/download'
+import { useDownloadFeedback } from '@/lib/download-feedback'
 import { fetchCertificatePdf } from '../data/api'
 import { type Certificate } from '../data/schema'
 
@@ -12,10 +13,12 @@ import { type Certificate } from '../data/schema'
  * The server sets the same name in `Content-Disposition`, but a blob download
  * never sees that header, so the filename is rebuilt here.
  */
-export function useDownloadCertificatePdf() {
+export function useDownloadCertificatePdf({ toastProgress = false } = {}) {
+  const feedback = useDownloadFeedback({ toastProgress })
   const mutation = useMutation({
     mutationFn: async (certificate: Certificate) => {
-      const blob = await fetchCertificatePdf(certificate.id)
+      feedback.start()
+      const blob = await fetchCertificatePdf(certificate.id, feedback.report)
       const suffix = certificate.status === 'revoked' ? '-revoked' : ''
       // Slash is only a display separator; keep the downloaded filename safe.
       saveBlob(
@@ -24,9 +27,17 @@ export function useDownloadCertificatePdf() {
       )
     },
     onError: () => toast.error('Could not download the certificate.'),
+    onSuccess: () => toast.success('Certificate download is ready.'),
+    onSettled: () => feedback.finish(),
   })
 
-  return { download: mutation.mutate, isDownloading: mutation.isPending }
+  return {
+    download: mutation.mutate,
+    isDownloading: mutation.isPending,
+    progressVisible: feedback.visible,
+    progress: feedback.percent,
+    progressPhase: feedback.phase,
+  }
 }
 
 /**

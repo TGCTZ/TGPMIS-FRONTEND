@@ -104,7 +104,7 @@ export function ReportSectionCard({
             </AlertDescription>
           </Alert>
         )}
-        {query.isError ? (
+        {query.isError && !data ? (
           <Alert variant='destructive'>
             <AlertTitle>Could not load this section</AlertTitle>
             <AlertDescription>
@@ -125,6 +125,8 @@ export function ReportSectionCard({
             data={data?.page.items ?? []}
             meta={data?.page.meta}
             isFetching={query.isFetching}
+            refreshError={query.isRefetchError}
+            onRetry={() => void query.refetch()}
             state={{ page: state.page, perPage: state.pageSize, search: '' }}
             onStateChange={(next) =>
               onPageChange(

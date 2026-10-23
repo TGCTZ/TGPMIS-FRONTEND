@@ -28,6 +28,8 @@ type UsersTableProps = {
   data: User[]
   meta?: Meta
   isFetching: boolean
+  refreshError?: boolean
+  onRetry?: () => void
   state: UsersQueryState
   onStateChange: (next: Partial<UsersQueryState>) => void
   onRowClick: (user: User) => void
@@ -38,6 +40,8 @@ export function UsersTable({
   data,
   meta,
   isFetching,
+  refreshError,
+  onRetry,
   state,
   onStateChange,
   onRowClick,
@@ -146,6 +150,8 @@ export function UsersTable({
       data={data}
       meta={meta}
       isFetching={isFetching}
+      refreshError={refreshError}
+      onRetry={onRetry}
       state={state}
       onStateChange={onStateChange}
       onRowClick={onRowClick}

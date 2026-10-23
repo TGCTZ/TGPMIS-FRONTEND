@@ -4,7 +4,23 @@ import { render } from 'vitest-browser-react'
 import { type ReportSearch } from './data/schema'
 import { ReportsPage } from './index'
 
-const mocks = vi.hoisted(() => ({ fetch: vi.fn(), download: vi.fn() }))
+const mocks = vi.hoisted(() => ({
+  fetch: vi.fn(),
+  download: vi.fn(),
+  toastSuccess: vi.fn(),
+  toastError: vi.fn(),
+  toastCustom: vi.fn(),
+  toastDismiss: vi.fn(),
+}))
+
+vi.mock('sonner', () => ({
+  toast: {
+    success: mocks.toastSuccess,
+    error: mocks.toastError,
+    custom: mocks.toastCustom,
+    dismiss: mocks.toastDismiss,
+  },
+}))
 
 vi.mock('./data/api', () => ({
   reportsQuery: (kind: string, search: ReportSearch) => ({
@@ -228,7 +244,63 @@ describe('Financial reports page', () => {
         to: '2026-09-30',
         status: 'paid',
       }),
-      'xlsx'
+      'xlsx',
+      expect.any(Function)
+    )
+  })
+
+  it('shows delayed, measurable progress for a report download', async () => {
+    let resolveDownload!: () => void
+    mocks.download.mockReturnValue(
+      new Promise<void>((resolve) => {
+        resolveDownload = resolve
+      })
+    )
+    const { screen } = await renderPage()
+    const excelButton = screen.getByRole('button', {
+      name: 'Excel',
+      exact: true,
+    })
+    await excelButton.click()
+
+    await expect.element(excelButton).toBeDisabled()
+    await new Promise((resolve) => window.setTimeout(resolve, 350))
+    await expect
+      .element(screen.getByRole('button', { name: /Preparing/ }))
+      .toBeInTheDocument()
+
+    const onProgress = mocks.download.mock.calls[0][3] as (event: {
+      loaded: number
+      total?: number
+    }) => void
+    onProgress({ loaded: 25, total: 100 })
+    await expect
+      .element(screen.getByRole('button', { name: /Downloading 25%/ }))
+      .toBeInTheDocument()
+    await expect
+      .element(
+        screen.getByRole('progressbar', {
+          name: 'Excel report download progress',
+        })
+      )
+      .toHaveAttribute('aria-valuenow', '25')
+
+    resolveDownload()
+    await expect.element(excelButton).toBeEnabled()
+    expect(mocks.toastSuccess).toHaveBeenCalledWith('Report download is ready.')
+  })
+
+  it('keeps reporting export failures', async () => {
+    mocks.download.mockRejectedValueOnce(new Error('Network unavailable'))
+    const { screen } = await renderPage()
+
+    await screen.getByRole('button', { name: 'Excel', exact: true }).click()
+    await expect
+      .element(screen.getByRole('button', { name: 'Excel', exact: true }))
+      .toBeEnabled()
+
+    expect(mocks.toastError).toHaveBeenCalledWith(
+      'Could not download this report. Please try again.'
     )
   })
 

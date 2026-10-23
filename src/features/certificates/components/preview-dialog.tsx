@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Progress } from '@/components/ui/progress'
 import { Can } from '@/components/can'
 import { fetchCertificatePdf } from '../data/api'
 import { type Certificate } from '../data/schema'
@@ -33,7 +34,8 @@ export function CertificatePreviewDialog({
 }: PreviewDialogProps) {
   const [url, setUrl] = useState<string | null>(null)
   const [failed, setFailed] = useState(false)
-  const { download, isDownloading } = useDownloadCertificatePdf()
+  const { download, isDownloading, progressVisible, progress, progressPhase } =
+    useDownloadCertificatePdf()
   const frameRef = useRef<HTMLIFrameElement>(null)
 
   useEffect(() => {
@@ -90,11 +92,25 @@ export function CertificatePreviewDialog({
                 type='button'
                 size='sm'
                 variant='success'
+                className='relative overflow-hidden'
                 disabled={isDownloading}
                 onClick={() => download(certificate)}
               >
                 <Download className='me-1 size-4' />
-                {isDownloading ? 'Preparing...' : 'Download PDF'}
+                {progressVisible
+                  ? progressPhase === 'preparing'
+                    ? 'Preparing…'
+                    : progress === null
+                      ? 'Downloading…'
+                      : `Downloading ${progress}%`
+                  : 'Download PDF'}
+                {progressVisible && (
+                  <Progress
+                    value={progress ?? undefined}
+                    label='Certificate download progress'
+                    className='absolute inset-x-0 bottom-0 h-1 rounded-none'
+                  />
+                )}
               </Button>
             </div>
           </Can>

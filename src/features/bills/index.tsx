@@ -67,18 +67,19 @@ function BillsContent() {
     source: search.source,
   }
 
-  const { data, isPending, isError, isFetching } = useQuery(
-    workflowFeedQuery('/bills/workflow-feed', {
-      page: state.page,
-      pageSize: state.perPage,
-      search: state.search,
-      sortBy: state.sortBy,
-      sortDir: state.sortDir,
-      status: state.status,
-      type: search.type,
-      source: search.source,
-    })
-  )
+  const { data, isPending, isError, isFetching, isRefetchError, refetch } =
+    useQuery(
+      workflowFeedQuery('/bills/workflow-feed', {
+        page: state.page,
+        pageSize: state.perPage,
+        search: state.search,
+        sortBy: state.sortBy,
+        sortDir: state.sortDir,
+        status: state.status,
+        type: search.type,
+        source: search.source,
+      })
+    )
 
   function handleStateChange(next: Partial<WorkflowListState>) {
     navigate({
@@ -115,13 +116,15 @@ function BillsContent() {
           description='Charges, payment status, and orders ready to bill.'
         />
 
-        {isError ? (
+        {isError && !data ? (
           <GeneralError minimal className='h-auto py-12' />
         ) : (
           <WorkflowFeedTable
             rows={data?.results ?? []}
             count={data?.count ?? 0}
             isFetching={isPending || isFetching}
+            refreshError={isRefetchError}
+            onRetry={() => void refetch()}
             state={state}
             onStateChange={handleStateChange}
             renderStatus={(row) =>

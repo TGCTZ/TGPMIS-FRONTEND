@@ -89,18 +89,19 @@ function IdentificationContent() {
     source: search.source,
   }
 
-  const { data, isPending, isError, isFetching } = useQuery(
-    workflowFeedQuery('/identification-reports/workflow-feed', {
-      page: state.page,
-      pageSize: state.perPage,
-      search: state.search,
-      sortBy: state.sortBy,
-      sortDir: state.sortDir,
-      status: state.status,
-      type: state.type,
-      source: state.source,
-    })
-  )
+  const { data, isPending, isError, isFetching, isRefetchError, refetch } =
+    useQuery(
+      workflowFeedQuery('/identification-reports/workflow-feed', {
+        page: state.page,
+        pageSize: state.perPage,
+        search: state.search,
+        sortBy: state.sortBy,
+        sortDir: state.sortDir,
+        status: state.status,
+        type: state.type,
+        source: state.source,
+      })
+    )
 
   function handleStateChange(next: Partial<WorkflowListState>) {
     navigate({
@@ -156,7 +157,7 @@ function IdentificationContent() {
             </TabsList>
           </PageHeading>
 
-          {isError ? (
+          {isError && !data ? (
             <GeneralError minimal className='h-auto py-12' />
           ) : (
             <TabsContent value={selectedTab} className='mt-0'>
@@ -164,6 +165,8 @@ function IdentificationContent() {
                 rows={data?.results ?? []}
                 count={data?.count ?? 0}
                 isFetching={isPending || isFetching}
+                refreshError={isRefetchError}
+                onRetry={() => void refetch()}
                 state={state}
                 onStateChange={handleStateChange}
                 renderStatus={(row) =>

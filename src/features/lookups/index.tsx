@@ -79,16 +79,17 @@ function LookupsContent({ config }: { config: LookupConfig }) {
     showDeleted: search.showDeleted,
   }
 
-  const { data, isPending, isError, isFetching } = useQuery(
-    lookupRowsQuery(config.resource, {
-      page: state.page,
-      perPage: state.perPage,
-      search: state.search,
-      sortBy: state.sortBy,
-      sortDir: state.sortDir,
-      trashed: state.showDeleted ? 'with' : undefined,
-    })
-  )
+  const { data, isPending, isError, isFetching, isRefetchError, refetch } =
+    useQuery(
+      lookupRowsQuery(config.resource, {
+        page: state.page,
+        perPage: state.perPage,
+        search: state.search,
+        sortBy: state.sortBy,
+        sortDir: state.sortDir,
+        trashed: state.showDeleted ? 'with' : undefined,
+      })
+    )
 
   function handleStateChange(
     next: Partial<TableQueryState & { showDeleted?: boolean }>
@@ -315,7 +316,7 @@ function LookupsContent({ config }: { config: LookupConfig }) {
           </Can>
         </PageHeading>
 
-        {isError ? (
+        {isError && !data ? (
           <GeneralError minimal className='h-auto py-12' />
         ) : (
           <DataTable
@@ -323,6 +324,8 @@ function LookupsContent({ config }: { config: LookupConfig }) {
             data={data?.items ?? []}
             meta={data?.meta}
             isFetching={isPending || isFetching}
+            refreshError={isRefetchError}
+            onRetry={() => void refetch()}
             state={state}
             onStateChange={handleStateChange}
             onRowClick={(row) => select('view', row)}

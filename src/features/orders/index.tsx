@@ -52,17 +52,18 @@ function OrdersContent() {
     stage: search.stage,
   }
 
-  const { data, isPending, isError, isFetching } = useQuery(
-    ordersQuery({
-      page: state.page,
-      perPage: state.perPage,
-      search: state.search,
-      sortBy: state.sortBy,
-      sortDir: state.sortDir,
-      trashed: state.showDeleted ? 'with' : undefined,
-      stage: state.stage,
-    })
-  )
+  const { data, isPending, isError, isFetching, isRefetchError, refetch } =
+    useQuery(
+      ordersQuery({
+        page: state.page,
+        perPage: state.perPage,
+        search: state.search,
+        sortBy: state.sortBy,
+        sortDir: state.sortDir,
+        trashed: state.showDeleted ? 'with' : undefined,
+        stage: state.stage,
+      })
+    )
 
   function handleStateChange(next: Partial<OrdersQueryState>) {
     navigate({
@@ -108,13 +109,15 @@ function OrdersContent() {
           </Can>
         </PageHeading>
 
-        {isError ? (
+        {isError && !data ? (
           <GeneralError minimal className='h-auto py-12' />
         ) : (
           <OrdersTable
             data={data?.items ?? []}
             meta={data?.meta}
             isFetching={isPending || isFetching}
+            refreshError={isRefetchError}
+            onRetry={() => void refetch()}
             state={state}
             onStateChange={handleStateChange}
             onRowClick={(order) => {

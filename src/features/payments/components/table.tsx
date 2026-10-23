@@ -21,6 +21,8 @@ type PaymentsTableProps = {
   data: Payment[]
   meta?: Meta
   isFetching: boolean
+  refreshError?: boolean
+  onRetry?: () => void
   state: PaymentsQueryState
   onStateChange: (next: Partial<PaymentsQueryState>) => void
   onRowClick: (payment: Payment) => void
@@ -31,6 +33,8 @@ export function PaymentsTable({
   data,
   meta,
   isFetching,
+  refreshError,
+  onRetry,
   state,
   onStateChange,
   onRowClick,
@@ -88,6 +92,8 @@ export function PaymentsTable({
       data={data}
       meta={meta}
       isFetching={isFetching}
+      refreshError={refreshError}
+      onRetry={onRetry}
       state={state}
       onStateChange={onStateChange}
       onRowClick={onRowClick}

@@ -41,16 +41,17 @@ function PaymentsContent() {
     processed: search.processed,
   }
 
-  const { data, isPending, isError, isFetching } = useQuery(
-    paymentsQuery({
-      page: state.page,
-      perPage: state.perPage,
-      search: state.search,
-      sortBy: state.sortBy,
-      sortDir: state.sortDir,
-      filters: { is_processed: state.processed },
-    })
-  )
+  const { data, isPending, isError, isFetching, isRefetchError, refetch } =
+    useQuery(
+      paymentsQuery({
+        page: state.page,
+        perPage: state.perPage,
+        search: state.search,
+        sortBy: state.sortBy,
+        sortDir: state.sortDir,
+        filters: { is_processed: state.processed },
+      })
+    )
 
   function handleStateChange(next: Partial<PaymentsQueryState>) {
     navigate({
@@ -82,13 +83,15 @@ function PaymentsContent() {
           description='GePG payment notifications, as received.'
         />
 
-        {isError ? (
+        {isError && !data ? (
           <GeneralError minimal className='h-auto py-12' />
         ) : (
           <PaymentsTable
             data={data?.items ?? []}
             meta={data?.meta}
             isFetching={isPending || isFetching}
+            refreshError={isRefetchError}
+            onRetry={() => void refetch()}
             state={state}
             onStateChange={handleStateChange}
             onRowClick={(payment) => {

@@ -47,17 +47,18 @@ function StonesContent({ embedded }: { embedded: boolean }) {
     showDeleted: embedded ? search.stonesShowDeleted : undefined,
   }
 
-  const { data, isPending, isError, isFetching } = useQuery(
-    stonesQuery({
-      page: state.page,
-      perPage: state.perPage,
-      search: state.search,
-      sortBy: state.sortBy,
-      sortDir: state.sortDir,
-      filters: { status: state.status },
-      trashed: state.showDeleted ? 'with' : undefined,
-    })
-  )
+  const { data, isPending, isError, isFetching, isRefetchError, refetch } =
+    useQuery(
+      stonesQuery({
+        page: state.page,
+        perPage: state.perPage,
+        search: state.search,
+        sortBy: state.sortBy,
+        sortDir: state.sortDir,
+        filters: { status: state.status },
+        trashed: state.showDeleted ? 'with' : undefined,
+      })
+    )
 
   function handleStateChange(next: Partial<StonesQueryState>) {
     navigate({
@@ -115,13 +116,15 @@ function StonesContent({ embedded }: { embedded: boolean }) {
           />
         )}
 
-        {isError ? (
+        {isError && !data ? (
           <GeneralError minimal className='h-auto py-12' />
         ) : (
           <StonesTable
             data={data?.items ?? []}
             meta={data?.meta}
             isFetching={isPending || isFetching}
+            refreshError={isRefetchError}
+            onRetry={() => void refetch()}
             state={state}
             onStateChange={handleStateChange}
             onRowClick={(stone) => {

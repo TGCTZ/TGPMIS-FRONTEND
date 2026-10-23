@@ -29,6 +29,8 @@ type OrdersTableProps = {
   data: Order[]
   meta?: Meta
   isFetching: boolean
+  refreshError?: boolean
+  onRetry?: () => void
   state: OrdersQueryState
   onStateChange: (next: Partial<OrdersQueryState>) => void
   onRowClick: (order: Order) => void
@@ -39,6 +41,8 @@ export function OrdersTable({
   data,
   meta,
   isFetching,
+  refreshError,
+  onRetry,
   state,
   onStateChange,
   onRowClick,
@@ -124,6 +128,8 @@ export function OrdersTable({
       data={data}
       meta={meta}
       isFetching={isFetching}
+      refreshError={refreshError}
+      onRetry={onRetry}
       state={state}
       onStateChange={onStateChange}
       onRowClick={onRowClick}

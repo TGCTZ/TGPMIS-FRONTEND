@@ -44,16 +44,17 @@ function CustomersContent() {
     showDeleted: search.showDeleted,
   }
 
-  const { data, isPending, isError, isFetching } = useQuery(
-    customersQuery({
-      page: state.page,
-      perPage: state.perPage,
-      search: state.search,
-      sortBy: state.sortBy,
-      sortDir: state.sortDir,
-      trashed: state.showDeleted ? 'with' : undefined,
-    })
-  )
+  const { data, isPending, isError, isFetching, isRefetchError, refetch } =
+    useQuery(
+      customersQuery({
+        page: state.page,
+        perPage: state.perPage,
+        search: state.search,
+        sortBy: state.sortBy,
+        sortDir: state.sortDir,
+        trashed: state.showDeleted ? 'with' : undefined,
+      })
+    )
 
   function handleStateChange(next: Partial<CustomersQueryState>) {
     navigate({
@@ -83,13 +84,15 @@ function CustomersContent() {
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <PageHeading title='Customers' />
 
-        {isError ? (
+        {isError && !data ? (
           <GeneralError minimal className='h-auto py-12' />
         ) : (
           <CustomersTable
             data={data?.items ?? []}
             meta={data?.meta}
             isFetching={isPending || isFetching}
+            refreshError={isRefetchError}
+            onRetry={() => void refetch()}
             state={state}
             onStateChange={handleStateChange}
             onRowClick={(customer) => {
