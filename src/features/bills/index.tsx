@@ -5,6 +5,7 @@ import { FileText } from 'lucide-react'
 import { formatMoney } from '@/lib/format'
 import { Progress } from '@/components/ui/progress'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { CopyButton } from '@/components/copy-button'
 import { DataTableRowActions, type RowAction } from '@/components/data-table'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -143,10 +144,13 @@ function BillsContent() {
             renderControlNumber={(row) => {
               if (row.kind !== 'bill') return '—'
               const controlNumber = billSchema.parse(row.detail).control_number
-              return (
-                controlNumber ?? (
-                  <span className='text-muted-foreground'>Awaiting number</span>
-                )
+              return controlNumber ? (
+                <span className='inline-flex items-center gap-1'>
+                  {controlNumber}
+                  <CopyButton label='control number' value={controlNumber} />
+                </span>
+              ) : (
+                <span className='text-muted-foreground'>Awaiting number</span>
               )
             }}
             renderProgress={(row) => {

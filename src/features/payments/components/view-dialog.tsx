@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
+import { CopyButton } from '@/components/copy-button'
 import { type RowAction } from '@/components/data-table'
 import { DefinitionList } from '@/components/definition-list'
 import { DialogBody } from '@/components/dialog-body'
@@ -90,7 +91,18 @@ export function PaymentViewDialog({
             <h3 className='text-sm font-medium'>Gateway</h3>
             <DefinitionList
               items={[
-                { label: 'Control number', value: payment.bill_ctr_num },
+                {
+                  label: 'Control number',
+                  value: payment.bill_ctr_num ? (
+                    <span className='inline-flex items-center gap-1'>
+                      {payment.bill_ctr_num}
+                      <CopyButton
+                        label='control number'
+                        value={payment.bill_ctr_num}
+                      />
+                    </span>
+                  ) : null,
+                },
                 { label: 'GePG bill id', value: payment.gepg_bill_id },
                 {
                   label: 'Customer centre number',

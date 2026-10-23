@@ -1,5 +1,6 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { formatDateTime, formatMoney } from '@/lib/format'
+import { CopyButton } from '@/components/copy-button'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { StatusBadge } from '@/components/status-badge'
 import { type Payment } from '../data/schema'
@@ -31,7 +32,15 @@ export const paymentsColumns: ColumnDef<Payment>[] = [
     enableSorting: false,
     cell: ({ row }) => (
       <div className='min-w-32'>
-        <div>{row.original.bill_ctr_num || '—'}</div>
+        <div className='flex items-center gap-1'>
+          {row.original.bill_ctr_num || '—'}
+          {row.original.bill_ctr_num && (
+            <CopyButton
+              label='control number'
+              value={row.original.bill_ctr_num}
+            />
+          )}
+        </div>
         <div className='text-xs text-muted-foreground'>
           {row.original.pyr_name || ''}
         </div>

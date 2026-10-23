@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
+import { CopyButton } from '@/components/copy-button'
 import { DefinitionList } from '@/components/definition-list'
 import { DialogBody } from '@/components/dialog-body'
 import { billPreviewQuery, billQuery } from '@/features/bills/data/api'
@@ -267,9 +268,12 @@ export function GenerateBillDialog({
                 <p className='text-sm text-muted-foreground'>
                   GePG control number
                 </p>
-                <p className='font-mono text-3xl font-bold tracking-wide break-all tabular-nums sm:text-4xl'>
-                  {controlNumber}
-                </p>
+                <div className='flex items-center gap-2'>
+                  <p className='font-mono text-3xl font-bold tracking-wide break-all tabular-nums sm:text-4xl'>
+                    {controlNumber}
+                  </p>
+                  <CopyButton label='control number' value={controlNumber} />
+                </div>
               </>
             ) : (
               <>
