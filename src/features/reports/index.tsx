@@ -3,9 +3,11 @@ import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
 import { Download } from 'lucide-react'
 import { toast } from 'sonner'
+import { useDownloadFeedback } from '@/lib/download-feedback'
 import { serverMessageOr } from '@/lib/handle-server-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { brandPanelClassName } from '@/components/layout/brand-panel'
@@ -69,7 +71,8 @@ export function ReportsPage({ kind, search, onChange }: Props) {
   }
   const problem = periodProblem(state.from, state.to)
   const query = useQuery({ ...reportsQuery(kind, state), enabled: !problem })
-  const [exporting, setExporting] = useState(false)
+  const [exporting, setExporting] = useState<'xlsx' | 'pdf' | null>(null)
+  const feedback = useDownloadFeedback()
   const data = query.data
   const totalRows =
     data?.sections.reduce((sum, section) => sum + section.count, 0) ?? 0
@@ -81,9 +84,11 @@ export function ReportsPage({ kind, search, onChange }: Props) {
   }
 
   async function exportFile(fileType: 'xlsx' | 'pdf') {
-    setExporting(true)
+    setExporting(fileType)
+    feedback.start()
     try {
-      await downloadReport(kind, state, fileType)
+      await downloadReport(kind, state, fileType, feedback.report)
+      toast.success('Report download is ready.')
     } catch (error) {
       // Axios returns JSON errors as blobs when the request expects a download.
       if (error && typeof error === 'object' && 'response' in error) {
@@ -111,7 +116,8 @@ export function ReportsPage({ kind, search, onChange }: Props) {
         )
       )
     } finally {
-      setExporting(false)
+      feedback.finish()
+      setExporting(null)
     }
   }
 
@@ -120,7 +126,7 @@ export function ReportsPage({ kind, search, onChange }: Props) {
       <AlertTitle>Check the date range</AlertTitle>
       <AlertDescription>{problem}</AlertDescription>
     </Alert>
-  ) : query.isError ? (
+  ) : query.isError && !data ? (
     <Alert variant='destructive'>
       <AlertTitle>Could not load the report</AlertTitle>
       <AlertDescription>
@@ -159,32 +165,59 @@ export function ReportsPage({ kind, search, onChange }: Props) {
           <div className='flex gap-2'>
             <Button
               variant='success'
+              className='relative overflow-hidden'
               disabled={
                 !data ||
                 !!problem ||
                 query.isFetching ||
-                exporting ||
+                !!exporting ||
                 totalRows > 10000
               }
               onClick={() => void exportFile('xlsx')}
             >
               <Download className='size-4' />
-              Excel
+              {exporting === 'xlsx' && feedback.visible
+                ? feedback.phase === 'preparing'
+                  ? 'Preparing…'
+                  : feedback.percent === null
+                    ? 'Downloading…'
+                    : `Downloading ${feedback.percent}%`
+                : 'Excel'}
+              {exporting === 'xlsx' && feedback.visible && (
+                <Progress
+                  value={feedback.percent ?? undefined}
+                  label='Excel report download progress'
+                  className='absolute inset-x-0 bottom-0 h-1 rounded-none'
+                />
+              )}
             </Button>
             <Button
               variant='default'
-              className='bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-institutional dark:text-institutional-foreground dark:hover:bg-institutional/90'
+              className='relative overflow-hidden bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-institutional dark:text-institutional-foreground dark:hover:bg-institutional/90'
               disabled={
                 !data ||
                 !!problem ||
                 query.isFetching ||
-                exporting ||
+                !!exporting ||
                 totalRows > 10000
               }
               onClick={() => void exportFile('pdf')}
             >
               <Download className='size-4' />
-              PDF
+              {exporting === 'pdf' && feedback.visible
+                ? feedback.phase === 'preparing'
+                  ? 'Preparing…'
+                  : feedback.percent === null
+                    ? 'Downloading…'
+                    : `Downloading ${feedback.percent}%`
+                : 'PDF'}
+              {exporting === 'pdf' && feedback.visible && (
+                <Progress
+                  value={feedback.percent ?? undefined}
+                  label='PDF report download progress'
+                  className='absolute inset-x-0 bottom-0 h-1 rounded-none'
+                />
+              )}
             </Button>
           </div>
         </PageHeading>

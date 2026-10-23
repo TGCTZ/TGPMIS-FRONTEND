@@ -1,5 +1,6 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { formatDate, formatMoney } from '@/lib/format'
+import { CopyButton } from '@/components/copy-button'
 import { LongText } from '@/components/long-text'
 import { type ReportKind } from '../data/config'
 import { formatReportMoney } from '../data/format'
@@ -28,6 +29,21 @@ export function reportColumns(
         return (
           <span className='whitespace-nowrap'>{formatDate(String(value))}</span>
         )
+      if (
+        (column.key === 'control_number' ||
+          column.label.toLowerCase().includes('control number')) &&
+        value !== null &&
+        value !== undefined &&
+        String(value) !== ''
+      ) {
+        const controlNumber = String(value)
+        return (
+          <span className='inline-flex items-center gap-1'>
+            <LongText className='max-w-64'>{controlNumber}</LongText>
+            <CopyButton label='control number' value={controlNumber} />
+          </span>
+        )
+      }
       return <LongText className='max-w-64'>{String(value ?? '')}</LongText>
     },
   }))

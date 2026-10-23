@@ -23,6 +23,8 @@ type AuditLogsTableProps = {
   data: ActivityLog[]
   meta?: Meta
   isFetching: boolean
+  refreshError?: boolean
+  onRetry?: () => void
   state: AuditLogsQueryState
   onStateChange: (next: Partial<AuditLogsQueryState>) => void
   onRowClick: (log: ActivityLog) => void
@@ -38,6 +40,8 @@ export function AuditLogsTable({
   data,
   meta,
   isFetching,
+  refreshError,
+  onRetry,
   state,
   onStateChange,
   onRowClick,
@@ -127,6 +131,8 @@ export function AuditLogsTable({
       data={data}
       meta={meta}
       isFetching={isFetching}
+      refreshError={refreshError}
+      onRetry={onRetry}
       state={state}
       onStateChange={onStateChange}
       onRowClick={onRowClick}

@@ -26,6 +26,8 @@ type StonesTableProps = {
   data: Stone[]
   meta?: Meta
   isFetching: boolean
+  refreshError?: boolean
+  onRetry?: () => void
   state: StonesQueryState
   onStateChange: (next: Partial<StonesQueryState>) => void
   onRowClick: (stone: Stone) => void
@@ -36,6 +38,8 @@ export function StonesTable({
   data,
   meta,
   isFetching,
+  refreshError,
+  onRetry,
   state,
   onStateChange,
   onRowClick,
@@ -120,6 +124,8 @@ export function StonesTable({
       data={data}
       meta={meta}
       isFetching={isFetching}
+      refreshError={refreshError}
+      onRetry={onRetry}
       state={state}
       onStateChange={onStateChange}
       onRowClick={onRowClick}

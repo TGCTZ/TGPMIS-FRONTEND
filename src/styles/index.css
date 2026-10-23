@@ -248,3 +248,15 @@
     height: 0;
   }
 }
+
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-120%);
+  }
+  50% {
+    transform: translateX(80%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}

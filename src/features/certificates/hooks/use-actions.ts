@@ -23,7 +23,7 @@ export function useCertificateActions(
 ): RowAction[] {
   const navigate = useNavigate()
   const { setOpen, setCurrentRow } = useCertificates()
-  const { download } = useDownloadCertificatePdf()
+  const { download } = useDownloadCertificatePdf({ toastProgress: true })
   const { print } = usePrintCertificatePdf()
 
   function select(dialog: 'preview') {

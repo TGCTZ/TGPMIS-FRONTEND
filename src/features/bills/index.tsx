@@ -5,6 +5,7 @@ import { FileText } from 'lucide-react'
 import { formatMoney } from '@/lib/format'
 import { Progress } from '@/components/ui/progress'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { CopyButton } from '@/components/copy-button'
 import { DataTableRowActions, type RowAction } from '@/components/data-table'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -67,18 +68,19 @@ function BillsContent() {
     source: search.source,
   }
 
-  const { data, isPending, isError, isFetching } = useQuery(
-    workflowFeedQuery('/bills/workflow-feed', {
-      page: state.page,
-      pageSize: state.perPage,
-      search: state.search,
-      sortBy: state.sortBy,
-      sortDir: state.sortDir,
-      status: state.status,
-      type: search.type,
-      source: search.source,
-    })
-  )
+  const { data, isPending, isError, isFetching, isRefetchError, refetch } =
+    useQuery(
+      workflowFeedQuery('/bills/workflow-feed', {
+        page: state.page,
+        pageSize: state.perPage,
+        search: state.search,
+        sortBy: state.sortBy,
+        sortDir: state.sortDir,
+        status: state.status,
+        type: search.type,
+        source: search.source,
+      })
+    )
 
   function handleStateChange(next: Partial<WorkflowListState>) {
     navigate({
@@ -115,13 +117,15 @@ function BillsContent() {
           description='Charges, payment status, and orders ready to bill.'
         />
 
-        {isError ? (
+        {isError && !data ? (
           <GeneralError minimal className='h-auto py-12' />
         ) : (
           <WorkflowFeedTable
             rows={data?.results ?? []}
             count={data?.count ?? 0}
             isFetching={isPending || isFetching}
+            refreshError={isRefetchError}
+            onRetry={() => void refetch()}
             state={state}
             onStateChange={handleStateChange}
             renderStatus={(row) =>
@@ -140,10 +144,13 @@ function BillsContent() {
             renderControlNumber={(row) => {
               if (row.kind !== 'bill') return '—'
               const controlNumber = billSchema.parse(row.detail).control_number
-              return (
-                controlNumber ?? (
-                  <span className='text-muted-foreground'>Awaiting number</span>
-                )
+              return controlNumber ? (
+                <span className='inline-flex items-center gap-1'>
+                  {controlNumber}
+                  <CopyButton label='control number' value={controlNumber} />
+                </span>
+              ) : (
+                <span className='text-muted-foreground'>Awaiting number</span>
               )
             }}
             renderProgress={(row) => {

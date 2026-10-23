@@ -11,6 +11,7 @@ import {
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
+import { CopyButton } from '@/components/copy-button'
 import { type RowAction } from '@/components/data-table'
 import { DefinitionList } from '@/components/definition-list'
 import { DialogBody } from '@/components/dialog-body'
@@ -87,7 +88,18 @@ export function BillViewDialog({
 
           <DefinitionList
             items={[
-              { label: 'Control number', value: bill.control_number },
+              {
+                label: 'Control number',
+                value: bill.control_number ? (
+                  <span className='inline-flex items-center gap-1'>
+                    {bill.control_number}
+                    <CopyButton
+                      label='control number'
+                      value={bill.control_number}
+                    />
+                  </span>
+                ) : null,
+              },
               { label: 'Total', value: money(bill.total_amount) },
               { label: 'Paid', value: money(bill.amount_paid) },
               {

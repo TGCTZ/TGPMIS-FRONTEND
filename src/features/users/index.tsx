@@ -52,20 +52,21 @@ function UsersContent() {
     showDeleted: search.showDeleted,
   }
 
-  const { data, isPending, isError, isFetching } = useQuery(
-    usersQueryOptions({
-      page: state.page,
-      perPage: state.perPage,
-      search: state.search,
-      sortBy: state.sortBy,
-      sortDir: state.sortDir,
-      filters: {
-        user_status: state.statusId,
-        is_active: state.isActive,
-      },
-      trashed: state.showDeleted ? 'with' : undefined,
-    })
-  )
+  const { data, isPending, isError, isFetching, isRefetchError, refetch } =
+    useQuery(
+      usersQueryOptions({
+        page: state.page,
+        perPage: state.perPage,
+        search: state.search,
+        sortBy: state.sortBy,
+        sortDir: state.sortDir,
+        filters: {
+          user_status: state.statusId,
+          is_active: state.isActive,
+        },
+        trashed: state.showDeleted ? 'with' : undefined,
+      })
+    )
 
   function handleStateChange(next: Partial<UsersQueryState>) {
     navigate({
@@ -112,13 +113,15 @@ function UsersContent() {
           </Can>
         </PageHeading>
 
-        {isError ? (
+        {isError && !data ? (
           <GeneralError minimal className='h-auto py-12' />
         ) : (
           <UsersTable
             data={data?.items ?? []}
             meta={data?.meta}
             isFetching={isPending || isFetching}
+            refreshError={isRefetchError}
+            onRetry={() => void refetch()}
             state={state}
             onStateChange={handleStateChange}
             onRowClick={(user) => {

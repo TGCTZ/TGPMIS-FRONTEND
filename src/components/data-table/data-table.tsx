@@ -10,6 +10,8 @@ import {
 import { type Meta } from '@/lib/api-query'
 import { cn } from '@/lib/utils'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -38,6 +40,8 @@ type DataTableProps<T> = {
   data: T[]
   meta?: Meta
   isFetching: boolean
+  refreshError?: boolean
+  onRetry?: () => void
   state: TableQueryState
   onStateChange: (next: Partial<TableQueryState>) => void
   /** Opens the row's detail view. Omit for tables with nothing to view. */
@@ -73,6 +77,8 @@ export function DataTable<T extends { id: number }>({
   data,
   meta,
   isFetching,
+  refreshError = false,
+  onRetry,
   state,
   onStateChange,
   onRowClick,
@@ -186,6 +192,30 @@ export function DataTable<T extends { id: number }>({
           <DataTableViewOptions table={table} />
         </div>
       </div>
+
+      {data.length > 0 && isFetching && (
+        <p
+          role='status'
+          aria-live='polite'
+          className='text-sm text-muted-foreground'
+        >
+          Updating…
+        </p>
+      )}
+      {refreshError && (
+        <Alert variant='destructive'>
+          <AlertTitle>Could not update these results</AlertTitle>
+          <AlertDescription className='flex flex-wrap items-center justify-between gap-3'>
+            Showing the previous results. Try again when your connection is
+            available.
+            {onRetry && (
+              <Button variant='outline' size='sm' onClick={onRetry}>
+                Retry
+              </Button>
+            )}
+          </AlertDescription>
+        </Alert>
+      )}
 
       {isFetching && data.length === 0 ? (
         <TableSkeleton isMobile={isMobile} columnCount={allColumns.length} />

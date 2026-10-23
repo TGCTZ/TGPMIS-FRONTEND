@@ -54,18 +54,19 @@ function CertificatesContent() {
     source: search.source,
   }
 
-  const { data, isPending, isError, isFetching } = useQuery(
-    workflowFeedQuery('/certificates/workflow-feed', {
-      page: state.page,
-      pageSize: state.perPage,
-      search: state.search,
-      sortBy: state.sortBy,
-      sortDir: state.sortDir,
-      status: state.status,
-      type: state.type,
-      source: state.source,
-    })
-  )
+  const { data, isPending, isError, isFetching, isRefetchError, refetch } =
+    useQuery(
+      workflowFeedQuery('/certificates/workflow-feed', {
+        page: state.page,
+        pageSize: state.perPage,
+        search: state.search,
+        sortBy: state.sortBy,
+        sortDir: state.sortDir,
+        status: state.status,
+        type: state.type,
+        source: state.source,
+      })
+    )
 
   function handleStateChange(next: Partial<WorkflowListState>) {
     navigate({
@@ -102,13 +103,15 @@ function CertificatesContent() {
           description='Issued certificates are available to view, print, and download.'
         />
 
-        {isError ? (
+        {isError && !data ? (
           <GeneralError minimal className='h-auto py-12' />
         ) : (
           <WorkflowFeedTable
             rows={data?.results ?? []}
             count={data?.count ?? 0}
             isFetching={isPending || isFetching}
+            refreshError={isRefetchError}
+            onRetry={() => void refetch()}
             state={state}
             onStateChange={handleStateChange}
             renderStatus={(row) =>

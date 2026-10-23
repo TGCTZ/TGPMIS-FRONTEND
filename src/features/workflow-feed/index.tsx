@@ -17,6 +17,8 @@ type Props = {
   rows: WorkflowRow[]
   count: number
   isFetching: boolean
+  refreshError?: boolean
+  onRetry?: () => void
   state: WorkflowListState
   onStateChange: (next: Partial<WorkflowListState>) => void
   actionPermission?: string | string[]
@@ -38,6 +40,8 @@ export function WorkflowFeedTable({
   rows,
   count,
   isFetching,
+  refreshError,
+  onRetry,
   state,
   onStateChange,
   actionPermission,
@@ -173,6 +177,8 @@ export function WorkflowFeedTable({
       data={rows}
       meta={meta}
       isFetching={isFetching}
+      refreshError={refreshError}
+      onRetry={onRetry}
       state={state}
       onStateChange={onStateChange}
       onRowClick={onRowClick}

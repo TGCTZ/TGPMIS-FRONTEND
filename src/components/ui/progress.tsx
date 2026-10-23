@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils'
 
 type ProgressProps = {
-  /** Work completed so far. Clamped into `0…max`. */
-  value: number
-  /** The total the bar fills up to. A `max` of 0 renders an empty track. */
-  max: number
+  /** Work completed so far. Omit for work whose total is unknown. */
+  value?: number
+  /** The total the bar fills up to. */
+  max?: number
   /** Accessible name, since the bar itself carries no text. */
   label: string
   className?: string
@@ -13,16 +13,13 @@ type ProgressProps = {
 }
 
 /**
- * A determinate progress bar.
+ * A progress bar for known or unknown totals.
  *
- * Hand-rolled rather than `@radix-ui/react-progress`: the only thing that
- * package adds over this is its own state machine for the indeterminate case,
- * which nothing here needs — every bar in this app measures a known count
- * against a known total.
+ * Hand-rolled rather than `@radix-ui/react-progress` to keep the existing
+ * compact styling while supporting transfer progress with unknown totals.
  *
- * Rendered as an ARIA `progressbar` so a screen reader announces "3 of 5"
- * rather than silence; the visible counts stay alongside it for everyone else,
- * because a bar alone cannot say whether "nearly full" means 4/5 or 49/50.
+ * Determinate bars expose their values to assistive technology. Indeterminate
+ * bars omit `aria-valuenow` because no accurate percentage is available.
  */
 export function Progress({
   value,
@@ -31,18 +28,19 @@ export function Progress({
   className,
   completeClassName = 'bg-success',
 }: ProgressProps) {
-  const safeMax = Math.max(0, max)
-  const safeValue = Math.min(Math.max(0, value), safeMax)
+  const safeMax = Math.max(0, max ?? 100)
+  const safeValue = Math.min(Math.max(0, value ?? 0), safeMax)
   const percent = safeMax === 0 ? 0 : (safeValue / safeMax) * 100
-  const isComplete = safeMax > 0 && safeValue >= safeMax
+  const isDeterminate = value !== undefined
+  const isComplete = isDeterminate && safeMax > 0 && safeValue >= safeMax
 
   return (
     <div
       role='progressbar'
       aria-label={label}
-      aria-valuemin={0}
-      aria-valuemax={safeMax}
-      aria-valuenow={safeValue}
+      aria-valuemin={isDeterminate ? 0 : undefined}
+      aria-valuemax={isDeterminate ? safeMax : undefined}
+      aria-valuenow={isDeterminate ? safeValue : undefined}
       className={cn(
         'relative h-2 w-full overflow-hidden rounded-full bg-secondary',
         className
@@ -51,12 +49,13 @@ export function Progress({
       <div
         className={cn(
           'h-full rounded-full transition-[width] duration-300',
-          // Semantic, not decorative: amber says "still outstanding", green
-          // says "done". A brand-coloured full bar reads as just another blue
-          // element rather than as a finished state.
-          isComplete ? completeClassName : 'bg-warning'
+          isDeterminate
+            ? isComplete
+              ? completeClassName
+              : 'bg-warning'
+            : 'w-1/3 animate-[indeterminate_1.4s_ease-in-out_infinite] bg-warning'
         )}
-        style={{ width: `${percent}%` }}
+        style={isDeterminate ? { width: `${percent}%` } : undefined}
       />
     </div>
   )

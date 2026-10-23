@@ -1,6 +1,7 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { formatMoney } from '@/lib/format'
 import { Progress } from '@/components/ui/progress'
+import { CopyButton } from '@/components/copy-button'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { StatusBadge } from '@/components/status-badge'
@@ -97,8 +98,9 @@ const ordersDataColumns: ColumnDef<Order>[] = [
       return (
         <div className='flex flex-col items-start gap-1'>
           {order.control_number ? (
-            <div className='font-medium tabular-nums'>
+            <div className='flex items-center gap-1 font-medium tabular-nums'>
               {order.control_number}
+              <CopyButton label='control number' value={order.control_number} />
             </div>
           ) : (
             <StatusBadge tone='danger'>Awaiting number</StatusBadge>

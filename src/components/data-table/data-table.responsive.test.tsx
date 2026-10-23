@@ -59,6 +59,35 @@ function renderTable(
 }
 
 describe('DataTable responsiveness', () => {
+  it('keeps existing rows visible and announces a background refresh', async () => {
+    await page.viewport(DESKTOP.width, DESKTOP.height)
+    const screen = await renderTable({ isFetching: true })
+
+    await expect
+      .element(screen.getByRole('status'))
+      .toHaveTextContent('Updating…')
+    await expect.element(screen.getByText('B-001')).toBeInTheDocument()
+  })
+
+  it('keeps rows visible and offers retry after a refresh failure', async () => {
+    await page.viewport(DESKTOP.width, DESKTOP.height)
+    const onRetry = vi.fn()
+    const screen = await renderTable({ refreshError: true, onRetry })
+
+    await expect
+      .element(screen.getByText(/Showing the previous results/))
+      .toBeInTheDocument()
+    await expect.element(screen.getByText('B-001')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+    expect(onRetry).toHaveBeenCalledOnce()
+  })
+
+  it('does not show the refresh cue during an initial load', async () => {
+    const screen = await renderTable({ data: [], isFetching: true })
+
+    await expect.element(screen.getByRole('status')).not.toBeInTheDocument()
+  })
+
   it('renders a real table on desktop', async () => {
     await page.viewport(DESKTOP.width, DESKTOP.height)
     const screen = await renderTable()

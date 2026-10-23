@@ -34,19 +34,20 @@ export function AuditLogs() {
     dateTo: search.dateTo,
   }
 
-  const { data, isPending, isError, isFetching } = useQuery(
-    activityLogsQueryOptions({
-      page: state.page,
-      perPage: state.perPage,
-      search: state.search,
-      sortBy: state.sortBy,
-      sortDir: state.sortDir,
-      filters: {
-        event: state.event,
-        created_at: { from: state.dateFrom, to: state.dateTo },
-      },
-    })
-  )
+  const { data, isPending, isError, isFetching, isRefetchError, refetch } =
+    useQuery(
+      activityLogsQueryOptions({
+        page: state.page,
+        perPage: state.perPage,
+        search: state.search,
+        sortBy: state.sortBy,
+        sortDir: state.sortDir,
+        filters: {
+          event: state.event,
+          created_at: { from: state.dateFrom, to: state.dateTo },
+        },
+      })
+    )
 
   function handleStateChange(next: Partial<AuditLogsQueryState>) {
     navigate({
@@ -79,13 +80,15 @@ export function AuditLogs() {
           description='API-recorded changes, sign-ins, and permission grants.'
         />
 
-        {isError ? (
+        {isError && !data ? (
           <GeneralError minimal className='h-auto py-12' />
         ) : (
           <AuditLogsTable
             data={data?.items ?? []}
             meta={data?.meta}
             isFetching={isPending || isFetching}
+            refreshError={isRefetchError}
+            onRetry={() => void refetch()}
             state={state}
             onStateChange={handleStateChange}
             onRowClick={setSelected}

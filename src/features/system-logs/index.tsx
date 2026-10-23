@@ -71,17 +71,18 @@ export function SystemLogs() {
     dateTo: search.dateTo,
   }
 
-  const { data, isPending, isError, isFetching } = useQuery(
-    systemLogsQueryOptions({
-      page: state.page,
-      perPage: state.perPage,
-      search: state.search,
-      filters: {
-        level: state.level,
-        logged_at: { from: state.dateFrom, to: state.dateTo },
-      },
-    })
-  )
+  const { data, isPending, isError, isFetching, isRefetchError, refetch } =
+    useQuery(
+      systemLogsQueryOptions({
+        page: state.page,
+        perPage: state.perPage,
+        search: state.search,
+        filters: {
+          level: state.level,
+          logged_at: { from: state.dateFrom, to: state.dateTo },
+        },
+      })
+    )
 
   function handleStateChange(next: Record<string, unknown>) {
     navigate({
@@ -278,7 +279,7 @@ export function SystemLogs() {
           description='API errors and warnings; credentials are redacted.'
         />
 
-        {isError ? (
+        {isError && !data ? (
           <GeneralError minimal className='h-auto py-12' />
         ) : (
           <DataTable
@@ -286,6 +287,8 @@ export function SystemLogs() {
             data={data?.items ?? []}
             meta={data?.meta}
             isFetching={isPending || isFetching}
+            refreshError={isRefetchError}
+            onRetry={() => void refetch()}
             state={state}
             onStateChange={handleStateChange}
             onRowClick={setSelected}

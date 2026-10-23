@@ -2,6 +2,7 @@ import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import { toPaginated } from '@/lib/api-query'
 import { saveBlob } from '@/lib/download'
+import { type DownloadProgressEvent } from '@/lib/download-feedback'
 import { type ReportKind } from './config'
 import { reportResultSchema, type ReportSearch } from './schema'
 
@@ -41,11 +42,15 @@ export const reportsQuery = (kind: ReportKind, search: ReportSearch) =>
 export async function downloadReport(
   kind: ReportKind,
   search: ReportSearch,
-  fileType: 'xlsx' | 'pdf'
+  fileType: 'xlsx' | 'pdf',
+  onProgress?: (progress: DownloadProgressEvent) => void
 ) {
   const response = await api.get(`/reports/${kind}/export`, {
     params: { ...reportParams(search), file_type: fileType },
     responseType: 'blob',
+    onDownloadProgress: onProgress
+      ? (event) => onProgress({ loaded: event.loaded, total: event.total })
+      : undefined,
   })
   saveBlob(
     response.data as Blob,
