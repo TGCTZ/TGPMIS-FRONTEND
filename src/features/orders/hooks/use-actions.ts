@@ -100,6 +100,7 @@ export function useOrderActions(
     },
     {
       label: 'Create New Order',
+      tone: 'gold',
       icon: CopyPlus,
       permission: perm('orders', 'add'),
       onSelect: () => select('copy-order'),

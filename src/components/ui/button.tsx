@@ -16,6 +16,7 @@ const buttonVariants = cva(
            because it is the one thing you came to that row for. */
         success:
           'bg-success text-success-foreground shadow-xs hover:bg-success/90 hover:shadow-md focus-visible:ring-success/20',
+        gold: 'bg-gold text-gold-foreground shadow-xs hover:bg-gold/90 hover:shadow-md focus-visible:ring-gold/20',
         /* Dangerous, but not the row's headline. Red enough to hesitate over,
            quiet enough that the solid button beside it still leads. */
         'destructive-outline':
