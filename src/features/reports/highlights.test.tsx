@@ -74,6 +74,11 @@ const operationalData = {
           count: 3,
           amounts: [{ currency: 'TZS', amount: '120.00' }],
         },
+        {
+          name: 'TestCategory',
+          count: 2,
+          amounts: [{ currency: 'TZS', amount: '600.00' }],
+        },
       ],
     }),
     section('certificates', 'Certificates issued', {
@@ -157,6 +162,9 @@ describe('report Highlights page', () => {
       .element(screen.getByText('Stone categories'))
       .toBeInTheDocument()
     await expect.element(screen.getByText('Precious')).toBeInTheDocument()
+    await expect
+      .element(screen.getByText('TestCategory', { exact: true }))
+      .not.toBeInTheDocument()
     await expect.element(screen.getByText('Varieties')).toBeInTheDocument()
     await expect
       .element(screen.getByText('Ruby', { exact: true }))
