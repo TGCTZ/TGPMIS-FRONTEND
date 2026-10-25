@@ -1,6 +1,7 @@
 import {
   Eye,
   FileText,
+  CopyPlus,
   Pencil,
   PlayCircle,
   Plus,
@@ -23,7 +24,10 @@ import { isBilled, isFullyIdentified, isHeld, type Order } from '../data/schema'
  * drops out of the identification queue, so this row action is the only way
  * back in to correct a type before the bill fixes the price.
  */
-export function useOrderActions(order: Order | null): RowAction[] {
+export function useOrderActions(
+  order: Order | null,
+  copyDeadlineReached = false
+): RowAction[] {
   const { setOpen, setCurrentRow } = useOrders()
 
   function select(
@@ -35,6 +39,7 @@ export function useOrderActions(order: Order | null): RowAction[] {
       | 'add-stone'
       | 'generate-bill'
       | 'release'
+      | 'copy-order'
   ) {
     setCurrentRow(order)
     setOpen(dialog)
@@ -45,6 +50,9 @@ export function useOrderActions(order: Order | null): RowAction[] {
 
   const isDeleted = Boolean(order.deleted_at)
   const isFull = isFullyIdentified(order)
+  const copyAvailable = Boolean(
+    order.copy_available_at && copyDeadlineReached && !order.control_number
+  )
 
   return [
     {
@@ -89,6 +97,14 @@ export function useOrderActions(order: Order | null): RowAction[] {
       // order awaiting payment is already billed, and `Bill.order` is a
       // OneToOne, so a second attempt is refused by the API anyway.
       hidden: isDeleted || !isFull || isBilled(order) || isHeld(order),
+    },
+    {
+      label: 'Create new order for this customer',
+      icon: CopyPlus,
+      permission: perm('orders', 'add'),
+      onSelect: () => select('copy-order'),
+      hidden: isDeleted || !copyAvailable,
+      separatorBefore: true,
     },
     {
       label: 'Release',

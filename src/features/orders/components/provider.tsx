@@ -10,6 +10,7 @@ type OrdersDialogType =
   | 'add-stone'
   | 'generate-bill'
   | 'release'
+  | 'copy-order'
 
 type OrdersContextType = {
   open: OrdersDialogType | null

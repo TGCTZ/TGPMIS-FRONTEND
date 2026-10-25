@@ -199,7 +199,9 @@ export function OrderViewDialog({
 
         <DialogFooter>
           <ViewFooterActions
-            actions={actions}
+            actions={actions.filter(
+              (action) => action.label !== 'Create new order for this customer'
+            )}
             primary={
               <div className='flex flex-wrap gap-2'>
                 {onRequestEdit && !currentOrder.bill_number && (
