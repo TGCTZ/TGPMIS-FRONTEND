@@ -7,6 +7,7 @@ import { perm } from '@/lib/permissions'
 import { Button } from '@/components/ui/button'
 import { Can } from '@/components/can'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { PageHeading } from '@/components/page-heading'
@@ -56,8 +57,8 @@ function OrdersContent() {
   }
 
   const { data, isPending, isError, isFetching, isRefetchError, refetch } =
-    useQuery(
-      ordersQuery({
+    useQuery({
+      ...ordersQuery({
         page: state.page,
         perPage: state.perPage,
         search: state.search,
@@ -65,8 +66,18 @@ function OrdersContent() {
         sortDir: state.sortDir,
         trashed: state.showDeleted ? 'with' : undefined,
         stage: state.stage,
-      })
-    )
+      }),
+      refetchInterval: (query) =>
+        query.state.data?.items.some(
+          (order) =>
+            order.copy_available_at &&
+            !order.control_number &&
+            !order.deleted_at &&
+            Date.parse(order.copy_available_at) > Date.now()
+        )
+          ? 30_000
+          : false,
+    })
 
   const copyOrderMutation = useMutation({
     mutationFn: copyOrderAfterGePGTimeout,
@@ -172,6 +183,25 @@ function OrdersContent() {
           onCopyOrder={(order) => copyOrderMutation.mutate(order.id)}
           isCopying={copyOrderMutation.isPending}
           actions={actions}
+        />
+      )}
+
+      {currentRow && (
+        <ConfirmDialog
+          open={open === 'copy-order'}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setOpen(null)
+              setCurrentRow(null)
+            }
+          }}
+          title='Create a new order?'
+          desc={`This will create a separate copy of ${currentRow.reference_number}, including its stones and identification findings. The original order and its GePG request will remain unchanged. GePG may still return a control number for the original, so both orders could require payment.`}
+          confirmText={
+            copyOrderMutation.isPending ? 'Creating order…' : 'Create new order'
+          }
+          isLoading={copyOrderMutation.isPending}
+          handleConfirm={() => copyOrderMutation.mutate(currentRow.id)}
         />
       )}
 
