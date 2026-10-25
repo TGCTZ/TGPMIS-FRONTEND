@@ -200,7 +200,7 @@ export function OrderViewDialog({
         <DialogFooter>
           <ViewFooterActions
             actions={actions.filter(
-              (action) => action.label !== 'Create new order for this customer'
+              (action) => action.label !== 'Create New Order'
             )}
             primary={
               <div className='flex flex-wrap gap-2'>
@@ -220,7 +220,7 @@ export function OrderViewDialog({
                       disabled={isCopying}
                     >
                       <CopyPlus className='me-1 size-4' />
-                      Create new order for this customer
+                      Create New Order
                     </Button>
                   </Can>
                 )}

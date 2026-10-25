@@ -74,7 +74,7 @@ describe('OrderViewDialog pending GePG copy action', () => {
     await expect
       .element(
         screen.getByRole('button', {
-          name: 'Create new order for this customer',
+          name: 'Create New Order',
         })
       )
       .not.toBeInTheDocument()
@@ -90,7 +90,7 @@ describe('OrderViewDialog pending GePG copy action', () => {
     await expect
       .element(
         screen.getByRole('button', {
-          name: 'Create new order for this customer',
+          name: 'Create New Order',
         })
       )
       .toBeInTheDocument()
@@ -105,7 +105,7 @@ describe('OrderViewDialog pending GePG copy action', () => {
     await expect
       .element(
         screen.getByRole('button', {
-          name: 'Create new order for this customer',
+          name: 'Create New Order',
         })
       )
       .not.toBeInTheDocument()

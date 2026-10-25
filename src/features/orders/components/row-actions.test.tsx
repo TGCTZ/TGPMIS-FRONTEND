@@ -45,7 +45,7 @@ describe('OrdersRowActions pending GePG copy action', () => {
     const order = makeOrder()
     const screen = await render(<OrdersRowActions order={order} />)
     const action = screen.getByRole('button', {
-      name: 'Create new order for this customer',
+      name: 'Create New Order',
     })
 
     await expect.element(action).toBeInTheDocument()
@@ -68,7 +68,7 @@ describe('OrdersRowActions pending GePG copy action', () => {
     await expect
       .element(
         screen.getByRole('button', {
-          name: 'Create new order for this customer',
+          name: 'Create New Order',
         })
       )
       .not.toBeInTheDocument()

@@ -99,7 +99,7 @@ export function useOrderActions(
       hidden: isDeleted || !isFull || isBilled(order) || isHeld(order),
     },
     {
-      label: 'Create new order for this customer',
+      label: 'Create New Order',
       icon: CopyPlus,
       permission: perm('orders', 'add'),
       onSelect: () => select('copy-order'),
