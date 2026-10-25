@@ -91,6 +91,12 @@ export async function restoreOrder(id: number): Promise<void> {
   await api.post(`/orders/${id}/restore`)
 }
 
+/** Copy an unresolved GePG order after the configured timeout. */
+export async function copyOrderAfterGePGTimeout(id: number): Promise<Order> {
+  const res = await api.post(`/orders/${id}/copy-after-gepg-timeout`)
+  return orderSchema.parse(res.data)
+}
+
 /**
  * Record the identification of the next stone.
  *
