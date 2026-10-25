@@ -63,7 +63,9 @@ export function SummaryCards({
               {section.categories.length > 0 && (
                 <GroupedSummary
                   title='Stone categories'
-                  rows={section.categories}
+                  rows={section.categories.filter(
+                    (category) => category.name !== 'TestCategory'
+                  )}
                 />
               )}
               {section.varieties.length > 0 && (
@@ -93,6 +95,8 @@ function GroupedSummary({
   title: string
   rows: ReportSection['categories']
 }) {
+  if (rows.length === 0) return null
+
   return (
     <div className='basis-full space-y-3 rounded-xl border border-amber-300/70 bg-gradient-to-br from-amber-50 to-orange-100/70 p-4 shadow-sm dark:border-amber-800 dark:from-amber-950/60 dark:to-orange-950/30'>
       <div className='flex items-center gap-2'>
