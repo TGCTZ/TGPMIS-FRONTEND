@@ -41,6 +41,8 @@ export const orderSchema = z.object({
   bill_total_amount: z.string().nullable().default(null),
   /** Currency used by the bill. */
   bill_currency: z.string().nullable().default(null),
+  /** Earliest time a submitted bill without a control number can be copied. */
+  copy_available_at: z.string().nullable().default(null),
   /**
    * The number the customer quotes when paying.
    *

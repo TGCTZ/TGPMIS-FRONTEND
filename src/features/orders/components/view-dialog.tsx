@@ -1,4 +1,6 @@
-import { Pencil } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { CopyPlus, Pencil } from 'lucide-react'
 import { formatDate, formatDateTime } from '@/lib/format'
 import { perm } from '@/lib/permissions'
 import { regionLabel } from '@/lib/regions'
@@ -14,11 +16,13 @@ import {
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
 import { Can } from '@/components/can'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { type RowAction } from '@/components/data-table'
 import { DefinitionList } from '@/components/definition-list'
 import { DialogBody } from '@/components/dialog-body'
 import { StatusBadge } from '@/components/status-badge'
 import { ViewFooterActions } from '@/components/view-footer-actions'
+import { orderQuery } from '../data/api'
 import { isFullyIdentified, type Order } from '../data/schema'
 import { OrderStonesPanel } from './stones-panel'
 
@@ -30,6 +34,9 @@ type OrderViewDialogProps = {
   onRequestEdit?: () => void
   /** Opens the identification dialog from the embedded stones panel. */
   onRegisterStone?: () => void
+  /** Creates a separate copy after the pending GePG timeout. */
+  onCopyOrder?: (order: Order) => void
+  isCopying?: boolean
   actions?: RowAction[]
 }
 
@@ -51,32 +58,66 @@ export function OrderViewDialog({
   order,
   onRequestEdit,
   onRegisterStone,
+  onCopyOrder,
+  isCopying = false,
   actions = [],
 }: OrderViewDialogProps) {
-  const complete = isFullyIdentified(order)
-  const customer = order.customer_detail
-  const remaining = Math.max(0, order.stone_count - order.identified_count)
+  const [reachedDeadline, setReachedDeadline] = useState<string | null>(null)
+  const [confirmCopyOpen, setConfirmCopyOpen] = useState(false)
+  const detailQuery = useQuery({
+    ...orderQuery(order.id),
+    enabled: open && Boolean(order.bill_number) && !order.control_number,
+    refetchInterval: (query) =>
+      query.state.data?.control_number ? false : 30_000,
+  })
+  const currentOrder = detailQuery.data ?? order
+  const copyAvailableAt = currentOrder.copy_available_at
+
+  useEffect(() => {
+    if (!open || !copyAvailableAt) return
+
+    const delay = Date.parse(copyAvailableAt) - Date.now()
+    const timer = window.setTimeout(
+      () => setReachedDeadline(copyAvailableAt),
+      Math.max(0, delay)
+    )
+    return () => window.clearTimeout(timer)
+  }, [open, copyAvailableAt])
+
+  const canCopyOrder = Boolean(
+    onCopyOrder &&
+    copyAvailableAt &&
+    reachedDeadline === copyAvailableAt &&
+    !currentOrder.control_number &&
+    !currentOrder.deleted_at
+  )
+  const complete = isFullyIdentified(currentOrder)
+  const customer = currentOrder.customer_detail
+  const remaining = Math.max(
+    0,
+    currentOrder.stone_count - currentOrder.identified_count
+  )
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='flex max-h-[90dvh] flex-col overflow-hidden sm:max-w-2xl'>
         <DialogHeader className='text-start'>
           <DialogTitle className='flex flex-wrap items-center gap-2'>
-            {order.reference_number}
+            {currentOrder.reference_number}
             <StatusBadge tone={complete ? 'success' : 'info'}>
               {complete ? 'Fully identified' : 'Awaiting identification'}
             </StatusBadge>
-            {order.bill_number && (
+            {currentOrder.bill_number && (
               <StatusBadge tone='warning'>
-                Billed {order.bill_number}
+                Billed {currentOrder.bill_number}
               </StatusBadge>
             )}
-            {order.deleted_at && (
+            {currentOrder.deleted_at && (
               <StatusBadge tone='danger'>Deleted</StatusBadge>
             )}
           </DialogTitle>
           <DialogDescription>
-            Received {formatDate(order.received_date)}
+            Received {formatDate(currentOrder.received_date)}
             {customer ? ` · ${customer.full_name}` : ''}
           </DialogDescription>
         </DialogHeader>
@@ -88,14 +129,15 @@ export function OrderViewDialog({
             <div className='flex flex-wrap items-baseline justify-between gap-2'>
               <h3 className='text-sm font-medium'>Identification progress</h3>
               <span className='text-xs text-muted-foreground tabular-nums'>
-                {order.identified_count} of {order.stone_count} identified
+                {currentOrder.identified_count} of {currentOrder.stone_count}{' '}
+                identified
                 {remaining > 0 && ` · ${remaining} to go`}
               </span>
             </div>
             <Progress
-              value={order.identified_count}
-              max={order.stone_count}
-              label={`Identification progress for ${order.reference_number}`}
+              value={currentOrder.identified_count}
+              max={currentOrder.stone_count}
+              label={`Identification progress for ${currentOrder.reference_number}`}
             />
           </div>
 
@@ -127,15 +169,24 @@ export function OrderViewDialog({
             <h3 className='text-sm font-medium'>Order</h3>
             <DefinitionList
               items={[
-                { label: 'Reference', value: order.reference_number },
-                { label: 'Received', value: formatDate(order.received_date) },
-                { label: 'Stones submitted', value: order.stone_count },
-                { label: 'Stones identified', value: order.identified_count },
-                { label: 'Bill', value: order.bill_number },
-                { label: 'Created', value: formatDateTime(order.created_at) },
+                { label: 'Reference', value: currentOrder.reference_number },
+                {
+                  label: 'Received',
+                  value: formatDate(currentOrder.received_date),
+                },
+                { label: 'Stones submitted', value: currentOrder.stone_count },
+                {
+                  label: 'Stones identified',
+                  value: currentOrder.identified_count,
+                },
+                { label: 'Bill', value: currentOrder.bill_number },
+                {
+                  label: 'Created',
+                  value: formatDateTime(currentOrder.created_at),
+                },
                 {
                   label: 'Last updated',
-                  value: formatDateTime(order.updated_at),
+                  value: formatDateTime(currentOrder.updated_at),
                 },
               ]}
             />
@@ -143,26 +194,48 @@ export function OrderViewDialog({
 
           <Separator />
 
-          <OrderStonesPanel order={order} onRegister={onRegisterStone} />
+          <OrderStonesPanel order={currentOrder} onRegister={onRegisterStone} />
         </DialogBody>
 
         <DialogFooter>
           <ViewFooterActions
             actions={actions}
             primary={
-              onRequestEdit &&
-              !order.bill_number && (
-                <Can permission={perm('orders', 'change')}>
-                  <Button onClick={onRequestEdit}>
-                    <Pencil className='me-1 size-4' />
-                    Edit
-                  </Button>
-                </Can>
-              )
+              <div className='flex flex-wrap gap-2'>
+                {onRequestEdit && !currentOrder.bill_number && (
+                  <Can permission={perm('orders', 'change')}>
+                    <Button onClick={onRequestEdit}>
+                      <Pencil className='me-1 size-4' />
+                      Edit
+                    </Button>
+                  </Can>
+                )}
+                {canCopyOrder && (
+                  <Can permission={perm('orders', 'add')}>
+                    <Button
+                      variant='outline'
+                      onClick={() => setConfirmCopyOpen(true)}
+                      disabled={isCopying}
+                    >
+                      <CopyPlus className='me-1 size-4' />
+                      Create new order for this customer
+                    </Button>
+                  </Can>
+                )}
+              </div>
             }
           />
         </DialogFooter>
       </DialogContent>
+      <ConfirmDialog
+        open={confirmCopyOpen}
+        onOpenChange={setConfirmCopyOpen}
+        title='Create a new order?'
+        desc={`This will create a separate copy of ${currentOrder.reference_number}, including its stones and identification findings. The original order and its GePG request will remain unchanged. GePG may still return a control number for the original, so both orders could require payment.`}
+        confirmText={isCopying ? 'Creating order…' : 'Create new order'}
+        isLoading={isCopying}
+        handleConfirm={() => onCopyOrder?.(currentOrder)}
+      />
     </Dialog>
   )
 }

@@ -1,6 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
+import { toast } from 'sonner'
 import { perm } from '@/lib/permissions'
 import { Button } from '@/components/ui/button'
 import { Can } from '@/components/can'
@@ -21,7 +23,7 @@ import { ReleaseOrderDialog } from './components/release-dialog'
 import { OrderRestoreDialog } from './components/restore-dialog'
 import { OrdersTable, type OrdersQueryState } from './components/table'
 import { OrderViewDialog } from './components/view-dialog'
-import { ordersQuery } from './data/api'
+import { copyOrderAfterGePGTimeout, ordersQuery } from './data/api'
 import { useOrderActions } from './hooks/use-actions'
 
 const route = getRouteApi('/_authenticated/orders/')
@@ -38,6 +40,7 @@ function OrdersContent() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
   const { open, setOpen, currentRow, setCurrentRow } = useOrders()
+  const queryClient = useQueryClient()
 
   // The same list the table cell renders.
   const actions = useOrderActions(currentRow)
@@ -64,6 +67,29 @@ function OrdersContent() {
         stage: state.stage,
       })
     )
+
+  const copyOrderMutation = useMutation({
+    mutationFn: copyOrderAfterGePGTimeout,
+    onSuccess: (copiedOrder) => {
+      void queryClient.invalidateQueries({ queryKey: ['orders'] })
+      toast.success(`Order ${copiedOrder.reference_number} has been created`, {
+        description: 'The order and its working data were copied.',
+      })
+      setCurrentRow(copiedOrder)
+      setOpen('view')
+    },
+    onError: (error) => {
+      void queryClient.invalidateQueries({ queryKey: ['orders'] })
+      const detail =
+        error instanceof AxiosError ? error.response?.data?.detail : undefined
+      toast.error('Could not create the new order', {
+        description:
+          typeof detail === 'string'
+            ? detail
+            : 'Refresh the order and try again.',
+      })
+    },
+  })
 
   function handleStateChange(next: Partial<OrdersQueryState>) {
     navigate({
@@ -143,6 +169,8 @@ function OrdersContent() {
           order={currentRow}
           onRequestEdit={() => setOpen('update')}
           onRegisterStone={() => setOpen('add-stone')}
+          onCopyOrder={(order) => copyOrderMutation.mutate(order.id)}
+          isCopying={copyOrderMutation.isPending}
           actions={actions}
         />
       )}
