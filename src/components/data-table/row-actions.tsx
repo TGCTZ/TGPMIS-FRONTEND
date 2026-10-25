@@ -37,7 +37,7 @@ export type RowAction = {
    * Colour is rationed on purpose. Every button coloured is every button
    * shouting, and a row of five equals means the eye has nowhere to land.
    */
-  tone?: 'neutral' | 'advance' | 'document' | 'destructive'
+  tone?: 'neutral' | 'advance' | 'document' | 'gold' | 'destructive'
   /** Draws a divider before this action, to fence destructive ones off. */
   separatorBefore?: boolean
   /** Hide entirely regardless of permission (e.g. Restore on a live record). */
@@ -49,6 +49,7 @@ const TONE_VARIANT = {
   neutral: 'outline',
   advance: 'default',
   document: 'success',
+  gold: 'gold',
   destructive: 'destructive-outline',
 } as const
 

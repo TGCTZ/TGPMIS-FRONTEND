@@ -215,7 +215,7 @@ export function OrderViewDialog({
                 {canCopyOrder && (
                   <Can permission={perm('orders', 'add')}>
                     <Button
-                      variant='outline'
+                      variant='gold'
                       onClick={() => setConfirmCopyOpen(true)}
                       disabled={isCopying}
                     >
