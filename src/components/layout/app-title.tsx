@@ -41,12 +41,15 @@ export function AppTitle() {
           to='/'
           aria-label={`${appConfig.name} — go to reports`}
           onClick={() => setOpenMobile(false)}
-          className='flex items-center gap-2.5 rounded-md p-1.5 transition-opacity group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 hover:opacity-80'
+          className='flex h-full items-center gap-3 rounded-md p-0 transition-opacity group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 hover:opacity-80'
         >
           {/* alt is empty: the wordmark beside it already names the app, and
               the link carries its own label. */}
-          <Logo alt='' className='size-9 shrink-0' />
-          <span className='truncate text-sm font-bold tracking-wide group-data-[collapsible=icon]:hidden'>
+          <Logo
+            alt=''
+            className='size-16 shrink-0 group-data-[collapsible=icon]:size-9'
+          />
+          <span className='brand-gradient-clean truncate bg-clip-text text-3xl font-black tracking-[0.12em] text-transparent drop-shadow-sm group-data-[collapsible=icon]:hidden dark:text-sidebar-foreground'>
             {appConfig.shortName}
           </span>
         </Link>
