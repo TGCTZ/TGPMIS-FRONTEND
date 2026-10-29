@@ -52,16 +52,17 @@ describe('report navigation', () => {
         ]
       )[0].items.map((item) => item.title)
     ).toEqual(['Highlights', 'Operational reports'])
-    expect(
-      filterNavGroups(
-        [reports],
-        [
-          PERMISSIONS.moduleReports,
-          PERMISSIONS.financialReports,
-          'orders.view_order',
-        ]
-      )
-    ).toEqual([])
+    const financialOnly = filterNavGroups(
+      [reports],
+      [
+        PERMISSIONS.moduleReports,
+        PERMISSIONS.financialReports,
+        'orders.view_order',
+      ]
+    )
+    expect(financialOnly[0].items.map((item) => item.title)).toEqual([
+      'Highlights',
+    ])
     const mainPageBadges = sidebarData.navGroups
       .flatMap((group) => group.items)
       .filter((item) => item.count)
