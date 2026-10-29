@@ -80,7 +80,7 @@ export async function logout(): Promise<void> {
 type PasswordChange = {
   current_password: string
   password: string
-  password_confirmation: string
+  password_confirm: string
 }
 
 /**
