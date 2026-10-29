@@ -1,13 +1,10 @@
 import { ContentSection } from '../components/content-section'
-import { ProfileForm } from './form'
+import { ProfileDetails } from './details'
 
 export function SettingsProfile() {
   return (
-    <ContentSection
-      title='Profile'
-      desc='This is how others will see you on the site.'
-    >
-      <ProfileForm />
+    <ContentSection title='Profile'>
+      <ProfileDetails />
     </ContentSection>
   )
 }

@@ -20,14 +20,9 @@ vi.mock('@tanstack/react-router', () => ({
 const items = [
   { title: 'Profile', href: '/settings', icon: <span>Profile icon</span> },
   {
-    title: 'Account',
+    title: 'Password',
     href: '/settings/account',
-    icon: <span>Account icon</span>,
-  },
-  {
-    title: 'Appearance',
-    href: '/settings/appearance',
-    icon: <span>Appearance icon</span>,
+    icon: <span>Password icon</span>,
   },
 ]
 
@@ -42,27 +37,28 @@ describe('Settings section navigation', () => {
     const screen = await render(<SidebarNav items={items} />)
 
     await expect
-      .element(screen.getByRole('link', { name: 'Account' }))
+      .element(screen.getByRole('link', { name: 'Password' }))
       .toHaveAttribute('aria-current', 'page')
     await expect
       .element(screen.getByRole('link', { name: 'Appearance' }))
-      .not.toHaveAttribute('aria-current', 'page')
+      .not.toBeInTheDocument()
     await expect
       .element(screen.getByRole('link', { name: 'Profile' }))
       .toHaveAttribute('href', '/settings')
   })
 
   it('navigates to the selected section on mobile', async () => {
+    routerMocks.pathname = '/settings'
     await page.viewport(375, 667)
     const screen = await render(<SidebarNav items={items} />)
 
     await userEvent.click(
       screen.getByRole('combobox', { name: 'Settings section' })
     )
-    await userEvent.click(screen.getByRole('option', { name: 'Appearance' }))
+    await userEvent.click(screen.getByRole('option', { name: 'Password' }))
 
     expect(routerMocks.navigate).toHaveBeenCalledWith({
-      to: '/settings/appearance',
+      to: '/settings/account',
     })
   })
 

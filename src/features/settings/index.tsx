@@ -1,5 +1,5 @@
 import { Outlet } from '@tanstack/react-router'
-import { Palette, Wrench, UserCog } from 'lucide-react'
+import { KeyRound, UserCog } from 'lucide-react'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -16,14 +16,9 @@ const sidebarNavItems = [
     icon: <UserCog size={18} />,
   },
   {
-    title: 'Account',
+    title: 'Password',
     href: '/settings/account',
-    icon: <Wrench size={18} />,
-  },
-  {
-    title: 'Appearance',
-    href: '/settings/appearance',
-    icon: <Palette size={18} />,
+    icon: <KeyRound size={18} />,
   },
 ]
 
@@ -41,7 +36,7 @@ export function Settings() {
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <PageHeading
           title='Settings'
-          description='Manage your profile, account, and app preferences.'
+          description='View your profile details and change your password.'
         />
         <div className='flex min-w-0 flex-col gap-4'>
           <SidebarNav items={sidebarNavItems} />

@@ -27,11 +27,11 @@ const passwordFormSchema = z
   .object({
     current_password: z.string().min(1, 'Enter your current password.'),
     password: z.string().min(8, 'New password must be at least 8 characters.'),
-    password_confirmation: z.string().min(1, 'Confirm your new password.'),
+    password_confirm: z.string().min(1, 'Confirm your new password.'),
   })
-  .refine((data) => data.password === data.password_confirmation, {
+  .refine((data) => data.password === data.password_confirm, {
     message: 'Passwords do not match.',
-    path: ['password_confirmation'],
+    path: ['password_confirm'],
   })
   .refine((data) => data.password !== data.current_password, {
     message: 'The new password must differ from the current one.',
@@ -46,7 +46,7 @@ export function PasswordForm() {
     defaultValues: {
       current_password: '',
       password: '',
-      password_confirmation: '',
+      password_confirm: '',
     },
   })
 
@@ -93,9 +93,6 @@ export function PasswordForm() {
               <FormControl>
                 <PasswordInput autoComplete='current-password' {...field} />
               </FormControl>
-              <FormDescription>
-                Confirm your identity before changing your password.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -118,7 +115,7 @@ export function PasswordForm() {
 
         <FormField
           control={form.control}
-          name='password_confirmation'
+          name='password_confirm'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Confirm new password</FormLabel>

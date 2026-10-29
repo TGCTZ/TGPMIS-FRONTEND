@@ -25,10 +25,13 @@ const REFRESH_MAX_AGE = 60 * 60 * 24 * 14
 export interface AuthUser {
   id: number
   first_name: string
+  middle_name?: string
   last_name: string
   full_name: string
   username: string
   email: string
+  phone_number?: string
+  bio?: string
   avatar: string | null
   is_active: boolean
   roles: string[]
