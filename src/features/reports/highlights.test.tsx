@@ -206,9 +206,7 @@ describe('report Highlights page', () => {
         stoneType: 7,
       }
     )
-    await expect
-      .element(screen.getByText('Bills Issued'))
-      .toBeInTheDocument()
+    await expect.element(screen.getByText('Bills Issued')).toBeInTheDocument()
     expect(mocks.fetch).toHaveBeenCalledWith(
       'financial',
       expect.objectContaining({ status: 'paid' })
@@ -238,9 +236,7 @@ describe('report Highlights page', () => {
 
   it('requests only the financial report for a financial-only user', async () => {
     const { screen } = await renderPage(financialPermissions)
-    await expect
-      .element(screen.getByText('Bills Issued'))
-      .toBeInTheDocument()
+    await expect.element(screen.getByText('Bills Issued')).toBeInTheDocument()
     await expect
       .element(screen.getByText('Stones registered'))
       .not.toBeInTheDocument()
