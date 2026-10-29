@@ -93,9 +93,6 @@ export function PasswordForm() {
               <FormControl>
                 <PasswordInput autoComplete='current-password' {...field} />
               </FormControl>
-              <FormDescription>
-                Confirm your identity before changing your password.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
