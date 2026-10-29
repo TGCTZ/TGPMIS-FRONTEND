@@ -48,6 +48,7 @@ describe('Settings section navigation', () => {
   })
 
   it('navigates to the selected section on mobile', async () => {
+    routerMocks.pathname = '/settings'
     await page.viewport(375, 667)
     const screen = await render(<SidebarNav items={items} />)
 
