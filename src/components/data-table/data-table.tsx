@@ -197,7 +197,7 @@ export function DataTable<T extends { id: number }>({
         <p
           role='status'
           aria-live='polite'
-          className='text-sm text-muted-foreground'
+          className='text-sm font-medium text-gold'
         >
           Updating…
         </p>

@@ -9,13 +9,11 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ConfigDrawer } from '@/components/config-drawer'
 import { brandPanelClassName } from '@/components/layout/brand-panel'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { PageHeading } from '@/components/page-heading'
 import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { FilterSelect } from './components/filter-select'
 import { ReportPeriodControls } from './components/period-controls'
@@ -155,9 +153,7 @@ export function ReportsPage({ kind, search, onChange }: Props) {
   return (
     <>
       <Header fixed>
-        <Search />
         <ThemeSwitch />
-        <ConfigDrawer />
         <ProfileDropdown />
       </Header>
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
@@ -267,7 +263,7 @@ export function ReportsPage({ kind, search, onChange }: Props) {
             )}
           </div>
           {query.isPlaceholderData && (
-            <p role='status' className='text-sm text-muted-foreground'>
+            <p role='status' className='text-sm font-medium text-gold'>
               Updating report...
             </p>
           )}

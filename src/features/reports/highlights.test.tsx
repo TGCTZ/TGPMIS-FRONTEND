@@ -55,7 +55,7 @@ function section(key: string, title: string, overrides = {}) {
 
 const financialData = {
   sections: [
-    section('billing', 'Billing summary', {
+    section('billing', 'Bills Issued', {
       amounts: [{ currency: 'TZS', amount: '300.00' }],
       statuses: [{ status: 'paid', count: 2 }],
       missing_dates: 1,
@@ -143,7 +143,7 @@ describe('report Highlights page', () => {
       .element(screen.getByRole('region', { name: 'Operational reports' }))
       .toHaveClass(/border-t-4/, /border-gold/)
     for (const title of [
-      'Billing summary',
+      'Bills Issued',
       'Outstanding bills',
       'Orders received',
       'Stones registered',
@@ -207,7 +207,7 @@ describe('report Highlights page', () => {
       }
     )
     await expect
-      .element(screen.getByText('Billing summary'))
+      .element(screen.getByText('Bills Issued'))
       .toBeInTheDocument()
     expect(mocks.fetch).toHaveBeenCalledWith(
       'financial',
@@ -239,7 +239,7 @@ describe('report Highlights page', () => {
   it('requests only the financial report for a financial-only user', async () => {
     const { screen } = await renderPage(financialPermissions)
     await expect
-      .element(screen.getByText('Billing summary'))
+      .element(screen.getByText('Bills Issued'))
       .toBeInTheDocument()
     await expect
       .element(screen.getByText('Stones registered'))
@@ -253,7 +253,7 @@ describe('report Highlights page', () => {
       .element(screen.getByText('Stones registered'))
       .toBeInTheDocument()
     await expect
-      .element(screen.getByText('Billing summary'))
+      .element(screen.getByText('Bills Issued'))
       .not.toBeInTheDocument()
     expect(mocks.fetch.mock.calls.map(([kind]) => kind)).toEqual([
       'operational',

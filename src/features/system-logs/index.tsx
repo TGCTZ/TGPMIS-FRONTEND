@@ -22,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ConfigDrawer } from '@/components/config-drawer'
 import { DataTable, DataTableColumnHeader } from '@/components/data-table'
 import { DialogBody } from '@/components/dialog-body'
 import { Header } from '@/components/layout/header'
@@ -269,7 +268,6 @@ export function SystemLogs() {
     <>
       <Header fixed>
         <ThemeSwitch />
-        <ConfigDrawer />
         <ProfileDropdown />
       </Header>
 

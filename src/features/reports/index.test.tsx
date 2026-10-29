@@ -56,7 +56,7 @@ function result() {
     sections: [
       {
         key: 'billing',
-        title: 'Billing summary',
+        title: 'Bills Issued',
         description: 'Bills issued in the period.',
         count: 3,
         missing_dates: 0,
@@ -123,7 +123,7 @@ describe('Financial reports page', () => {
       .element(screen.getByText('3 matching records'))
       .toBeInTheDocument()
     await expect
-      .element(screen.getByText('Billing summary'))
+      .element(screen.getByText('Bills Issued', { exact: true }))
       .toBeInTheDocument()
     await expect
       .element(screen.getByRole('tab', { name: 'Summarized report' }))

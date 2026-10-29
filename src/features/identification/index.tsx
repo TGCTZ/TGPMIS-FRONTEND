@@ -5,13 +5,11 @@ import { Plus } from 'lucide-react'
 import { useAuthStore } from '@/stores/auth-store'
 import { PERMISSIONS, perm } from '@/lib/permissions'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ConfigDrawer } from '@/components/config-drawer'
 import { DataTableRowActions, type RowAction } from '@/components/data-table'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { PageHeading } from '@/components/page-heading'
 import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
 import { StatusBadge } from '@/components/status-badge'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { GeneralError } from '@/features/errors/general-error'
@@ -126,9 +124,7 @@ function IdentificationContent() {
   return (
     <>
       <Header fixed>
-        <Search />
         <ThemeSwitch />
-        <ConfigDrawer />
         <ProfileDropdown />
       </Header>
 
