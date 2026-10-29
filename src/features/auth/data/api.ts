@@ -14,10 +14,13 @@ const authUserSchema = z
   .object({
     id: z.number(),
     first_name: z.string(),
+    middle_name: z.string().default(''),
     last_name: z.string(),
     full_name: z.string(),
     username: z.string(),
     email: z.string(),
+    phone_number: z.string().default(''),
+    bio: z.string().default(''),
     avatar: z.string().nullable().default(null),
     is_active: z.boolean().default(true),
     roles: z.array(z.string()).default([]),
