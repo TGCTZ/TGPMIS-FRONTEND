@@ -113,10 +113,9 @@ src/
 │                           page-heading.tsx        a screen's title + description
 │                           view-footer-actions.tsx row actions in a view dialog
 │                           user-menu-content.tsx   shared by both user menus
-│                           kbd.tsx                 platform-correct shortcut hints
 │                           bool-badge.tsx · confirm-dialog.tsx · definition-list.tsx
 │                           command-menu.tsx · date-picker.tsx · long-text.tsx
-│                           password-input.tsx · theme-switch.tsx · search.tsx
+│                           password-input.tsx · theme-switch.tsx
 │
 ├── features/           One folder per feature/screen (the bulk of the app)
 │   ├── auth/             Sign-in page, form and the auth data layer
@@ -288,8 +287,8 @@ picker nor renders anything but `DEFAULT_CURRENCY` — a picker invites data the
 app has no way to convert or total correctly. Widening to multi-currency means
 adding the picker back *and* deciding what a mixed-currency total means.
 
-Keyboard hints go through `src/components/kbd.tsx`, which resolves the platform
-once and renders `Ctrl` rather than `⌘` off Apple hardware.
+The command palette is mounted by `src/context/search-provider.tsx` and opens
+with `Ctrl+K` or `Cmd+K`.
 
 ## Reports
 
