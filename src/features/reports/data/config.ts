@@ -40,9 +40,6 @@ export function canAccessHighlights(permissions: string[]) {
 }
 
 /** Used by the root and /reports redirects after the auth guard has loaded permissions. */
-export function firstReportPath(permissions: string[]) {
-  if (canAccessHighlights(permissions)) {
-    return '/reports/highlights' as const
-  }
-  return '/403' as const
+export function firstReportPath() {
+  return '/reports/highlights' as const
 }
