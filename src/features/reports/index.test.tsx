@@ -39,7 +39,6 @@ vi.mock('@/components/config-drawer', () => ({ ConfigDrawer: () => null }))
 vi.mock('@/components/profile-dropdown', () => ({
   ProfileDropdown: () => null,
 }))
-vi.mock('@/components/search', () => ({ Search: () => null }))
 vi.mock('@/components/theme-switch', () => ({ ThemeSwitch: () => null }))
 
 function result() {
@@ -56,7 +55,7 @@ function result() {
     sections: [
       {
         key: 'billing',
-        title: 'Billing summary',
+        title: 'Bills Issued',
         description: 'Bills issued in the period.',
         count: 3,
         missing_dates: 0,
@@ -123,7 +122,7 @@ describe('Financial reports page', () => {
       .element(screen.getByText('3 matching records'))
       .toBeInTheDocument()
     await expect
-      .element(screen.getByText('Billing summary'))
+      .element(screen.getByText('Bills Issued', { exact: true }))
       .toBeInTheDocument()
     await expect
       .element(screen.getByRole('tab', { name: 'Summarized report' }))

@@ -27,7 +27,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Can } from '@/components/can'
-import { ConfigDrawer } from '@/components/config-drawer'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { DataTableRowActions, type RowAction } from '@/components/data-table'
 import { Header } from '@/components/layout/header'
@@ -153,7 +152,6 @@ export function Roles() {
     <>
       <Header fixed>
         <ThemeSwitch />
-        <ConfigDrawer />
         <ProfileDropdown />
       </Header>
 
@@ -175,7 +173,7 @@ export function Roles() {
               <p
                 role='status'
                 aria-live='polite'
-                className='text-sm text-muted-foreground'
+                className='text-sm font-medium text-gold'
               >
                 Updating…
               </p>

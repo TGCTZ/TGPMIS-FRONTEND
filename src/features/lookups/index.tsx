@@ -13,7 +13,6 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { BoolBadge } from '@/components/bool-badge'
 import { Can } from '@/components/can'
-import { ConfigDrawer } from '@/components/config-drawer'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import {
   DataTable,
@@ -297,7 +296,6 @@ function LookupsContent({ config }: { config: LookupConfig }) {
     <>
       <Header fixed>
         <ThemeSwitch />
-        <ConfigDrawer />
         <ProfileDropdown />
       </Header>
 
