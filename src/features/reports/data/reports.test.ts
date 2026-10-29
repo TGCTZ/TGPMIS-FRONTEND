@@ -13,33 +13,13 @@ import {
 } from './period'
 
 describe('report navigation', () => {
-  it('chooses an accessible home without granting financial access to operations staff', () => {
+  it('always routes Reports to Highlights without granting report data access', () => {
     const reports = PERMISSIONS.moduleReports
     const financial = PERMISSIONS.financialReports
-    const operational = PERMISSIONS.operationalReports
-    expect(firstReportPath([reports, financial, 'billing.view_bill'])).toBe(
-      '/reports/highlights'
-    )
-    expect(firstReportPath([reports, financial, 'billing.view_payment'])).toBe(
-      '/reports/highlights'
-    )
-    expect(firstReportPath([reports, operational, 'orders.view_order'])).toBe(
-      '/reports/highlights'
-    )
-    expect(
-      firstReportPath([
-        reports,
-        financial,
-        operational,
-        'orders.view_order',
-        'billing.view_payment',
-      ])
-    ).toBe('/reports/highlights')
+    expect(firstReportPath()).toBe('/reports/highlights')
     expect(canAccessHighlights([reports, financial, 'orders.view_order'])).toBe(
       false
     )
-    expect(firstReportPath(['billing.view_bill'])).toBe('/403')
-    expect(firstReportPath([])).toBe('/403')
   })
 
   it('shows Highlights first and filters report links by their actual access', () => {
@@ -59,7 +39,9 @@ describe('report navigation', () => {
         .flatMap((group) => group.items)
         .some((item) => item.title === 'Dashboard')
     ).toBe(false)
-    expect(filterNavGroups([reports], []).length).toBe(0)
+    expect(
+      filterNavGroups([reports], [])[0].items.map((item) => item.title)
+    ).toEqual(['Highlights'])
     expect(
       filterNavGroups(
         [reports],
@@ -92,10 +74,10 @@ describe('report navigation', () => {
 })
 
 describe('report periods', () => {
-  it('uses the lab month even before UTC midnight and in a different browser timezone', () => {
-    expect(defaultPeriod(new Date('2026-09-30T22:00:00Z'))).toEqual({
-      from: '2026-10-01',
-      to: '2026-10-01',
+  it('defaults to the current lab day before UTC midnight', () => {
+    expect(defaultPeriod(new Date('2026-10-14T22:00:00Z'))).toEqual({
+      from: '2026-10-15',
+      to: '2026-10-15',
     })
   })
 
@@ -103,6 +85,10 @@ describe('report periods', () => {
     const now = new Date('2026-10-01T09:00:00Z')
     expect(periodForPreset('this-month', now)).toEqual({
       from: '2026-10-01',
+      to: '2026-10-01',
+    })
+    expect(periodForPreset('this-week', now)).toEqual({
+      from: '2026-09-28',
       to: '2026-10-01',
     })
     expect(periodForPreset('this-year', now)).toEqual({
@@ -119,6 +105,9 @@ describe('report periods', () => {
     ).toBe('this-month')
     const presetLabels = dateRangePresets.map(({ label }) => label)
     expect(presetLabels).toContain('This month')
+    expect(presetLabels).toContain('This week')
+    expect(presetLabels).not.toContain('Last year')
+    expect(presetLabels).not.toContain('Last financial year')
     expect(presetLabels).not.toContain('Last 7 days')
     expect(presetLabels).not.toContain('Last 30 days')
     expect(presetLabels).not.toContain('Last 90 days')

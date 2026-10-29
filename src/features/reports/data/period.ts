@@ -4,16 +4,17 @@ const isoDay = z.iso.date()
 
 export const dateRangePresets = [
   { value: 'today', label: 'Today' },
+  { value: 'this-week', label: 'This week' },
   { value: 'this-month', label: 'This month' },
   { value: 'this-year', label: 'This year' },
   { value: 'this-financial-year', label: 'This financial year' },
-  { value: 'last-year', label: 'Last year' },
-  { value: 'last-financial-year', label: 'Last financial year' },
 ] as const
 
 type DateRangePreset = (typeof dateRangePresets)[number]['value']
 type PeriodPreset =
   | DateRangePreset
+  | 'last-year'
+  | 'last-financial-year'
   | 'last-7-days'
   | 'last-30-days'
   | 'last-90-days'
@@ -48,7 +49,7 @@ function labToday(now: Date) {
 /** Use lab dates even when a user's browser is in another timezone. */
 export function defaultPeriod(now = new Date()) {
   const today = labToday(now)
-  return { from: `${today.slice(0, 7)}-01`, to: today }
+  return { from: today, to: today }
 }
 
 function utcDay(date: Date) {
@@ -65,6 +66,9 @@ export function periodForPreset(preset: PeriodPreset, now = new Date()) {
 
   switch (preset) {
     case 'today':
+      break
+    case 'this-week':
+      start.setUTCDate(start.getUTCDate() - ((start.getUTCDay() + 6) % 7))
       break
     case 'this-month':
       start = new Date(Date.UTC(year, month, 1))

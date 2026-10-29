@@ -17,10 +17,7 @@ import {
 import { countQuery } from '@/lib/count-query'
 import { PERMISSIONS, perm } from '@/lib/permissions'
 import { allLookupConfigs } from '@/features/lookups/data/config'
-import {
-  canAccessHighlights,
-  reportConfigs,
-} from '@/features/reports/data/config'
+import { reportConfigs } from '@/features/reports/data/config'
 import { type NavLink, type SidebarData } from '../types'
 
 /**
@@ -66,13 +63,11 @@ export const sidebarData: SidebarData = {
   navGroups: [
     {
       title: 'Reports',
-      permission: PERMISSIONS.moduleReports,
       items: [
         {
           title: 'Highlights',
           url: '/reports/highlights',
           icon: LayoutDashboard,
-          visibleWhen: canAccessHighlights,
         },
         {
           title: 'Financial reports',

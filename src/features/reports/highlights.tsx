@@ -81,7 +81,7 @@ export function ReportHighlightsPage({
     enabled: operationalAllowed && !problem,
   })
   const preferredRangePreset =
-    state.rangePreset ?? (!search.from && !search.to ? 'this-month' : undefined)
+    state.rangePreset ?? (!search.from && !search.to ? 'today' : undefined)
 
   function changeFilters(next: Partial<ReportSearch>) {
     onChange({ ...state, ...next })

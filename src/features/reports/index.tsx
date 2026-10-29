@@ -77,7 +77,7 @@ export function ReportsPage({ kind, search, onChange }: Props) {
   const totalRows =
     data?.sections.reduce((sum, section) => sum + section.count, 0) ?? 0
   const preferredRangePreset =
-    state.rangePreset ?? (!search.from && !search.to ? 'this-month' : undefined)
+    state.rangePreset ?? (!search.from && !search.to ? 'today' : undefined)
 
   function changeFilters(next: Partial<ReportSearch>) {
     onChange({ ...state, ...next, page: 1, section: undefined })
