@@ -33,12 +33,14 @@ describe('PasswordInput', () => {
     const passwordInput = getByPlaceholder('password')
     const showPasswordButton = getByRole('button', { name: /show password/i })
 
+    await userEvent.type(passwordInput, 'secret-value')
     await expect.element(passwordInput).toHaveAttribute('type', 'password')
     await expect.element(showPasswordButton).toBeInTheDocument()
 
     await userEvent.click(showPasswordButton)
 
     await expect.element(passwordInput).toHaveAttribute('type', 'text')
+    await expect.element(passwordInput).toHaveValue('secret-value')
     const hidePasswordButton = getByRole('button', { name: /hide password/i })
     await expect.element(hidePasswordButton).toBeInTheDocument()
 
