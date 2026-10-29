@@ -85,12 +85,11 @@ describe('sidebar module gates', () => {
     const [reports] = filterNavGroups(sidebarData.navGroups, canManageUsers)
     expect(reports.items.map((item) => item.title)).toEqual(['Highlights'])
 
-    const [admin] = filterNavGroups(sidebarData.navGroups, [
+    const admin = filterNavGroups(sidebarData.navGroups, [
       ...canManageUsers,
       PERMISSIONS.moduleUser,
-    ])
+    ]).find((group) => group.title === 'Administration')
 
-    expect(admin.title).toBe('Administration')
-    expect(admin.items.map((item) => item.title)).toEqual(['Users'])
+    expect(admin?.items.map((item) => item.title)).toEqual(['Users'])
   })
 })
