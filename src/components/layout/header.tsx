@@ -96,7 +96,11 @@ export function Header({
           <div className='ms-auto flex shrink-0 items-center gap-3 sm:gap-4'>
             <Can permission={PERMISSIONS.accessLegacySystem}>
               <Button asChild variant='outline' size='sm'>
-                <a href='https://legacy.tgpmis.tgc.ac.tz'>
+                <a
+                  href='https://legacy.tgpmis.tgc.ac.tz'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
                   <ExternalLink aria-hidden='true' className='size-4' />
                   Open Legacy System
                 </a>
