@@ -146,4 +146,5 @@ export const PERMISSIONS = {
   moduleUser: 'core.module_user',
   moduleSettings: 'core.module_settings',
   moduleAudit: 'core.module_audit',
+  accessLegacySystem: 'core.access_legacy_system',
 } as const

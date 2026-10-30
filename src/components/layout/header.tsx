@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
+import { ExternalLink } from 'lucide-react'
+import { PERMISSIONS } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
 import { useLayout } from '@/context/layout-provider'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar'
+import { Can } from '@/components/can'
 import { BackButton } from './back-button'
 import { Breadcrumbs } from './breadcrumbs'
 
@@ -91,9 +94,14 @@ export function Header({
           <BackButton />
           <Breadcrumbs className='min-w-0 flex-1' />
           <div className='ms-auto flex shrink-0 items-center gap-3 sm:gap-4'>
-            <Button asChild variant='outline' size='sm'>
-              <a href='https://legacy.tgpmis.tgc.ac.tz'>Open Legacy System</a>
-            </Button>
+            <Can permission={PERMISSIONS.accessLegacySystem}>
+              <Button asChild variant='outline' size='sm'>
+                <a href='https://legacy.tgpmis.tgc.ac.tz'>
+                  <ExternalLink aria-hidden='true' className='size-4' />
+                  Open Legacy System
+                </a>
+              </Button>
+            </Can>
             {children}
           </div>
         </div>
