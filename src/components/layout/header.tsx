@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { useLayout } from '@/context/layout-provider'
+import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar'
 import { BackButton } from './back-button'
@@ -90,6 +91,9 @@ export function Header({
           <BackButton />
           <Breadcrumbs className='min-w-0 flex-1' />
           <div className='ms-auto flex shrink-0 items-center gap-3 sm:gap-4'>
+            <Button asChild variant='outline' size='sm'>
+              <a href='https://legacy.tgpmis.tgc.ac.tz'>Open Legacy System</a>
+            </Button>
             {children}
           </div>
         </div>
