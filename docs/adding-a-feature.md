@@ -48,10 +48,11 @@ deletes, restore — **stop**. Add one entry to `lookupConfigs` in
 and you get a table, CRUD, soft-delete/restore, permission gating and audit
 history with no new components.
 
-Reference tables use `features/lookups/`; pending-work counts share query
-definitions in `features/worklists/` and appear in the identification,
-findings, or billing screen. A new feature is appropriate when a resource needs
-its own behavior and screen rather than another entry in an existing config.
+Reference tables use `features/lookups/`; pending-work data uses shared query
+definitions in `features/workflow-feed/` and appears in the identification,
+findings, billing, or certificates screen. A new feature is appropriate when a
+resource needs its own behavior and screen rather than another entry in an
+existing config.
 
 ## Walkthrough
 
@@ -162,9 +163,9 @@ export function WidgetsTable({ data, meta, isFetching, state, onStateChange, onR
 ```
 
 Six columns: the serial number (injected for you), four data columns, and
-actions. Declare the actions as data rather than JSX — they are rendered twice,
-as icon buttons in the cell and as labelled buttons in the view dialog, so build
-them in a hook both can call:
+actions. Declare the actions as data rather than JSX — desktop tables render
+labelled buttons, phone tables render a menu, and the view dialog renders
+labelled buttons. Build the list in a hook both can call:
 
 ```tsx
 // hooks/use-actions.ts
@@ -191,10 +192,12 @@ screen.
 The page reads table state from the URL, runs the query, and handles the error
 state explicitly.
 
-`<Header>` already carries the sidebar toggle, the back button and the
-breadcrumb trail on every screen — pass it the page's own controls and nothing
-else. No `ms-auto` or `me-auto`: the header owns that alignment, and the trail
-is derived from the URL via the sidebar entry you add in step 6.
+`<Header>` carries the sidebar toggle and back button on every screen. It shows
+the breadcrumb trail on wider screens; below 768px, the breadcrumb is hidden and
+the permitted legacy-system link moves into the overflow menu. Pass it the
+page's own controls and nothing else. No `ms-auto` or `me-auto`: the header owns
+that alignment, and the trail is derived from the URL via the sidebar entry you
+add in step 6.
 
 ```tsx
 const search = route.useSearch()

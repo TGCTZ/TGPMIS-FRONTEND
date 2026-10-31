@@ -4,9 +4,10 @@ import { toast } from 'sonner'
  * Toast a form's values as formatted JSON.
  *
  * A **development placeholder**, not a real submit handler — it shows what
- * would have been sent and saves nothing. The remaining callers are the
- * unfinished settings forms (Account, Appearance, Notifications, Display);
- * each should lose this once it gets a real mutation.
+ * would have been sent and saves nothing. The Appearance form is its current
+ * caller: it applies theme and font choices locally, then shows the submitted
+ * values here instead of sending them to the API. Remove that call when those
+ * settings gain persistence.
  *
  * Treat a call to this in a new screen as a to-do, not a pattern to copy.
  *

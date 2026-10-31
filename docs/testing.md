@@ -64,32 +64,34 @@ Coverage is grouped by area:
 
 | Area | Files |
 | --- | --- |
-| Utilities | `src/lib/cookies.test.ts`, `src/lib/utils.test.ts`, `src/lib/handle-server-error.test.ts` |
+| Utilities | `src/lib/cookies.test.ts`, `src/lib/utils.test.ts`, `src/lib/handle-server-error.test.ts`, `src/lib/format.test.ts`, `src/lib/date.test.ts`, `src/lib/regions.test.ts`, `src/lib/download-feedback.test.tsx` |
 | Permissions | `src/lib/permissions.test.ts` |
-| Navigation | `src/components/layout/data/breadcrumbs.test.ts`, `src/components/layout/data/filter-nav.test.ts` |
-| Reports | `src/features/reports/data/reports.test.ts`, `src/features/reports/index.test.tsx` (periods, navigation, sections, exports) |
-| Regions | `src/lib/regions.test.ts` |
+| Navigation and responsive layout | `src/components/layout/data/breadcrumbs.test.ts`, `src/components/layout/data/filter-nav.test.ts`, `src/components/layout/header.responsive.test.tsx`, `src/components/page-heading.responsive.test.tsx` |
+| Reports | `src/features/reports/data/reports.test.ts`, `src/features/reports/index.test.tsx`, `src/features/reports/highlights.test.tsx` |
 | Hooks | `src/hooks/use-table-url-state.test.ts` |
 | State | `src/stores/auth-store.test.ts` |
-| Components | `src/components/config-drawer.test.tsx`, `src/components/confirm-dialog.test.tsx`, `src/components/password-input.test.tsx`, `src/components/sign-out-dialog.test.tsx` |
+| Components | `src/components/config-drawer.test.tsx`, `src/components/confirm-dialog.test.tsx`, `src/components/password-input.test.tsx`, `src/components/sign-out-dialog.test.tsx`, `src/components/user-menu-content.test.tsx`, `src/components/ui/date-input.test.tsx`, `src/components/data-table/data-table.responsive.test.tsx`, `src/components/data-table/row-actions.responsive.test.tsx` |
 | Context | `src/context/search-provider.test.tsx` |
-| Auth forms | `src/features/auth/sign-in/components/form.test.tsx` |
-| Domain data | `src/features/stones/data/enums.test.ts`, `src/features/identification/data/finalize-rules.test.ts` |
-| Feature dialogs | `src/features/lookups/components/mutate-dialog.test.tsx` |
+| Authentication and notifications | `src/features/auth/data/landing.test.ts`, `src/features/auth/data/api.test.ts`, `src/features/auth/sign-in/components/form.test.tsx`, `src/features/notifications/components/notification-bell.test.tsx`, `src/features/notifications/hooks/use-notification-watcher.test.tsx` |
+| Domain data and API | `src/features/stones/data/enums.test.ts`, `src/features/identification/data/finalize-rules.test.ts`, `src/features/certificates/data/format.test.ts`, `src/features/certificates/data/api.test.ts`, `src/features/orders/data/stone-label.test.ts` |
+| Feature components | `src/features/lookups/components/mutate-dialog.test.tsx`, `src/features/orders/components/columns.test.tsx`, `src/features/orders/components/view-dialog.test.tsx`, `src/features/orders/components/row-actions.test.tsx`, `src/features/roles/role-card-list.responsive.test.tsx`, `src/features/settings/components/sidebar-nav.test.tsx` |
 
 ## What is not covered — read this before trusting the suite
 
-**The domain screens are largely untested.** No coverage of:
+Coverage is still selective; tests do not amount to full end-to-end coverage of
+the domain workflows. In particular, there is no current coverage of:
 
-- `src/components/data-table/` — the shared table and row actions
-- `src/lib/authz.ts` — permission gating
-- `src/lib/format.ts` — money and date formatting
+- `src/lib/authz.ts` — permission gating (the permissions test covers vocabulary, not UI authorization)
 - `src/lib/api-query.ts` — the query-parameter contract
-- `src/features/orders/`, `bills/`, `certificates/`, `identification/` — the
-  whole pipeline
-- The read-only dialog and soft-delete flows
+- broad list, mutation, and soft-delete workflows across the domain screens;
+  current Orders component tests cover selected views and actions, not the full pipeline
 
-The pure functions are where to start — `authz`, `format`, `buildListParams` and
+Responsive tests now cover the shared data-table, row actions, page heading,
+header, and Roles card layout. They do not cover every table interaction or
+every screen at every viewport. `src/lib/format.ts` and `src/lib/date.ts` have
+unit tests; those do not replace screen-level date or currency checks.
+
+The pure functions are where to start — `authz`, `buildListParams` and
 `toPaginated` are dependency-free and each takes minutes. `toPaginated` is worth
 a test in particular: it derives page numbers the API does not send, so an
 off-by-one there misreports the last page on every table in the app.

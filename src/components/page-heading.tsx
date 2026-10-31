@@ -1,24 +1,28 @@
 import { cn } from '@/lib/utils'
 
 /**
- * A page's title and the sentence explaining what the screen is for.
+ * A page's title, optional description, and page-level actions.
  *
  * Sixteen screens were writing the same two elements by hand, which meant
  * sixteen chances for the type scale or the colour to drift — and no single
  * place to change either.
  *
- * The description sits in a panel tinted with the same colour as the sidebar
+ * The title remains visible at every width. On phones the description is hidden
+ * and icon-bearing action buttons become icon-only, keeping the heading usable
+ * in a narrow viewport.
+ *
+ * On wider screens, the description sits in a panel tinted with the same colour as the sidebar
  * and header. It is the screen explaining itself, so it belongs to the frame
  * rather than to the data — and the text stays the same quiet grey as every
  * other secondary value, so the page gains a surface rather than a second
  * colour of prose.
  *
  * @param props.title - The screen's name. Rendered as an `h2`; the page title
- *   proper lives in the document head and the breadcrumb.
+ *   proper lives in the document head and, on wider screens, the breadcrumb.
  * @param props.description - One sentence on what the screen holds. Optional,
  *   for screens whose title already says it.
  * @param props.children - Actions aligned to the end of the row, such as a
- *   primary "Create" button.
+ *   primary "Create" button. Icon-bearing buttons become icon-only on phones.
  */
 export function PageHeading({
   title,

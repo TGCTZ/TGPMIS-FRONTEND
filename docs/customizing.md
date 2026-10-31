@@ -118,7 +118,9 @@ they cannot disagree.
 Gates are **permissions**, never roles — a role gate drifts the moment someone
 edits that role from the Roles screen.
 
-**Known incomplete**, so you are not surprised: the Account, Appearance,
-Notifications and Display forms under `src/features/settings/` still call
-`src/lib/show-submitted-data.tsx` — they display what *would* be submitted
-rather than saving. Only Profile and the password form write to the API.
+The current Settings screen has **Profile** and **Password** sections. Profile
+and password changes are submitted to the API. The separate Appearance form
+updates the local theme and font settings, then calls
+`src/lib/show-submitted-data.tsx`; it does not submit those values to the API.
+There are no Notifications or Display settings screens in the current route
+tree.

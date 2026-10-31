@@ -25,10 +25,10 @@ type HeaderProps = React.HTMLAttributes<HTMLElement> & {
  * The page header bar: where you are and how you got here on one side, the
  * page's own controls on the other.
  *
- * The left cluster — sidebar toggle, back button, breadcrumb trail — is fixed
- * and identical on every screen. A page cannot opt out of it and cannot
- * configure it: the trail is derived from the URL, so it can never contradict
- * the sidebar the user just clicked. See `./breadcrumbs.tsx`.
+ * The sidebar toggle and back button stay visible at every width. Breadcrumbs
+ * are hidden on phones; where shown, the trail is derived from the URL, so it
+ * cannot contradict the sidebar the user just clicked. See `./breadcrumbs.tsx`.
+ * The permitted legacy-system link moves into the overflow menu on phones.
  *
  * The sidebar trigger is unconditional: it is the only control that collapses
  * or reopens the sidebar, in every collapse mode.

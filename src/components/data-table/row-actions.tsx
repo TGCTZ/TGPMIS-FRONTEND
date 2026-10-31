@@ -16,8 +16,8 @@ import {
  * One action available on a table row.
  *
  * Declared as data rather than JSX so a resource lists its full capability in
- * one place, and so the same array can feed both the row's icon buttons and
- * the record's view dialog.
+ * one place, and so the same array can feed the row controls and the record's
+ * view dialog.
  *
  * @example
  * const actions: RowAction[] = [
@@ -80,7 +80,7 @@ function visibleActions(actions: RowAction[]) {
 }
 
 /**
- * Row actions, rendered inline in the table cell.
+ * Row actions, rendered inline in desktop table cells and in a menu on phones.
  *
  * **Labelled**, not icon-only. A row of bare icons asks the user to decode a
  * pictogram before every click: a document glyph could be "view", "generate
@@ -90,13 +90,14 @@ function visibleActions(actions: RowAction[]) {
  * column. The label is the affordance; the icon only speeds up recognition
  * once you already know what you are looking for.
  *
- * Icons rather than a dropdown: with at most four or five actions visible at
- * once (Delete and Restore are mutually exclusive) there is room to show them,
- * and a menu costs two clicks plus a guess at what the row can do.
+ * Desktop keeps actions visible when a table cell has room. On phones, one
+ * labelled menu keeps every action reachable without letting the action column
+ * force the table wider than the viewport. Menu items retain their labels so
+ * touch users do not have to guess what an icon means.
  *
- * The buttons **wrap** rather than shrink or truncate, so a narrow column makes
- * the row taller instead of hiding what it can do. That is the deliberate
- * trade: vertical space is cheap, a misread action is not.
+ * Desktop buttons **wrap** rather than shrink or truncate, so a narrow column
+ * makes the row taller instead of hiding what it can do. The phone menu trigger
+ * uses a 44px target and its items keep text labels.
  *
  * Actions are declared as data rather than JSX so each table lists its full
  * capability in one place, and so the same list can be reused by the record's

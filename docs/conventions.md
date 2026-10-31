@@ -83,11 +83,12 @@ API's query contract — including `filter[field][from]/[to]` ranges and the
 Return a `RowAction[]` and let the shared renderer draw it. Permission filtering
 then happens in exactly one place instead of being re-implemented per screen.
 
-The same list feeds **two** renderers, which is the reason for declaring it as
-data rather than JSX:
+The same list feeds the row and view-dialog renderers, which is the reason for
+declaring it as data rather than JSX:
 
-- `<DataTableRowActions>` — icon buttons inline in the table cell, wrapping
-  rather than shrinking when the column is tight
+- `<DataTableRowActions>` — labelled buttons inline in desktop table cells,
+  wrapping rather than shrinking when the column is tight. Below 768px, row
+  actions move into one compact menu with labelled menu items.
 - `<RowActionButtons>` — icon **and** label, for the record's view dialog
 
 So build the list in a hook, not inside the cell component — see
@@ -297,12 +298,19 @@ a second definition. The tokens themselves are in
 
 ## 9b. Page headings and feedback
 
-Two smaller shared pieces that screens should not re-implement:
+Shared heading, navigation and feedback behavior that screens should not re-implement:
 
-- **`<PageHeading title description>`** — the screen's name and the one sentence
-  saying what it holds. The description renders in a blue-outlined box tinted
-  with the chrome colour, because it is the screen explaining itself rather than
-  data.
+- **`<PageHeading title description>`** — the screen's name and optional
+  description. The title remains visible at every width; the description hides
+  below 768px. Page actions with icons become icon-only below that breakpoint,
+  so supply an icon for each action. On wider screens, the description renders
+  in a blue-outlined box tinted with the chrome colour.
+- **`<Header>` on phones** — keeps the sidebar toggle and back button, hides the
+  breadcrumb below 768px, and places the permitted legacy-system link in the
+  overflow menu.
+- **Contained table scrolling** — keep dense comparison data, such as the report
+  summary table, horizontally scrollable inside its own container. Avoid making
+  the page itself wider than the viewport.
 - **`<Progress value max>`** — use it wherever a screen would otherwise print
   "3 of 5". It turns amber while work remains and green once complete.
 - **Toasts** are configured once in
