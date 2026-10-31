@@ -4,9 +4,11 @@ import { getRouteApi } from '@tanstack/react-router'
 import { type ColumnDef } from '@tanstack/react-table'
 import { Copy, X } from 'lucide-react'
 import { toast } from 'sonner'
+import { isIsoDate } from '@/lib/date'
 import { formatDate, formatTime } from '@/lib/format'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { DateInput } from '@/components/ui/date-input'
 import {
   Dialog,
   DialogContent,
@@ -224,21 +226,21 @@ export function SystemLogs() {
         </SelectContent>
       </Select>
 
-      <Input
-        type='date'
+      <DateInput
         aria-label='From date'
         value={state.dateFrom ?? ''}
-        onChange={(e) =>
-          handleStateChange({ dateFrom: e.target.value || undefined, page: 1 })
+        onChange={(value) =>
+          (value === '' || isIsoDate(value)) &&
+          handleStateChange({ dateFrom: value || undefined, page: 1 })
         }
         className='h-8 w-36'
       />
-      <Input
-        type='date'
+      <DateInput
         aria-label='To date'
         value={state.dateTo ?? ''}
-        onChange={(e) =>
-          handleStateChange({ dateTo: e.target.value || undefined, page: 1 })
+        onChange={(value) =>
+          (value === '' || isIsoDate(value)) &&
+          handleStateChange({ dateTo: value || undefined, page: 1 })
         }
         className='h-8 w-36'
       />

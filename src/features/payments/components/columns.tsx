@@ -18,7 +18,7 @@ export const paymentsColumns: ColumnDef<Payment>[] = [
     header: () => <span>Transaction</span>,
     enableSorting: false,
     cell: ({ row }) => (
-      <div className='min-w-40'>
+      <div className='min-w-0 md:min-w-40'>
         <div className='font-medium'>{row.original.trx_id || '—'}</div>
         <div className='text-xs text-muted-foreground'>
           {row.original.psp_name || 'Unknown provider'}
@@ -31,7 +31,7 @@ export const paymentsColumns: ColumnDef<Payment>[] = [
     header: () => <span>Bill</span>,
     enableSorting: false,
     cell: ({ row }) => (
-      <div className='min-w-32'>
+      <div className='min-w-0 md:min-w-32'>
         <div className='flex items-center gap-1'>
           {row.original.bill_ctr_num || '—'}
           {row.original.bill_ctr_num && (

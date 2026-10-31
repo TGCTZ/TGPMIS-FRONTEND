@@ -18,7 +18,7 @@ export const customersColumns: ColumnDef<Customer>[] = [
       <DataTableColumnHeader column={column} title='Customer' />
     ),
     cell: ({ row }) => (
-      <div className='min-w-44'>
+      <div className='min-w-0 md:min-w-44'>
         <div className='flex items-center gap-2'>
           <LongText className='max-w-48 font-medium'>
             {row.original.full_name}

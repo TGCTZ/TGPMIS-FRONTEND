@@ -4,9 +4,11 @@ import { AxiosError } from 'axios'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { isIsoDate } from '@/lib/date'
 import { fieldErrors } from '@/lib/handle-server-error'
 import { zodResolver } from '@/lib/zod-resolver'
 import { Button } from '@/components/ui/button'
+import { DateInput } from '@/components/ui/date-input'
 import {
   Dialog,
   DialogContent,
@@ -52,7 +54,10 @@ const orderFormSchema = z
     company_name: z.string().default(''),
     region: z.string().default(''),
 
-    received_date: z.string().min(1, 'Received date is required.'),
+    received_date: z
+      .string()
+      .min(1, 'Received date is required.')
+      .refine(isIsoDate, 'Enter a valid date as dd/mm/yyyy.'),
     stone_count: z.string().min(1, 'How many stones were submitted?'),
   })
   .superRefine((values, ctx) => {
@@ -250,7 +255,11 @@ export function OrderMutateDialog({
                       <FormItem>
                         <FormLabel>Received date</FormLabel>
                         <FormControl>
-                          <Input type='date' {...field} />
+                          <DateInput
+                            {...field}
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

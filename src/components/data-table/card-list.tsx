@@ -59,11 +59,28 @@ export function DataTableCardList<T>({
               // otherwise it must not advertise a tap target or take focus.
               role={onRowClick ? 'button' : undefined}
               tabIndex={onRowClick ? 0 : undefined}
-              onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+              onClick={
+                onRowClick
+                  ? (event) => {
+                      if (
+                        (event.target as HTMLElement).closest(
+                          'button, a, input, [role="menuitem"], [role="checkbox"]'
+                        )
+                      ) {
+                        return
+                      }
+                      onRowClick(row.original)
+                    }
+                  : undefined
+              }
               onKeyDown={
                 onRowClick
                   ? (event) => {
-                      if (event.key !== 'Enter' && event.key !== ' ') return
+                      if (
+                        event.target !== event.currentTarget ||
+                        (event.key !== 'Enter' && event.key !== ' ')
+                      )
+                        return
                       // Space would otherwise scroll the page out from under
                       // the card the user just activated.
                       event.preventDefault()
@@ -98,7 +115,7 @@ export function DataTableCardList<T>({
                 {fieldCells.map((cell) => (
                   <div
                     key={cell.id}
-                    className='grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)] items-start gap-2'
+                    className='grid grid-cols-[minmax(0,6rem)_minmax(0,1fr)] items-start gap-2'
                   >
                     <dt className='text-xs font-medium tracking-wide text-muted-foreground uppercase'>
                       {columnLabel(cell.column)}

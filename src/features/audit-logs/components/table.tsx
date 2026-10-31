@@ -1,6 +1,8 @@
 import { X } from 'lucide-react'
 import { type Meta } from '@/lib/api-query'
+import { isIsoDate } from '@/lib/date'
 import { Button } from '@/components/ui/button'
+import { DateInput } from '@/components/ui/date-input'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -83,23 +85,21 @@ export function AuditLogsTable({
         </SelectContent>
       </Select>
 
-      {/* Native date inputs: the range is two independent, optional bounds,
-          which a calendar popover makes fussier rather than easier. */}
-      <Input
-        type='date'
+      <DateInput
         aria-label='From date'
         value={state.dateFrom ?? ''}
-        onChange={(e) =>
-          onStateChange({ dateFrom: e.target.value || undefined, page: 1 })
+        onChange={(value) =>
+          (value === '' || isIsoDate(value)) &&
+          onStateChange({ dateFrom: value || undefined, page: 1 })
         }
         className='h-8 w-36'
       />
-      <Input
-        type='date'
+      <DateInput
         aria-label='To date'
         value={state.dateTo ?? ''}
-        onChange={(e) =>
-          onStateChange({ dateTo: e.target.value || undefined, page: 1 })
+        onChange={(value) =>
+          (value === '' || isIsoDate(value)) &&
+          onStateChange({ dateTo: value || undefined, page: 1 })
         }
         className='h-8 w-36'
       />

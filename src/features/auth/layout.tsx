@@ -7,7 +7,7 @@ type AuthLayoutProps = {
 
 export function AuthLayout({ children, showLogo = true }: AuthLayoutProps) {
   return (
-    <div className='auth-watermark container grid h-svh max-w-none items-center justify-center text-white'>
+    <div className='auth-watermark container grid min-h-svh max-w-none items-center justify-center px-4 text-white md:h-svh md:px-8'>
       <div className='mx-auto flex w-full flex-col justify-center space-y-2 py-8 sm:p-8'>
         <div className='mb-4 flex flex-col items-center gap-3 text-center'>
           {showLogo && <Logo className='mx-auto size-32 sm:size-40' />}

@@ -603,7 +603,7 @@ export function ReportMutateDialog({
                     {/* Weight is the one measurement stored on the stone rather
                         than the report — the certificate snapshots the stone.
                         The API takes it here and hands it on. */}
-                    <div className='grid grid-cols-[1fr_8rem] gap-3'>
+                    <div className='grid gap-3 sm:grid-cols-[minmax(0,1fr)_8rem]'>
                       <FormField
                         control={form.control}
                         name='weight'

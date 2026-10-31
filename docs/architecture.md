@@ -110,11 +110,11 @@ src/
 │                           dialog-body.tsx         scrollable dialog region
 │                           status-badge.tsx        status tones, and the factory
 │                                                   every feature's badge is built on
-│                           page-heading.tsx        a screen's title + description
+│                           page-heading.tsx        a screen's title, description and actions
 │                           view-footer-actions.tsx row actions in a view dialog
 │                           user-menu-content.tsx   shared by both user menus
 │                           bool-badge.tsx · confirm-dialog.tsx · definition-list.tsx
-│                           command-menu.tsx · date-picker.tsx · long-text.tsx
+│                           command-menu.tsx · ui/date-input.tsx · long-text.tsx
 │                           password-input.tsx · theme-switch.tsx
 │
 ├── features/           One folder per feature/screen (the bulk of the app)
@@ -129,12 +129,12 @@ src/
 │   ├── bills/            Bills, control numbers and payment simulation
 │   ├── payments/         Payments received against bills
 │   ├── certificates/     Viewing and downloading issued certificates
-│   ├── worklists/        Shared query definitions for pending-work counts
+│   ├── workflow-feed/    Shared query definitions for pending-work records
 │   ├── roles/            RBAC admin: roles and the permission matrix
 │   ├── users/            Accounts, avatars and role assignment
 │   ├── lookups/          ONE screen serving all ten reference tables
 │   ├── system-logs/      Read-only view over the API's own log files
-│   ├── settings/         Profile / account / appearance / notifications / display
+│   ├── settings/         Profile, password and appearance settings
 │   └── errors/           Error pages (401/403/404/500/503) — also reused as boundaries
 │
 ├── routes/             File-based routes (TanStack Router). Structure = URL structure.
@@ -193,9 +193,16 @@ Certificates    Certificates
 Administration  Users · Logs · Reference data           ← maintained, not worked
 ```
 
-Pending counts appear on Identification, Findings, and Bills. Their feature
-pages combine worklists with the corresponding records; there are no separate
-queue routes. Shared count queries live with the sidebar navigation.
+Pending work appears on Identification, Findings, Bills, and Certificates.
+Their feature pages combine the workflow feed with corresponding records; there
+are no separate queue routes. Shared feed queries live in
+`features/workflow-feed/`.
+
+The header keeps the sidebar toggle and back button on phones, hides the
+breadcrumb trail below 768px, and moves the permitted legacy-system link into an
+overflow menu. Page headings keep their title at every width, hide descriptions
+below 768px, and show icon-only page actions at that width. The dense report
+summary table scrolls inside its own container so it does not widen the page.
 
 **Reference data** is a collapsible generated from
 `features/lookups/data/config.ts`, so adding a lookup table is one config entry
@@ -231,7 +238,7 @@ components/data-table/data-table.tsx    server-driven table shell
   ├── row click ────────────────────►   opens the record's detail view
   └── components/data-table/row-actions.tsx
           actions declared as data: View · Edit · the workflow verb · Restore · Delete
-          rendered inline in the cell, and again in the view dialog's footer
+          rendered inline on desktop, in a menu on phones, and in the view dialog
 
 the feature's detail dialog           separate from mutate forms where needed
 ```
@@ -239,7 +246,8 @@ the feature's detail dialog           separate from mutate forms where needed
 > **Roles is the exception.** `features/roles/index.tsx` hand-rolls its table
 > from the raw `ui/table` primitives: it has no serial column, no *Show deleted*
 > toggle and no server pagination, because there are only ever a handful of
-> roles. It does borrow `DataTableRowActions`. Worth knowing before you copy it.
+> roles. On phones it replaces the table with stacked role cards. It does borrow
+> `DataTableRowActions`. Worth knowing before you copy it.
 
 Four rules keep screens from drifting. The shell provides the machinery for
 all four; the first is a convention it does not enforce.
@@ -252,9 +260,9 @@ all four; the first is a convention it does not enforce.
    landing on a button, link, or menu item are
    ignored, so the actions menu never opens a sheet behind itself.
 3. **Actions are declared, not hand-written.** Each table returns a
-   `RowAction[]`, rendered as inline icon buttons in the cell and as labelled
-   buttons in the record's view dialog. Permission filtering happens once, in
-   the shared renderer.
+   `RowAction[]`, rendered as labelled inline buttons on desktop, a labelled
+   menu on phones, and labelled buttons in the record's view dialog. Permission
+   filtering happens once, in the shared renderer.
 4. **Deletes are soft.** Every *soft-deletable* table has a *Show deleted*
    toggle (sending `with_trashed`), deleted rows render with a red tint and
    start-edge marker plus a badge, and Restore replaces Delete in their menu.
@@ -268,9 +276,9 @@ The ten lookup screens — stone categories, stone types, species, varieties,
 colours, origins, shapes and cuts, instruments, user statuses and genders —
 share **one** feature, `features/lookups/`, parameterised by `data/config.ts`.
 Adding an eleventh means adding a config entry, not a new feature folder. The
-Pending work appears in the identification, findings, and billing pages. The
-worklists feature holds metadata for legacy standalone screens, not current
-routes.
+Pending work appears in identification, findings, billing, and certificates.
+Shared workflow-feed query definitions are in `features/workflow-feed/`; there
+are no standalone queue routes.
 
 ## Formatting and localisation
 

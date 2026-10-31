@@ -26,7 +26,11 @@ export function ProfileDropdown() {
     <>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='relative size-8 rounded-full'>
+          <Button
+            variant='ghost'
+            className='relative size-8 rounded-full max-md:size-11'
+            aria-label='Open profile menu'
+          >
             <Avatar className='size-8'>
               <AvatarImage src={avatar} alt={name} />
               <AvatarFallback>{initials}</AvatarFallback>

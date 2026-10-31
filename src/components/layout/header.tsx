@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, MoreHorizontal } from 'lucide-react'
 import { PERMISSIONS } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
 import { useLayout } from '@/context/layout-provider'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar'
 import { Can } from '@/components/can'
@@ -19,10 +25,10 @@ type HeaderProps = React.HTMLAttributes<HTMLElement> & {
  * The page header bar: where you are and how you got here on one side, the
  * page's own controls on the other.
  *
- * The left cluster — sidebar toggle, back button, breadcrumb trail — is fixed
- * and identical on every screen. A page cannot opt out of it and cannot
- * configure it: the trail is derived from the URL, so it can never contradict
- * the sidebar the user just clicked. See `./breadcrumbs.tsx`.
+ * The sidebar toggle and back button stay visible at every width. Breadcrumbs
+ * are hidden on phones; where shown, the trail is derived from the URL, so it
+ * cannot contradict the sidebar the user just clicked. See `./breadcrumbs.tsx`.
+ * The permitted legacy-system link moves into the overflow menu on phones.
  *
  * The sidebar trigger is unconditional: it is the only control that collapses
  * or reopens the sidebar, in every collapse mode.
@@ -88,23 +94,50 @@ export function Header({
         }}
         {...props}
       >
-        <div className='relative flex h-full items-center gap-3 p-4 sm:gap-4'>
-          <SidebarTrigger variant='outline' className='max-md:scale-125' />
+        <div className='relative flex h-full items-center gap-2 p-2 sm:gap-4 sm:p-4'>
+          <SidebarTrigger variant='outline' className='max-md:size-11' />
           <Separator orientation='vertical' className='h-6' />
           <BackButton />
-          <Breadcrumbs className='min-w-0 flex-1' />
-          <div className='ms-auto flex shrink-0 items-center gap-3 sm:gap-4'>
+          {!isMobile && <Breadcrumbs className='min-w-0 flex-1' />}
+          <div className='ms-auto flex shrink-0 items-center gap-1 sm:gap-4'>
             <Can permission={PERMISSIONS.accessLegacySystem}>
-              <Button asChild variant='outline' size='sm'>
-                <a
-                  href='https://legacy.tgpmis.tgc.ac.tz'
-                  target='_blank'
-                  rel='noopener noreferrer'
-                >
-                  <ExternalLink aria-hidden='true' className='size-4' />
-                  Open Legacy System
-                </a>
-              </Button>
+              {isMobile ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant='outline'
+                      size='icon'
+                      className='size-11'
+                      aria-label='More actions'
+                    >
+                      <MoreHorizontal aria-hidden='true' />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align='end'>
+                    <DropdownMenuItem asChild className='min-h-11'>
+                      <a
+                        href='https://legacy.tgpmis.tgc.ac.tz'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                      >
+                        <ExternalLink aria-hidden='true' />
+                        Open Legacy System
+                      </a>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button asChild variant='outline' size='sm'>
+                  <a
+                    href='https://legacy.tgpmis.tgc.ac.tz'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    <ExternalLink aria-hidden='true' className='size-4' />
+                    Open Legacy System
+                  </a>
+                </Button>
+              )}
             </Can>
             {children}
           </div>

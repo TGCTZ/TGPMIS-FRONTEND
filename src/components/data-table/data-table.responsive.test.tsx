@@ -7,15 +7,16 @@ import { DataTable, type TableQueryState } from './data-table'
 /**
  * Responsive regression guard for the shared list surface.
  *
- * Every list screen renders through `<DataTable>`, so the mobile contract is
+ * Shared server-driven lists use `<DataTable>`, so its mobile contract is
  * worth pinning here once rather than per feature. These run in a real
  * Chromium viewport — `page.viewport()` resizes the actual window, so the
  * media query behind `useIsMobile` and the CSS breakpoints are the real ones,
  * not a mocked `matchMedia`.
  *
- * The width below is an iPhone SE, the narrowest screen worth supporting.
+ * Include the smallest supported phone, the supplied screenshot width, and
+ * both sides of the mobile breakpoint.
  */
-const MOBILE = { width: 375, height: 667 }
+const MOBILE_WIDTHS = [320, 375, 458, 767]
 const DESKTOP = { width: 1280, height: 800 }
 
 type Row = { id: number; bill_number: string; customer_name: string }
@@ -88,43 +89,76 @@ describe('DataTable responsiveness', () => {
     await expect.element(screen.getByRole('status')).not.toBeInTheDocument()
   })
 
-  it('renders a real table on desktop', async () => {
-    await page.viewport(DESKTOP.width, DESKTOP.height)
-    const screen = await renderTable()
+  it.each([768, 1024, DESKTOP.width])(
+    'renders a real table at %i px',
+    async (width) => {
+      await page.viewport(width, DESKTOP.height)
+      const screen = await renderTable()
 
-    await expect.element(screen.getByRole('table')).toBeInTheDocument()
-  })
+      await expect.element(screen.getByRole('table')).toBeInTheDocument()
+    }
+  )
 
-  it('renders labelled cards instead of a table on a phone', async () => {
-    await page.viewport(MOBILE.width, MOBILE.height)
-    const screen = await renderTable()
+  it.each(MOBILE_WIDTHS)(
+    'renders labelled cards instead of a table at %i px',
+    async (width) => {
+      await page.viewport(width, 667)
+      const screen = await renderTable()
 
-    // The card view must replace the table outright. Rendering both would
-    // duplicate every row action in the accessibility tree.
-    expect(screen.container.querySelector('table')).toBeNull()
+      // The card view must replace the table outright. Rendering both would
+      // duplicate every row action in the accessibility tree.
+      expect(screen.container.querySelector('table')).toBeNull()
 
-    // Each value keeps its label, which is what horizontal scrolling loses.
-    await expect
-      .element(screen.getByRole('term').first())
-      .toHaveTextContent('Bill')
-    await expect.element(screen.getByText('B-001')).toBeInTheDocument()
-    await expect.element(screen.getByText('Asha Mollel')).toBeInTheDocument()
-  })
+      // Each value keeps its label, which is what horizontal scrolling loses.
+      await expect
+        .element(screen.getByRole('term').first())
+        .toHaveTextContent('Bill')
+      await expect.element(screen.getByText('B-001')).toBeInTheDocument()
+      await expect.element(screen.getByText('Asha Mollel')).toBeInTheDocument()
+    }
+  )
 
-  it('does not overflow the viewport horizontally on a phone', async () => {
-    await page.viewport(MOBILE.width, MOBILE.height)
-    await renderTable()
+  it.each(MOBILE_WIDTHS)(
+    'does not overflow the viewport horizontally at %i px',
+    async (width) => {
+      await page.viewport(width, 667)
+      await renderTable()
 
-    // The guard that actually matters: a page the user can scroll sideways is
-    // the single most common mobile layout failure, and it is invisible in any
-    // test that only asserts on the DOM.
-    expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(
-      MOBILE.width
+      expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(width)
+    }
+  )
+
+  it('does not open the row when a nested action is clicked', async () => {
+    await page.viewport(375, 667)
+    const onAction = vi.fn()
+    const onRowClick = vi.fn()
+    const columnsWithAction: ColumnDef<Row>[] = [
+      ...columns,
+      {
+        id: 'actions',
+        header: 'Actions',
+        cell: () => (
+          <button type='button' onClick={onAction}>
+            Row action
+          </button>
+        ),
+      },
+    ]
+    const screen = await renderTable({
+      columns: columnsWithAction,
+      onRowClick,
+    })
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Row action', exact: true }).first()
     )
+
+    expect(onAction).toHaveBeenCalledOnce()
+    expect(onRowClick).not.toHaveBeenCalled()
   })
 
   it('exposes the row as a keyboard-activatable control when clickable', async () => {
-    await page.viewport(MOBILE.width, MOBILE.height)
+    await page.viewport(375, 667)
     const onRowClick = vi.fn()
     const screen = await renderTable({ onRowClick })
 
@@ -136,7 +170,7 @@ describe('DataTable responsiveness', () => {
   })
 
   it('leaves the card inert when there is no detail view to open', async () => {
-    await page.viewport(MOBILE.width, MOBILE.height)
+    await page.viewport(375, 667)
     const screen = await renderTable()
 
     expect(screen.container.querySelectorAll('[role="button"]')).toHaveLength(0)

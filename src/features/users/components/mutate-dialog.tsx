@@ -4,6 +4,7 @@ import { AxiosError } from 'axios'
 import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { isIsoDate } from '@/lib/date'
 import { fieldErrors } from '@/lib/handle-server-error'
 import { perm } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
@@ -11,6 +12,7 @@ import { zodResolver } from '@/lib/zod-resolver'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { DateInput } from '@/components/ui/date-input'
 import {
   Dialog,
   DialogContent,
@@ -70,7 +72,12 @@ function buildSchema(isEdit: boolean) {
       bio: z.string().optional(),
       city: z.string().optional(),
       country: z.string().optional(),
-      date_of_birth: z.string().optional(),
+      date_of_birth: z
+        .string()
+        .optional()
+        .refine((value) => !value || isIsoDate(value), {
+          message: 'Enter a valid date as dd/mm/yyyy.',
+        }),
 
       is_active: z.boolean().default(true),
       roles: z.array(z.string()).default([]),
@@ -447,7 +454,15 @@ function TextField({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input type={type} {...field} value={field.value ?? ''} />
+            {type === 'date' ? (
+              <DateInput
+                {...field}
+                value={field.value ?? ''}
+                onChange={field.onChange}
+              />
+            ) : (
+              <Input type={type} {...field} value={field.value ?? ''} />
+            )}
           </FormControl>
           <FormMessage />
         </FormItem>

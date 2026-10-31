@@ -47,13 +47,16 @@ export function FirstLogin() {
             </span>
             .
           </CardDescription>
-          <ol className='flex gap-4 pt-2 text-xs' aria-label='Setup steps'>
+          <ol
+            className='flex flex-wrap gap-2 pt-2 text-xs'
+            aria-label='Setup steps'
+          >
             {STEPS.map((label, index) => (
               <li
                 key={label}
                 aria-current={index === step ? 'step' : undefined}
                 className={cn(
-                  'flex items-center gap-1.5',
+                  'flex min-w-0 items-center gap-1.5',
                   index === step
                     ? 'font-medium text-primary-foreground dark:text-foreground'
                     : 'text-primary-foreground/80 dark:text-muted-foreground'

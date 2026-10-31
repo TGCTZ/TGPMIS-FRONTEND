@@ -67,7 +67,7 @@ export function NotificationBell() {
         <Button
           variant='ghost'
           size='icon'
-          className='relative scale-95 rounded-full'
+          className='relative size-9 rounded-full max-md:size-11'
           aria-label={
             unread > 0 ? `Notifications, ${unread} unread` : 'Notifications'
           }

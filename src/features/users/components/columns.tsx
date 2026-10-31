@@ -25,7 +25,7 @@ export const usersColumns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const user = row.original
       return (
-        <div className='flex min-w-48 items-center gap-3'>
+        <div className='flex min-w-0 items-center gap-3 md:min-w-48'>
           <Avatar className='size-8'>
             <AvatarImage src={user.avatar ?? undefined} alt={user.full_name} />
             <AvatarFallback className='text-xs'>

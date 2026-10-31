@@ -30,7 +30,7 @@ export function BackButton({
     <Button
       variant='outline'
       size='icon'
-      className={cn('size-7 max-md:scale-125', className)}
+      className={cn('size-7 max-md:size-11', className)}
       disabled={!canGoBack}
       onClick={() => history.go(-1)}
       {...props}
