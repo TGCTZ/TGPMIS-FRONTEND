@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, MoreHorizontal } from 'lucide-react'
 import { PERMISSIONS } from '@/lib/permissions'
 import { cn } from '@/lib/utils'
 import { useLayout } from '@/context/layout-provider'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar'
 import { Can } from '@/components/can'
@@ -88,23 +94,50 @@ export function Header({
         }}
         {...props}
       >
-        <div className='relative flex h-full items-center gap-3 p-4 sm:gap-4'>
-          <SidebarTrigger variant='outline' className='max-md:scale-125' />
+        <div className='relative flex h-full items-center gap-2 p-2 sm:gap-4 sm:p-4'>
+          <SidebarTrigger variant='outline' className='max-md:size-11' />
           <Separator orientation='vertical' className='h-6' />
           <BackButton />
-          <Breadcrumbs className='min-w-0 flex-1' />
-          <div className='ms-auto flex shrink-0 items-center gap-3 sm:gap-4'>
+          {!isMobile && <Breadcrumbs className='min-w-0 flex-1' />}
+          <div className='ms-auto flex shrink-0 items-center gap-1 sm:gap-4'>
             <Can permission={PERMISSIONS.accessLegacySystem}>
-              <Button asChild variant='outline' size='sm'>
-                <a
-                  href='https://legacy.tgpmis.tgc.ac.tz'
-                  target='_blank'
-                  rel='noopener noreferrer'
-                >
-                  <ExternalLink aria-hidden='true' className='size-4' />
-                  Open Legacy System
-                </a>
-              </Button>
+              {isMobile ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant='outline'
+                      size='icon'
+                      className='size-11'
+                      aria-label='More actions'
+                    >
+                      <MoreHorizontal aria-hidden='true' />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align='end'>
+                    <DropdownMenuItem asChild className='min-h-11'>
+                      <a
+                        href='https://legacy.tgpmis.tgc.ac.tz'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                      >
+                        <ExternalLink aria-hidden='true' />
+                        Open Legacy System
+                      </a>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button asChild variant='outline' size='sm'>
+                  <a
+                    href='https://legacy.tgpmis.tgc.ac.tz'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    <ExternalLink aria-hidden='true' className='size-4' />
+                    Open Legacy System
+                  </a>
+                </Button>
+              )}
             </Can>
             {children}
           </div>

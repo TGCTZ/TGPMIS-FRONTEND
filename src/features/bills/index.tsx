@@ -155,7 +155,7 @@ function BillsContent() {
                 const total = Number(bill.total_amount ?? 0)
                 const paid = Number(bill.amount_paid ?? 0)
                 return (
-                  <div className='min-w-40 space-y-1.5 tabular-nums'>
+                  <div className='w-full min-w-0 space-y-1.5 tabular-nums'>
                     <div>{formatMoney(total, bill.currency)}</div>
                     <Progress
                       value={paid}
@@ -173,7 +173,7 @@ function BillsContent() {
               if (row.kind === 'order') {
                 const order = orderSchema.parse(row.detail)
                 return (
-                  <div className='min-w-40 space-y-1.5'>
+                  <div className='w-full min-w-0 space-y-1.5'>
                     <div className='text-xs tabular-nums'>
                       {order.identified_count} of {order.stone_count} identified
                     </div>

@@ -1,6 +1,16 @@
+import { Fragment } from 'react'
+import { MoreHorizontal } from 'lucide-react'
 import { hasAnyPermission } from '@/lib/authz'
 import { cn } from '@/lib/utils'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 /**
  * One action available on a table row.
@@ -100,9 +110,45 @@ export function DataTableRowActions({
   align?: 'center' | 'end'
 }) {
   const visible = visibleActions(actions)
+  const isMobile = useIsMobile()
 
   // An empty cell beats a "no actions" placeholder repeated down every row.
   if (visible.length === 0) return null
+
+  if (isMobile) {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant='outline'
+            size='icon'
+            className='size-11'
+            aria-label={`Open row actions: ${visible
+              .map((action) => action.label)
+              .join(', ')}`}
+          >
+            <MoreHorizontal aria-hidden='true' />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align={align}>
+          {visible.map((action, index) => (
+            <Fragment key={action.label}>
+              {action.separatorBefore && index > 0 && <DropdownMenuSeparator />}
+              <DropdownMenuItem
+                variant={
+                  action.tone === 'destructive' ? 'destructive' : 'default'
+                }
+                onSelect={action.onSelect}
+              >
+                <action.icon aria-hidden='true' />
+                {action.label}
+              </DropdownMenuItem>
+            </Fragment>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+  }
 
   return (
     // The max-width is what makes `flex-wrap` mean anything. A table cell sizes
@@ -123,7 +169,7 @@ export function DataTableRowActions({
           <Button
             variant={TONE_VARIANT[action.tone ?? 'neutral']}
             size='sm'
-            className='h-8 gap-1.5 px-2.5'
+            className='h-8 gap-1.5 px-2.5 max-md:min-h-11'
             onClick={action.onSelect}
           >
             <action.icon className='size-4 shrink-0' />

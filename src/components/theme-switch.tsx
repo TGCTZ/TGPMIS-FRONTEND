@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from '@/context/theme-provider'
+import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 
 /**
@@ -23,14 +24,30 @@ export function ThemeSwitch() {
   }, [theme])
 
   return (
-    <div className='flex items-center gap-2'>
-      <Sun className='size-4 text-muted-foreground' aria-hidden='true' />
-      <Switch
-        checked={theme === 'dark'}
-        onCheckedChange={(enabled) => setTheme(enabled ? 'dark' : 'light')}
-        aria-label='Dark mode'
-      />
-      <Moon className='size-4 text-muted-foreground' aria-hidden='true' />
-    </div>
+    <>
+      <Button
+        variant='ghost'
+        size='icon'
+        className='hidden size-11 max-md:inline-flex'
+        aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        aria-pressed={theme === 'dark'}
+        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      >
+        {theme === 'dark' ? (
+          <Sun aria-hidden='true' />
+        ) : (
+          <Moon aria-hidden='true' />
+        )}
+      </Button>
+      <div className='hidden items-center gap-2 md:flex'>
+        <Sun className='size-4 text-muted-foreground' aria-hidden='true' />
+        <Switch
+          checked={theme === 'dark'}
+          onCheckedChange={(enabled) => setTheme(enabled ? 'dark' : 'light')}
+          aria-label='Dark mode'
+        />
+        <Moon className='size-4 text-muted-foreground' aria-hidden='true' />
+      </div>
+    </>
   )
 }

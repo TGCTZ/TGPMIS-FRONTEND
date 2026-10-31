@@ -30,7 +30,7 @@ const stonesDataColumns: ColumnDef<Stone>[] = [
       const stone = row.original
 
       return (
-        <div className='min-w-40'>
+        <div className='min-w-0 md:min-w-40'>
           <div className='flex items-center gap-2 font-medium'>
             {stone.label}
             {stone.deleted_at && (

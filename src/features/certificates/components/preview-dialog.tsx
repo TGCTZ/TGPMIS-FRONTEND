@@ -64,7 +64,7 @@ export function CertificatePreviewDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='flex h-[90vh] flex-col sm:max-w-5xl'>
+      <DialogContent className='flex h-[90dvh] max-h-[90dvh] flex-col sm:max-w-5xl'>
         {/* pe-8 keeps the button clear of the dialog's close (X) button. */}
         <DialogHeader className='flex-row items-start justify-between gap-4 pe-8'>
           <div className='space-y-1.5'>

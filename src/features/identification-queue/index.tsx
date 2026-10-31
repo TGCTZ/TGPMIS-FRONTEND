@@ -165,7 +165,7 @@ export function IdentificationQueue() {
                   renderProgress={(row) => {
                     const order = orderSchema.parse(row.detail)
                     return (
-                      <div className='min-w-40 space-y-1.5'>
+                      <div className='w-full min-w-0 space-y-1.5'>
                         <div className='text-xs tabular-nums'>
                           {order.identified_count} of {order.stone_count}{' '}
                           identified

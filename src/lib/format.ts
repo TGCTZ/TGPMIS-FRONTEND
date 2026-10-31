@@ -53,6 +53,9 @@ export function formatDate(value: string | null | undefined): string {
   if (!value) return '—'
 
   return new Date(value).toLocaleDateString(APP_LOCALE, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
     timeZone: APP_TIMEZONE,
   })
 }
@@ -62,6 +65,9 @@ export function formatDateTime(value: string | null | undefined): string {
   if (!value) return '—'
 
   return new Date(value).toLocaleString(APP_LOCALE, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
     timeZone: APP_TIMEZONE,
   })
 }

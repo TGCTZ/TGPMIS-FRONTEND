@@ -41,13 +41,18 @@ export function PageHeading({
       <div className='relative z-10 space-y-1'>
         <h2 className='text-2xl font-bold tracking-tight'>{title}</h2>
         {description && (
-          <p className='max-w-prose text-sm/relaxed text-white/80 dark:rounded-md dark:bg-sidebar dark:px-3 dark:py-2 dark:text-muted-foreground'>
+          <p
+            className={cn(
+              'max-w-prose text-sm/relaxed text-white/80 dark:rounded-md dark:bg-sidebar dark:px-3 dark:py-2 dark:text-muted-foreground',
+              'max-md:hidden'
+            )}
+          >
             {description}
           </p>
         )}
       </div>
 
-      <div className='relative z-10 ms-auto flex flex-wrap items-center gap-2'>
+      <div className='page-heading-actions relative z-10 ms-auto flex flex-wrap items-center gap-2'>
         {children}
       </div>
     </div>

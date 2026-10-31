@@ -29,7 +29,7 @@ const ordersDataColumns: ColumnDef<Order>[] = [
       const customer = row.original.customer_detail
 
       return (
-        <div className='min-w-44'>
+        <div className='min-w-0 md:min-w-44'>
           <div className='flex items-center gap-2 font-medium'>
             {row.original.reference_number}
             {row.original.deleted_at && (
@@ -127,7 +127,7 @@ const ordersDataColumns: ColumnDef<Order>[] = [
       const order = row.original
 
       return (
-        <div className='min-w-36 space-y-1'>
+        <div className='min-w-0 space-y-1 md:min-w-36'>
           {/* The label comes from the server so the words cannot drift from the
               rule that produced them; only the emphasis is decided here. */}
           <StatusBadge tone={ORDER_STAGE_TONES[order.stage]}>

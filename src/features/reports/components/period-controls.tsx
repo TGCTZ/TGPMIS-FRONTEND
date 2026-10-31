@@ -1,4 +1,4 @@
-import { Input } from '@/components/ui/input'
+import { DateInput } from '@/components/ui/date-input'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -30,23 +30,25 @@ export function ReportPeriodControls({
     <>
       <div className='space-y-2'>
         <Label htmlFor='report-from'>From</Label>
-        <Input
+        <DateInput
           id='report-from'
-          type='date'
           value={from}
-          onChange={(event) =>
-            onChange({ from: event.target.value, rangePreset: undefined })
+          onChange={(value) =>
+            value === '' || /^\d{4}-\d{2}-\d{2}$/.test(value)
+              ? onChange({ from: value, rangePreset: undefined })
+              : undefined
           }
         />
       </div>
       <div className='space-y-2'>
         <Label htmlFor='report-to'>To</Label>
-        <Input
+        <DateInput
           id='report-to'
-          type='date'
           value={to}
-          onChange={(event) =>
-            onChange({ to: event.target.value, rangePreset: undefined })
+          onChange={(value) =>
+            value === '' || /^\d{4}-\d{2}-\d{2}$/.test(value)
+              ? onChange({ to: value, rangePreset: undefined })
+              : undefined
           }
         />
       </div>

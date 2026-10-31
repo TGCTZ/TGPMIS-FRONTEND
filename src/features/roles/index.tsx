@@ -5,6 +5,7 @@ import { Eye, KeyRound, Lock, Pencil, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { fieldErrors, handleServerError } from '@/lib/handle-server-error'
 import { perm } from '@/lib/permissions'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -41,6 +42,7 @@ import { createRole, deleteRole, rolesQuery, updateRole } from './data/api'
 import { type Role } from './data/schema'
 
 export function Roles() {
+  const isMobile = useIsMobile()
   const queryClient = useQueryClient()
   const { data, isPending, isError, isFetching, isRefetchError, refetch } =
     useQuery(rolesQuery({ perPage: 100 }))
@@ -195,93 +197,104 @@ export function Roles() {
               </Alert>
             )}
             <div className='overflow-hidden rounded-md border bg-card text-card-foreground dark:bg-transparent dark:text-foreground'>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Role</TableHead>
-                    <TableHead className='text-center'>Permissions</TableHead>
-                    <TableHead className='text-center'>Users</TableHead>
-                    {/*
+              {isMobile ? (
+                <RoleCardList
+                  roles={roles}
+                  isPending={isPending}
+                  onView={setViewFor}
+                  rowActions={rowActions}
+                />
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Role</TableHead>
+                      <TableHead className='text-center'>Permissions</TableHead>
+                      <TableHead className='text-center'>Users</TableHead>
+                      {/*
                     No fixed width: the actions cell is a wrapping flex row, so
                     pinning the column narrow (it was `w-1`) forced the icons
                     to stack vertically. Auto layout sizes it to its content.
                   */}
-                    <TableHead className='text-center' />
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isPending ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={i}>
-                        <TableCell colSpan={4}>
-                          <Skeleton className='h-8 w-full' />
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : roles.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={4} className='h-24 text-center'>
-                        No roles found.
-                      </TableCell>
+                      <TableHead className='text-center' />
                     </TableRow>
-                  ) : (
-                    roles.map((role) => (
-                      <TableRow
-                        key={role.id}
-                        className='cursor-pointer'
-                        onClick={(event) => {
-                          // Ignore clicks on the actions menu, which sits inside
-                          // the row and opens its own surface.
-                          if (
-                            (event.target as HTMLElement).closest(
-                              'button, [role="menuitem"]'
-                            )
-                          ) {
-                            return
-                          }
-                          setViewFor(role)
-                        }}
-                      >
-                        <TableCell>
-                          <div className='flex items-center gap-2'>
-                            <span className='font-medium capitalize'>
-                              {role.name}
-                            </span>
-                            {!role.can_manage && (
-                              <Badge
-                                variant='outline'
-                                className='gap-1 text-muted-foreground'
-                                title={
-                                  role.is_protected
-                                    ? 'Protected: always holds every permission'
-                                    : 'Roles at your own level are managed by the level above'
-                                }
-                              >
-                                <Lock className='size-3' />
-                                {role.is_protected ? 'Protected' : 'Your level'}
-                              </Badge>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell className='text-center tabular-nums'>
-                          {role.permissions.length}
-                        </TableCell>
-                        <TableCell className='text-center tabular-nums'>
-                          {role.user_count}
-                        </TableCell>
-                        <TableCell className='text-center'>
-                          <div className='flex justify-center'>
-                            <DataTableRowActions
-                              actions={rowActions(role)}
-                              align='center'
-                            />
-                          </div>
+                  </TableHeader>
+                  <TableBody>
+                    {isPending ? (
+                      Array.from({ length: 5 }).map((_, i) => (
+                        <TableRow key={i}>
+                          <TableCell colSpan={4}>
+                            <Skeleton className='h-8 w-full' />
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : roles.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className='h-24 text-center'>
+                          No roles found.
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
+                    ) : (
+                      roles.map((role) => (
+                        <TableRow
+                          key={role.id}
+                          className='cursor-pointer'
+                          onClick={(event) => {
+                            // Ignore clicks on the actions menu, which sits inside
+                            // the row and opens its own surface.
+                            if (
+                              (event.target as HTMLElement).closest(
+                                'button, [role="menuitem"]'
+                              )
+                            ) {
+                              return
+                            }
+                            setViewFor(role)
+                          }}
+                        >
+                          <TableCell>
+                            <div className='flex items-center gap-2'>
+                              <span className='font-medium capitalize'>
+                                {role.name}
+                              </span>
+                              {!role.can_manage && (
+                                <Badge
+                                  variant='outline'
+                                  className='gap-1 text-muted-foreground'
+                                  title={
+                                    role.is_protected
+                                      ? 'Protected: always holds every permission'
+                                      : 'Roles at your own level are managed by the level above'
+                                  }
+                                >
+                                  <Lock className='size-3' />
+                                  {role.is_protected
+                                    ? 'Protected'
+                                    : 'Your level'}
+                                </Badge>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className='text-center tabular-nums'>
+                            {role.permissions.length}
+                          </TableCell>
+                          <TableCell className='text-center tabular-nums'>
+                            {role.user_count}
+                          </TableCell>
+                          <TableCell className='text-center'>
+                            <div className='flex justify-center'>
+                              <DataTableRowActions
+                                actions={rowActions(role)}
+                                align='center'
+                              />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              )}
             </div>
           </div>
         )}
@@ -395,5 +408,86 @@ export function Roles() {
         </DialogContent>
       </Dialog>
     </>
+  )
+}
+
+export function RoleCardList({
+  roles,
+  isPending,
+  onView,
+  rowActions,
+}: {
+  roles: Role[]
+  isPending: boolean
+  onView: (role: Role) => void
+  rowActions: (role: Role) => RowAction[]
+}) {
+  if (isPending) {
+    return (
+      <ul className='space-y-3 p-3' aria-label='Loading roles'>
+        {Array.from({ length: 5 }, (_, index) => (
+          <li key={index} className='space-y-3 rounded-md border p-4'>
+            <Skeleton className='h-5 w-2/5' />
+            <Skeleton className='h-4 w-full' />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  if (roles.length === 0) {
+    return (
+      <p className='p-6 text-center text-sm text-muted-foreground'>
+        No roles found.
+      </p>
+    )
+  }
+
+  return (
+    <ul className='divide-y'>
+      {roles.map((role) => (
+        <li key={role.id} className='space-y-3 p-4'>
+          <div className='flex items-start justify-between gap-3'>
+            <Button
+              variant='link'
+              className='h-auto min-w-0 justify-start p-0 text-start text-base font-medium whitespace-normal capitalize'
+              aria-label={`View role ${role.name}`}
+              onClick={() => onView(role)}
+            >
+              {role.name}
+            </Button>
+            <DataTableRowActions actions={rowActions(role)} />
+          </div>
+          {!role.can_manage && (
+            <Badge
+              variant='outline'
+              className='gap-1 text-muted-foreground'
+              title={
+                role.is_protected
+                  ? 'Protected: always holds every permission'
+                  : 'Roles at your own level are managed by the level above'
+              }
+            >
+              <Lock className='size-3' />
+              {role.is_protected ? 'Protected' : 'Your level'}
+            </Badge>
+          )}
+          <dl className='grid grid-cols-2 gap-3 text-sm'>
+            <div className='rounded-md bg-muted/50 p-3'>
+              <dt className='text-xs text-muted-foreground'>Permissions</dt>
+              <dd className='mt-1 font-semibold tabular-nums'>
+                {role.permissions.length}
+              </dd>
+            </div>
+            <div className='rounded-md bg-muted/50 p-3'>
+              <dt className='text-xs text-muted-foreground'>Users</dt>
+              <dd className='mt-1 font-semibold tabular-nums'>
+                {role.user_count}
+              </dd>
+            </div>
+          </dl>
+        </li>
+      ))}
+    </ul>
   )
 }
