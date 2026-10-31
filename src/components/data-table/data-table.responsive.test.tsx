@@ -149,7 +149,9 @@ describe('DataTable responsiveness', () => {
       onRowClick,
     })
 
-    await userEvent.click(screen.getByRole('button', { name: 'Row action' }))
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Row action', exact: true })
+    )
 
     expect(onAction).toHaveBeenCalledOnce()
     expect(onRowClick).not.toHaveBeenCalled()

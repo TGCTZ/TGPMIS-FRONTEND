@@ -1,3 +1,4 @@
+import '@/styles/index.css'
 import { Plus } from 'lucide-react'
 import { describe, expect, it } from 'vitest'
 import { render } from 'vitest-browser-react'
