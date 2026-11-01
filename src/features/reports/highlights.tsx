@@ -97,7 +97,7 @@ export function ReportHighlightsPage({
           description='Financial and operational report totals for the selected period.'
         />
         <div
-          className={`${brandPanelClassName} flex flex-wrap items-end gap-3 p-4 dark:bg-card dark:text-card-foreground`}
+          className={`${brandPanelClassName} grid grid-cols-[repeat(auto-fit,minmax(min(100%,10rem),1fr))] items-end gap-2 p-3 dark:bg-card dark:text-card-foreground`}
         >
           <ReportPeriodControls
             from={state.from}

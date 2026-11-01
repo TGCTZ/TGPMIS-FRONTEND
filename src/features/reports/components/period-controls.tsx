@@ -28,7 +28,7 @@ export function ReportPeriodControls({
 }) {
   return (
     <>
-      <div className='space-y-2'>
+      <div className='min-w-0 space-y-1.5'>
         <Label htmlFor='report-from'>From</Label>
         <DateInput
           id='report-from'
@@ -40,7 +40,7 @@ export function ReportPeriodControls({
           }
         />
       </div>
-      <div className='space-y-2'>
+      <div className='min-w-0 space-y-1.5'>
         <Label htmlFor='report-to'>To</Label>
         <DateInput
           id='report-to'
@@ -52,7 +52,7 @@ export function ReportPeriodControls({
           }
         />
       </div>
-      <div className='min-w-48 space-y-2'>
+      <div className='min-w-0 space-y-1.5'>
         <Label htmlFor='report-date-range'>Date range</Label>
         <Select
           value={periodPresetForRange(
@@ -72,7 +72,7 @@ export function ReportPeriodControls({
               })
           }}
         >
-          <SelectTrigger id='report-date-range'>
+          <SelectTrigger id='report-date-range' className='w-full'>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
