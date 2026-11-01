@@ -23,7 +23,12 @@ export function useUserIdentity() {
 
   const name = user?.full_name || user?.username || 'Signed out'
   const roles = user?.roles ?? []
-  const roleLabel = roles
+  // createsuperuser grants top-level access without assigning a Django group.
+  const displayRoles =
+    user?.is_superuser && !roles.includes('superadmin')
+      ? ['superadmin', ...roles]
+      : roles
+  const roleLabel = displayRoles
     .map((role) =>
       role
         .split(/[_\s-]+/)

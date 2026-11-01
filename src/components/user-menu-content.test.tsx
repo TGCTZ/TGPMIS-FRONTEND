@@ -30,4 +30,28 @@ describe('UserIdentity', () => {
       .element(screen.getByTitle('Role: Gemmologist · Lab Manager'))
       .toBeInTheDocument()
   })
+
+  it('shows a Django superuser without an assigned role group', async () => {
+    useAuthStore.getState().auth.setUser({
+      id: 2,
+      first_name: 'Samwel',
+      last_name: 'Mtakati',
+      full_name: 'Samwel Mtakati',
+      username: 'samwel',
+      email: 'samwel@example.com',
+      avatar: null,
+      is_active: true,
+      is_superuser: true,
+      roles: [],
+      permissions: [],
+      must_change_password: false,
+      must_complete_profile: false,
+    })
+
+    const screen = await render(<UserIdentity />)
+
+    await expect
+      .element(screen.getByTitle('Role: Superadmin'))
+      .toBeInTheDocument()
+  })
 })

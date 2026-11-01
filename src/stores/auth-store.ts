@@ -34,6 +34,8 @@ export interface AuthUser {
   bio?: string
   avatar: string | null
   is_active: boolean
+  /** Django superusers have top-level access even without an assigned role group. */
+  is_superuser?: boolean
   roles: string[]
   permissions: string[]
   /** First login, step one: the temporary password is still in use. */

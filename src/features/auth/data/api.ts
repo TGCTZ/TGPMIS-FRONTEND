@@ -23,6 +23,7 @@ const authUserSchema = z
     bio: z.string().default(''),
     avatar: z.string().nullable().default(null),
     is_active: z.boolean().default(true),
+    is_superuser: z.boolean().default(false),
     roles: z.array(z.string()).default([]),
     permissions: z.array(z.string()).default([]),
     must_change_password: z.boolean().default(false),
