@@ -20,13 +20,13 @@ export function FilterSelect({
 }) {
   const id = `report-${label.toLowerCase().replace(/ /g, '-')}`
   return (
-    <div className='min-w-44 space-y-2'>
+    <div className='min-w-0 space-y-1.5'>
       <Label htmlFor={id}>{label}</Label>
       <Select
         value={value ?? 'all'}
         onValueChange={(next) => onChange(next === 'all' ? undefined : next)}
       >
-        <SelectTrigger id={id}>
+        <SelectTrigger id={id} className='w-full'>
           <SelectValue placeholder={`All ${label.toLowerCase()}s`} />
         </SelectTrigger>
         <SelectContent>
