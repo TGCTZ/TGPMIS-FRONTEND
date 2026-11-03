@@ -90,9 +90,8 @@ export const reportSchema = z.object({
   /**
    * The second gemmologist, named beside the first on the certificate.
    *
-   * Nullable: a report can be closed when only one person saw the stone, and
-   * the certificate then prints a single name. Set at finalize time, not while
-   * the findings are being written — it is a sign-off, not a finding.
+   * Nullable for drafts and historical reports finalized before two signatories
+   * were required. Set at finalize time, not while findings are recorded.
    */
   verified_by: z.number().nullable().default(null),
   verified_by_label: z.string().nullable().default(null),

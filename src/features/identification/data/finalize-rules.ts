@@ -9,16 +9,18 @@ import { type IdentificationReport } from './schema'
  * the findings are being recorded, and so Finalize can refuse before spending a
  * round trip on a rejection.
  *
- * Deliberately short: a certificate quotes these four — what the stone is, what
- * it looks like, how big it is, and the verdict. Everything else is situational,
- * because a stone may legitimately defeat a test and still deserve a
- * certificate, which is why the form itself stays permissive.
+ * Drafts stay saveable while findings are incomplete. These answers become
+ * mandatory when the report is finalized.
  */
 const FINALIZE_REQUIRED_FIELDS = [
   { name: 'species', label: 'Specie / Group' },
+  { name: 'variety', label: 'variety' },
   { name: 'color', label: 'colour' },
+  { name: 'shape_cut', label: 'shape/cut' },
   { name: 'weight', label: 'weight' },
-  { name: 'conclusion', label: 'comments' },
+  { name: 'transparency', label: 'transparency' },
+  { name: 'optic_character', label: 'optic character' },
+  { name: 'nature_type', label: 'nature' },
 ] as const
 
 /** Field names the form should mark as needed before sign-off. */
@@ -36,9 +38,13 @@ export const FINALIZE_REQUIRED_NAMES: ReadonlySet<string> = new Set(
 export function missingForFinalize(report: IdentificationReport): string[] {
   const answered: Record<string, unknown> = {
     species: report.species,
+    variety: report.variety,
     color: report.color,
+    shape_cut: report.shape_cut,
     weight: report.stone_weight,
-    conclusion: report.conclusion.trim(),
+    transparency: report.transparency.trim(),
+    optic_character: report.optic_character.trim(),
+    nature_type: report.nature_type.trim(),
   }
 
   return FINALIZE_REQUIRED_FIELDS.filter((field) => !answered[field.name]).map(

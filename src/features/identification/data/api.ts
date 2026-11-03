@@ -70,12 +70,11 @@ export async function restoreReport(id: number): Promise<void> {
  *
  * `verified_by` names the second gemmologist. Asked for here rather than on the
  * findings form because it is a sign-off: this is the moment the report stops
- * being a draft. Optional — the API accepts a report signed by one person, and
- * the certificate then prints a single name.
+ * being a draft. A distinct second gemmologist is required to finalize.
  */
 export async function finalizeReport(
   id: number,
-  payload: { verified_by?: number | null } = {}
+  payload: { verified_by: number }
 ): Promise<IdentificationReport> {
   const res = await api.post(`/identification-reports/${id}/finalize`, payload)
   return reportSchema.parse(res.data)

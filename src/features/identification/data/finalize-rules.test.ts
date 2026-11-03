@@ -21,9 +21,14 @@ function report(overrides: Record<string, unknown> = {}) {
     report_number: 'TGC-2627-0001',
     is_finalized: false,
     species: 3,
+    variety: 6,
     stone_type_detail: { id: 5, name: 'Ruby' },
     color: 4,
+    shape_cut: 7,
     stone_weight: '2.500',
+    transparency: 'transparent',
+    optic_character: 'dr',
+    nature_type: 'natural',
     conclusion: 'Natural ruby.',
     ...overrides,
   })
@@ -41,16 +46,25 @@ describe('missingForFinalize', () => {
   it('names every unanswered field, not just the first', () => {
     const blank = report({
       species: null,
+      variety: null,
       color: null,
+      shape_cut: null,
       stone_weight: null,
+      transparency: '',
+      optic_character: '',
+      nature_type: '',
       conclusion: '',
     })
 
     expect(missingForFinalize(blank)).toEqual([
       'Specie / Group',
+      'variety',
       'colour',
+      'shape/cut',
       'weight',
-      'comments',
+      'transparency',
+      'optic character',
+      'nature',
     ])
   })
 
@@ -62,17 +76,20 @@ describe('missingForFinalize', () => {
     ])
   })
 
-  it('treats a whitespace-only conclusion as unwritten', () => {
-    expect(missingForFinalize(report({ conclusion: '   ' }))).toEqual([
-      'comments',
-    ])
+  it('allows empty or whitespace-only optional comments', () => {
+    expect(missingForFinalize(report({ conclusion: '' }))).toEqual([])
+    expect(missingForFinalize(report({ conclusion: '   ' }))).toEqual([])
   })
 
   it('marks exactly the required fields the form should flag', () => {
     expect([...FINALIZE_REQUIRED_NAMES].sort()).toEqual([
       'color',
-      'conclusion',
+      'nature_type',
+      'optic_character',
+      'shape_cut',
       'species',
+      'transparency',
+      'variety',
       'weight',
     ])
   })
