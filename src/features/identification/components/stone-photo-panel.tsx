@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ImageUp, Loader2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { serverMessageOr } from '@/lib/handle-server-error'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { setStonePhoto, stoneQuery } from '@/features/stones/data/api'
@@ -82,7 +83,15 @@ export function StonePhotoPanel({
   const shown = preview ?? stone?.photo ?? null
 
   return (
-    <div className='space-y-3 rounded-xl border bg-card p-4 shadow-sm'>
+    <div
+      role='group'
+      aria-label='Stone photograph'
+      aria-invalid={!isPending && !shown}
+      className={cn(
+        'space-y-3 rounded-xl border bg-card p-4 shadow-sm',
+        !isPending && !shown && 'border-destructive'
+      )}
+    >
       <div className='flex flex-wrap items-center justify-between gap-2 border-b pb-3'>
         <div className='flex items-center gap-2'>
           <h3 className='text-base font-semibold tracking-tight'>Photograph</h3>
@@ -154,7 +163,7 @@ export function StonePhotoPanel({
           />
         </div>
       ) : (
-        <p className='rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground'>
+        <p className='rounded-md border border-dashed border-destructive p-6 text-center text-sm text-muted-foreground'>
           No photograph yet. Add one before finalizing findings.
         </p>
       )}

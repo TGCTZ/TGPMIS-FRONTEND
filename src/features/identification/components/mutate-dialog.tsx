@@ -696,9 +696,7 @@ export function ReportMutateDialog({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className='sr-only'>Comments</FormLabel>
-                        <FormControl
-                          {...unansweredProps('conclusion', field.value)}
-                        >
+                        <FormControl>
                           <Textarea
                             rows={4}
                             placeholder='Add comments about the stone.'

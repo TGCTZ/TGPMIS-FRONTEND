@@ -24,7 +24,7 @@ import { finalizeReport, gemmologistCandidatesQuery } from '../data/api'
 import { listLabels, missingForFinalize } from '../data/finalize-rules'
 import { type IdentificationReport } from '../data/schema'
 
-/** Radix forbids an empty-string SelectItem value, so "nobody" needs one. */
+/** An unselected signatory is held in state until a candidate is chosen. */
 const NONE = 'none'
 
 type FinalizeDialogProps = {
@@ -42,9 +42,7 @@ type FinalizeDialogProps = {
  *
  * The second gemmologist is asked for here rather than on the findings form
  * because it is a sign-off, not a finding: this is the moment the report stops
- * being a draft. It is optional, and the certificate prints one name when it is
- * left empty — but the printed document claims the stone was "examined by at
- * least two qualified Gemmologists", so the dialog says plainly what is lost.
+ * being a draft. The second signatory is required for the certificate.
  */
 export function FinalizeReportDialog({
   open,
@@ -97,7 +95,7 @@ export function FinalizeReportDialog({
   const mutation = useMutation({
     mutationFn: () =>
       finalizeReport(currentRow.id, {
-        verified_by: verifiedBy === NONE ? null : Number(verifiedBy),
+        verified_by: Number(verifiedBy),
       }),
     onSuccess: async (report) => {
       toast.success(
@@ -152,11 +150,15 @@ export function FinalizeReportDialog({
         <div className='space-y-2'>
           <Label htmlFor='verified-by'>Second gemmologist</Label>
           <Select value={verifiedBy} onValueChange={setVerifiedBy}>
-            <SelectTrigger id='verified-by' className='w-full'>
+            <SelectTrigger
+              id='verified-by'
+              className='w-full'
+              aria-required='true'
+              aria-invalid={verifiedBy === NONE}
+            >
               <SelectValue placeholder='Who checked these findings?' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={NONE}>No second gemmologist</SelectItem>
               {candidates.map((candidate) => (
                 <SelectItem key={candidate.id} value={String(candidate.id)}>
                   {candidate.label}
@@ -166,20 +168,21 @@ export function FinalizeReportDialog({
           </Select>
           {isError && (
             <p className='text-xs text-destructive'>
-              The list of gemmologists could not be loaded. You can still
-              finalize with a single name.
+              The list of gemmologists could not be loaded. Try again before
+              finalizing.
             </p>
           )}
           {!isError && !isPending && candidates.length === 0 && (
-            <p className='text-xs text-muted-foreground'>
-              No other gemmologist is available to countersign.
+            <p className='text-xs text-destructive'>
+              No other gemmologist is available to countersign. Finalization
+              requires a second gemmologist.
             </p>
           )}
-          <p className='text-xs text-muted-foreground'>
-            {verifiedBy === NONE
-              ? 'The certificate will name only you. It states that at least two gemmologists examined the stone.'
-              : 'Both names are printed on the certificate and frozen into it.'}
-          </p>
+          {verifiedBy !== NONE && (
+            <p className='text-xs text-muted-foreground'>
+              Both names are printed on the certificate and frozen into it.
+            </p>
+          )}
         </div>
 
         <DialogFooter>
@@ -196,7 +199,10 @@ export function FinalizeReportDialog({
               mutation.isPending ||
               isStonePending ||
               isStoneError ||
-              missing.length > 0
+              missing.length > 0 ||
+              isPending ||
+              isError ||
+              verifiedBy === NONE
             }
           >
             {mutation.isPending ? 'Finalizing...' : 'Finalize'}
