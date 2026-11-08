@@ -15,20 +15,16 @@ const APP_TIMEZONE = 'Africa/Dar_es_Salaam'
 /**
  * The single currency the app deals in.
  *
- * The API still stores a per-record currency code (and validates only that it
- * is three characters), but the UI neither offers nor renders anything else -
- * a picker invites data this app has no way to convert or total correctly.
- * Widening to multi-currency means adding a picker here and, more importantly,
- * deciding what a mixed-currency total means.
+ * The API retains a currency field for gateway and report compatibility, but
+ * billing and payment records are restricted to TZS.
  */
 const DEFAULT_CURRENCY = 'TZS'
 
 /**
  * Format a monetary value.
  *
- * Falls back to `CODE 1234.00` for a currency code Intl does not recognise —
- * the API validates only that the code is three characters, so an unknown one
- * can reach the UI and must not throw.
+ * The optional currency argument keeps existing call sites compatible; API
+ * response schemas require TZS for monetary records.
  */
 export function formatMoney(
   value: number | null | undefined,

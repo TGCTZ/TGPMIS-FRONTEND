@@ -13,20 +13,26 @@ export const reportSectionSchema = z.object({
   description: z.string(),
   count: z.number(),
   missing_dates: z.number(),
-  amounts: z.array(z.object({ currency: z.string(), amount: z.string() })),
+  amounts: z.array(
+    z.object({ currency: z.literal('TZS'), amount: z.string() })
+  ),
   statuses: z.array(z.object({ status: z.string(), count: z.number() })),
   categories: z.array(
     z.object({
       name: z.string(),
       count: z.number(),
-      amounts: z.array(z.object({ currency: z.string(), amount: z.string() })),
+      amounts: z.array(
+        z.object({ currency: z.literal('TZS'), amount: z.string() })
+      ),
     })
   ),
   varieties: z.array(
     z.object({
       name: z.string(),
       count: z.number(),
-      amounts: z.array(z.object({ currency: z.string(), amount: z.string() })),
+      amounts: z.array(
+        z.object({ currency: z.literal('TZS'), amount: z.string() })
+      ),
     })
   ),
 })

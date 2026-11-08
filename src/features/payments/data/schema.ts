@@ -31,7 +31,7 @@ export const paymentSchema = z.object({
   bill_amount: z.string().nullable().default(null),
   paid_amount: z.string().nullable().default(null),
   bill_pay_opt: z.string().nullable().default(''),
-  currency: z.string().nullable().default('TZS'),
+  currency: z.literal('TZS').default('TZS'),
   coll_acc_num: z.string().nullable().default(''),
   trx_dt_tm: z.string().nullable().default(null),
   usd_pay_chnl: z.string().nullable().default(''),

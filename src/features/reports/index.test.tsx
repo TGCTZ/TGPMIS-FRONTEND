@@ -201,7 +201,7 @@ describe('Financial reports page', () => {
             {
               name: 'Ruby',
               count: 4,
-              amounts: [{ currency: 'USD', amount: '45.00' }],
+              amounts: [{ currency: 'TZS', amount: '45.00' }],
             },
           ],
         },

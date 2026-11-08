@@ -52,7 +52,7 @@ export const billSchema = z.object({
   items: z.array(billItemSchema).default([]),
   total_amount: z.string().nullable().default(null),
   amount_paid: z.string().nullable().default('0'),
-  currency: z.string().default('TZS'),
+  currency: z.literal('TZS').default('TZS'),
   status: z.string(),
   issued_at: z.string().nullable().default(null),
   expiry_at: z.string().nullable().default(null),
