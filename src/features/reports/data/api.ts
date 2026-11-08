@@ -57,3 +57,23 @@ export async function downloadReport(
     `${kind}-reports-${search.from}-${search.to}.${fileType}`
   )
 }
+
+/** Download the totals shown on one highlights group, without detail rows. */
+export async function downloadHighlights(
+  kind: ReportKind,
+  search: ReportSearch,
+  fileType: 'xlsx' | 'pdf',
+  onProgress?: (progress: DownloadProgressEvent) => void
+) {
+  const response = await api.get(`/reports/${kind}/highlights/export`, {
+    params: { ...reportParams(search), file_type: fileType },
+    responseType: 'blob',
+    onDownloadProgress: onProgress
+      ? (event) => onProgress({ loaded: event.loaded, total: event.total })
+      : undefined,
+  })
+  saveBlob(
+    response.data as Blob,
+    `${kind}-highlights-${search.from}-${search.to}.${fileType}`
+  )
+}

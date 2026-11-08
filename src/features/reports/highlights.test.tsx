@@ -6,7 +6,12 @@ import { formatReportBadgeMoney } from './data/format'
 import { type ReportHighlightsSearch, type ReportSearch } from './data/schema'
 import { ReportHighlightsPage } from './highlights'
 
-const mocks = vi.hoisted(() => ({ fetch: vi.fn() }))
+const mocks = vi.hoisted(() => ({
+  fetch: vi.fn(),
+  download: vi.fn(),
+  toastSuccess: vi.fn(),
+  toastError: vi.fn(),
+}))
 
 vi.mock('./data/api', () => ({
   reportsQuery: (kind: string, search: ReportSearch) => ({
@@ -14,6 +19,10 @@ vi.mock('./data/api', () => ({
     retry: false,
     queryFn: () => mocks.fetch(kind, search),
   }),
+  downloadHighlights: (...args: unknown[]) => mocks.download(...args),
+}))
+vi.mock('sonner', () => ({
+  toast: { success: mocks.toastSuccess, error: mocks.toastError },
 }))
 vi.mock('@/components/layout/header', () => ({
   Header: ({ children }: { children: React.ReactNode }) => (
@@ -119,12 +128,13 @@ async function renderPage(
 describe('report Highlights page', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mocks.download.mockResolvedValue(undefined)
     mocks.fetch.mockImplementation((kind: string) =>
       Promise.resolve(kind === 'financial' ? financialData : operationalData)
     )
   })
 
-  it('shows both groups, preserves summary content, and has no downloads', async () => {
+  it('shows both groups, preserves summary content, and offers downloads', async () => {
     const { screen } = await renderPage([
       ...financialPermissions,
       ...operationalPermissions,
@@ -133,11 +143,11 @@ describe('report Highlights page', () => {
       .element(screen.getByText('GemID Perfomance Highlights'))
       .toBeInTheDocument()
     await expect
-      .element(screen.getByRole('heading', { name: 'Financial reports' }))
-      .not.toBeInTheDocument()
+      .element(screen.getByRole('heading', { name: 'Financial' }))
+      .toBeInTheDocument()
     await expect
-      .element(screen.getByRole('heading', { name: 'Operational reports' }))
-      .not.toBeInTheDocument()
+      .element(screen.getByRole('heading', { name: 'Operational' }))
+      .toBeInTheDocument()
     await expect
       .element(screen.getByRole('region', { name: 'Operational reports' }))
       .toHaveClass(/border-t-4/, /border-gold/)
@@ -172,11 +182,19 @@ describe('report Highlights page', () => {
       .element(screen.getByText('Amount (TZS)', { exact: true }).first())
       .toBeInTheDocument()
     await expect
-      .element(screen.getByRole('button', { name: 'Excel' }))
-      .not.toBeInTheDocument()
+      .element(
+        screen.getByRole('button', {
+          name: 'Download financial highlights as Excel',
+        })
+      )
+      .toBeInTheDocument()
     await expect
-      .element(screen.getByRole('button', { name: 'PDF' }))
-      .not.toBeInTheDocument()
+      .element(
+        screen.getByRole('button', {
+          name: 'Download operational highlights as PDF',
+        })
+      )
+      .toBeInTheDocument()
     expect(mocks.fetch).toHaveBeenCalledWith(
       'financial',
       expect.objectContaining({
@@ -222,6 +240,32 @@ describe('report Highlights page', () => {
     )?.[1] as ReportSearch
     expect(financialSearch.stoneType).toBeUndefined()
     expect(operationalSearch.status).toBeUndefined()
+    await screen
+      .getByRole('button', { name: 'Download financial highlights as Excel' })
+      .click()
+    await screen
+      .getByRole('button', { name: 'Download operational highlights as PDF' })
+      .click()
+    expect(mocks.download).toHaveBeenCalledWith(
+      'financial',
+      expect.objectContaining({
+        from: '2026-09-01',
+        to: '2026-09-30',
+        status: 'paid',
+      }),
+      'xlsx',
+      expect.any(Function)
+    )
+    expect(mocks.download).toHaveBeenCalledWith(
+      'operational',
+      expect.objectContaining({
+        from: '2026-09-01',
+        to: '2026-09-30',
+        stoneType: 7,
+      }),
+      'pdf',
+      expect.any(Function)
+    )
     await screen.getByLabelText('From').fill('2026-08-01')
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -240,6 +284,13 @@ describe('report Highlights page', () => {
       .element(screen.getByText('Stones registered'))
       .not.toBeInTheDocument()
     expect(mocks.fetch.mock.calls.map(([kind]) => kind)).toEqual(['financial'])
+    await expect
+      .element(
+        screen.getByRole('button', {
+          name: 'Download operational highlights as Excel',
+        })
+      )
+      .not.toBeInTheDocument()
   })
 
   it('requests only the operational report for an operational-only user', async () => {
@@ -279,5 +330,19 @@ describe('report Highlights page', () => {
     await expect
       .element(screen.getByRole('button', { name: 'Retry' }))
       .toBeInTheDocument()
+    await expect
+      .element(
+        screen.getByRole('button', {
+          name: 'Download financial highlights as Excel',
+        })
+      )
+      .toBeDisabled()
+    await expect
+      .element(
+        screen.getByRole('button', {
+          name: 'Download operational highlights as Excel',
+        })
+      )
+      .toBeEnabled()
   })
 })

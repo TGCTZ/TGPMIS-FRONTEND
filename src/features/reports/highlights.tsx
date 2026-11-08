@@ -1,9 +1,14 @@
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
+import { Download } from 'lucide-react'
+import { toast } from 'sonner'
 import { getCurrentPermissions } from '@/lib/authz'
+import { useDownloadFeedback } from '@/lib/download-feedback'
 import { serverMessageOr } from '@/lib/handle-server-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { brandPanelClassName } from '@/components/layout/brand-panel'
 import { Header } from '@/components/layout/header'
@@ -14,7 +19,7 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { FilterSelect } from './components/filter-select'
 import { ReportPeriodControls } from './components/period-controls'
 import { SummaryCards } from './components/summary-cards'
-import { reportsQuery } from './data/api'
+import { downloadHighlights, reportsQuery } from './data/api'
 import { canAccessReport, reportConfigs, type ReportKind } from './data/config'
 import { defaultPeriod, periodProblem } from './data/period'
 import {
@@ -146,6 +151,7 @@ export function ReportHighlightsPage({
             {financialAllowed && (
               <SummaryGroup
                 kind='financial'
+                search={financialSearch}
                 sections={financialQuery.data?.sections}
                 isPending={financialQuery.isPending}
                 isPlaceholderData={financialQuery.isPlaceholderData}
@@ -156,6 +162,7 @@ export function ReportHighlightsPage({
             {operationalAllowed && (
               <SummaryGroup
                 kind='operational'
+                search={operationalSearch}
                 showDivider={financialAllowed}
                 sections={operationalQuery.data?.sections}
                 isPending={operationalQuery.isPending}
@@ -173,6 +180,7 @@ export function ReportHighlightsPage({
 
 function SummaryGroup({
   kind,
+  search,
   showDivider = false,
   sections,
   isPending,
@@ -181,6 +189,7 @@ function SummaryGroup({
   onRetry,
 }: {
   kind: ReportKind
+  search: ReportSearch
   showDivider?: boolean
   sections?: ReportSection[]
   isPending: boolean
@@ -188,6 +197,51 @@ function SummaryGroup({
   error: Error | null
   onRetry: () => void
 }) {
+  const [exporting, setExporting] = useState<'xlsx' | 'pdf' | null>(null)
+  const feedback = useDownloadFeedback()
+
+  async function exportFile(fileType: 'xlsx' | 'pdf') {
+    setExporting(fileType)
+    feedback.start()
+    try {
+      await downloadHighlights(kind, search, fileType, feedback.report)
+      toast.success('Highlights download is ready.')
+    } catch (downloadError) {
+      if (
+        downloadError &&
+        typeof downloadError === 'object' &&
+        'response' in downloadError
+      ) {
+        const response = (downloadError as { response?: { data?: unknown } })
+          .response
+        if (response?.data instanceof Blob) {
+          try {
+            const payload = JSON.parse(await response.data.text()) as {
+              detail?: string | string[]
+            }
+            toast.error(
+              Array.isArray(payload.detail)
+                ? payload.detail.join(' ')
+                : (payload.detail ?? 'Could not download these highlights.')
+            )
+            return
+          } catch {
+            // The server can also return a non-JSON error body.
+          }
+        }
+      }
+      toast.error(
+        serverMessageOr(
+          downloadError,
+          'Could not download these highlights. Please try again.'
+        )
+      )
+    } finally {
+      feedback.finish()
+      setExporting(null)
+    }
+  }
+
   return (
     <section
       className={
@@ -195,6 +249,45 @@ function SummaryGroup({
       }
       aria-label={reportConfigs[kind].title}
     >
+      <PageHeading
+        title={kind === 'financial' ? 'Financial' : 'Operational'}
+        className='p-2 sm:p-3'
+      >
+        {(['xlsx', 'pdf'] as const).map((fileType) => (
+          <Button
+            key={fileType}
+            variant={fileType === 'xlsx' ? 'success' : 'default'}
+            className='relative overflow-hidden'
+            aria-label={`Download ${kind} highlights as ${fileType === 'xlsx' ? 'Excel' : 'PDF'}`}
+            disabled={
+              !sections ||
+              isPending ||
+              isPlaceholderData ||
+              !!error ||
+              !!exporting
+            }
+            onClick={() => void exportFile(fileType)}
+          >
+            <Download className='size-4' />
+            {exporting === fileType && feedback.visible
+              ? feedback.phase === 'preparing'
+                ? 'Preparing…'
+                : feedback.percent === null
+                  ? 'Downloading…'
+                  : `Downloading ${feedback.percent}%`
+              : fileType === 'xlsx'
+                ? 'Excel'
+                : 'PDF'}
+            {exporting === fileType && feedback.visible && (
+              <Progress
+                value={feedback.percent ?? undefined}
+                label={`${kind} highlights ${fileType === 'xlsx' ? 'Excel' : 'PDF'} download progress`}
+                className='absolute inset-x-0 bottom-0 h-1 rounded-none'
+              />
+            )}
+          </Button>
+        ))}
+      </PageHeading>
       {isPlaceholderData && (
         <p role='status' className='text-sm font-medium text-gold'>
           Updating report...
