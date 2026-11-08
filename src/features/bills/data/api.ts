@@ -28,7 +28,7 @@ const billPreviewSchema = z.object({
     )
     .default([]),
   total: z.string().nullable().default('0'),
-  currency: z.string().default('TZS'),
+  currency: z.literal('TZS').default('TZS'),
   /** Reasons the order cannot be billed. Empty means it can. */
   blockers: z.array(z.string()).default([]),
 })

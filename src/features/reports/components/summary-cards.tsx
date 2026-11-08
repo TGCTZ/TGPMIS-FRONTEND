@@ -112,9 +112,6 @@ function GroupedSummary({
 
 function GroupedSummaryTable({ rows }: { rows: ReportSection['categories'] }) {
   const rowTone = 'border-amber-200/70 dark:border-amber-800/70'
-  const currencies = Array.from(
-    new Set(rows.flatMap((row) => row.amounts.map((amount) => amount.currency)))
-  ).sort()
 
   return (
     <div className='overflow-x-auto rounded-lg border border-white/60 bg-white dark:border-white/10 dark:bg-slate-950/80'>
@@ -130,7 +127,7 @@ function GroupedSummaryTable({ rows }: { rows: ReportSection['categories'] }) {
               Count
             </th>
             <th scope='col' className='px-3 py-2 text-right font-semibold'>
-              Amount{currencies.length ? ` (${currencies.join(', ')})` : ''}
+              Amount (TZS)
             </th>
           </tr>
         </thead>
@@ -144,31 +141,12 @@ function GroupedSummaryTable({ rows }: { rows: ReportSection['categories'] }) {
                 {row.count.toLocaleString('en-TZ')}
               </td>
               <td className='px-3 py-2 text-right font-semibold tabular-nums'>
-                {currencies.length ? (
-                  <div className='flex flex-wrap justify-end gap-2'>
-                    {currencies.map((currency) => {
-                      const amount = row.amounts.find(
-                        (item) => item.currency === currency
-                      )
-                      return amount ? (
-                        <Badge
-                          key={currency}
-                          className='border-emerald-300 bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-800 shadow-sm dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200'
-                        >
-                          {Math.round(Number(amount.amount)).toLocaleString(
-                            'en-TZ'
-                          )}
-                        </Badge>
-                      ) : (
-                        <span
-                          key={currency}
-                          className='text-slate-500 dark:text-slate-400'
-                        >
-                          —
-                        </span>
-                      )
-                    })}
-                  </div>
+                {row.amounts[0] ? (
+                  <Badge className='border-emerald-300 bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200'>
+                    {Math.round(Number(row.amounts[0].amount)).toLocaleString(
+                      'en-TZ'
+                    )}
+                  </Badge>
                 ) : (
                   '—'
                 )}

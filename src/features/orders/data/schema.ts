@@ -39,8 +39,8 @@ export const orderSchema = z.object({
   bill_number: z.string().nullable().default(null),
   /** Total amount charged by the order's bill, as a decimal string. */
   bill_total_amount: z.string().nullable().default(null),
-  /** Currency used by the bill. */
-  bill_currency: z.string().nullable().default(null),
+  /** A billed order is always charged in TZS. */
+  bill_currency: z.literal('TZS').nullable().default(null),
   /** Earliest time a submitted bill without a control number can be copied. */
   copy_available_at: z.string().nullable().default(null),
   /**
