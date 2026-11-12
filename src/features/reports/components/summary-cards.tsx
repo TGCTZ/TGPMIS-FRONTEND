@@ -69,7 +69,16 @@ export function SummaryCards({
                 />
               )}
               {section.varieties.length > 0 && (
-                <GroupedSummary title='Varieties' rows={section.varieties} />
+                <GroupedSummary
+                  title='Varieties'
+                  rows={
+                    section.key === 'certificates'
+                      ? [...section.varieties].sort(
+                          (left, right) => right.count - left.count
+                        )
+                      : section.varieties
+                  }
+                />
               )}
             </div>
             {section.missing_dates > 0 && (
