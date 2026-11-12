@@ -36,13 +36,10 @@ export function SimulatePaymentDialog({
   const mutation = useMutation({
     mutationFn: () => simulateBillPayment(bill.id),
     onSuccess: async (updated) => {
-      toast.success(
-        `${updated.bill_number} has been settled`,
-        {
-          description:
-            'Every stone on the order has moved to paid and is ready for findings.',
-        }
-      )
+      toast.success(`${updated.bill_number} has been settled`, {
+        description:
+          'Every stone on the order has moved to paid and is ready for findings.',
+      })
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['bills'] }),
         queryClient.invalidateQueries({ queryKey: ['payments'] }),
