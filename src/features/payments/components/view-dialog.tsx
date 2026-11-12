@@ -47,7 +47,7 @@ export function PaymentViewDialog({
           <DialogTitle className='flex items-center gap-2'>
             {payment.trx_id || 'Payment'}
             {payment.is_processed ? (
-              <StatusBadge tone='success'>Processed</StatusBadge>
+              <StatusBadge tone='success'>Paid</StatusBadge>
             ) : (
               <StatusBadge tone='warning'>Unprocessed</StatusBadge>
             )}

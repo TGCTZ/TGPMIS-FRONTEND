@@ -235,16 +235,12 @@ export function ReportsPage({ kind, search, onChange }: Props) {
                   <FilterSelect
                     label='Bill status'
                     value={state.status}
-                    choices={[
-                      'pending',
-                      'partially_paid',
-                      'paid',
-                      'cancelled',
-                      'expired',
-                    ].map((status) => ({
-                      id: status,
-                      label: status.replace(/_/g, ' '),
-                    }))}
+                    choices={['pending', 'paid', 'cancelled', 'expired'].map(
+                      (status) => ({
+                        id: status,
+                        label: status.replace(/_/g, ' '),
+                      })
+                    )}
                     onChange={(value) => changeFilters({ status: value })}
                   />
                 )}

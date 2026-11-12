@@ -62,11 +62,11 @@ export function PaymentsTable({
         }
       >
         <SelectTrigger className='h-8 w-40'>
-          <SelectValue placeholder='Processing' />
+          <SelectValue placeholder='Payment status' />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value='all'>All payments</SelectItem>
-          <SelectItem value='1'>Processed</SelectItem>
+          <SelectItem value='1'>Paid</SelectItem>
           <SelectItem value='0'>Unprocessed</SelectItem>
         </SelectContent>
       </Select>

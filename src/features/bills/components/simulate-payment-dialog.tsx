@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FlaskConical } from 'lucide-react'
 import { toast } from 'sonner'
@@ -13,8 +12,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { simulateBillPayment } from '../data/api'
 import { type Bill } from '../data/schema'
 
@@ -24,19 +21,7 @@ type SimulatePaymentDialogProps = {
   bill: Bill
 }
 
-/**
- * Settle a bill without the gateway. Development only.
- *
- * Only rendered where `/config` says simulation is on, and the endpoint answers
- * 404 otherwise — so the button cannot exist on a deployment that must never
- * have it, whichever way you arrive.
- *
- * The amount is editable because **partial payment has no other route**. The
- * management command always pays in full, and `PARTIALLY_PAID` is a real state
- * the system reaches that nothing else can produce offline — so the Bills
- * progress bar, the part-paid badge and the top-up path would otherwise never
- * be exercised before production.
- */
+/** Settle the outstanding bill balance without the gateway. Development only. */
 export function SimulatePaymentDialog({
   open,
   onOpenChange,
@@ -48,33 +33,13 @@ export function SimulatePaymentDialog({
   const paid = Number(bill.amount_paid ?? 0)
   const outstanding = Math.max(0, total - paid)
 
-  const [amount, setAmount] = useState('')
-
-  // Blank means "the balance", which is what the API defaults to. Keeping the
-  // field empty rather than pre-filling it means the common case needs no
-  // typing and no clearing.
-  const value = amount.trim() === '' ? outstanding : Number(amount)
-  const isValid = Number.isFinite(value) && value > 0
-
   const mutation = useMutation({
-    mutationFn: () =>
-      simulateBillPayment(bill.id, amount.trim() === '' ? undefined : amount),
+    mutationFn: () => simulateBillPayment(bill.id),
     onSuccess: async (updated) => {
-      const settled = updated.status === 'paid'
-      toast.success(
-        settled
-          ? `${updated.bill_number} has been settled`
-          : `${updated.bill_number} is partly paid`,
-        {
-          description: settled
-            ? 'Every stone on the order has moved to paid and is ready for findings.'
-            : `${formatMoney(
-                Number(updated.total_amount ?? 0) -
-                  Number(updated.amount_paid ?? 0),
-                updated.currency
-              )} still outstanding. The stones stay billed until it is settled.`,
-        }
-      )
+      toast.success(`${updated.bill_number} has been settled`, {
+        description:
+          'Every stone on the order has moved to paid and is ready for findings.',
+      })
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['bills'] }),
         queryClient.invalidateQueries({ queryKey: ['payments'] }),
@@ -115,7 +80,7 @@ export function SimulatePaymentDialog({
             </dd>
           </div>
           <div>
-            <dt className='text-xs text-muted-foreground'>Paid</dt>
+            <dt className='text-xs text-muted-foreground'>Received</dt>
             <dd className='tabular-nums'>{formatMoney(paid, bill.currency)}</dd>
           </div>
           <div>
@@ -126,24 +91,8 @@ export function SimulatePaymentDialog({
           </div>
         </dl>
 
-        <div className='space-y-2'>
-          <Label htmlFor='simulate-amount'>Amount to pay</Label>
-          <Input
-            id='simulate-amount'
-            type='number'
-            min='0.01'
-            step='0.01'
-            value={amount}
-            onChange={(event) => setAmount(event.target.value)}
-            placeholder={String(outstanding)}
-          />
-          <p className='text-xs text-muted-foreground'>
-            {amount.trim() === ''
-              ? 'Leave blank to settle the balance in full.'
-              : value < outstanding
-                ? 'Less than the balance — the bill will read as partly paid and the stones stay billed.'
-                : 'Settles the bill. Anything above the balance is recorded as paid.'}
-          </p>
+        <div className='rounded-md border p-3 text-sm text-muted-foreground'>
+          This will simulate payment of the full outstanding balance.
         </div>
 
         <DialogFooter>
@@ -157,11 +106,11 @@ export function SimulatePaymentDialog({
           <Button
             variant='success'
             onClick={() => mutation.mutate()}
-            disabled={!isValid || mutation.isPending}
+            disabled={mutation.isPending}
           >
             {mutation.isPending
               ? 'Paying...'
-              : `Pay ${formatMoney(value, bill.currency)}`}
+              : `Pay ${formatMoney(outstanding, bill.currency)}`}
           </Button>
         </DialogFooter>
       </DialogContent>

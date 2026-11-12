@@ -153,20 +153,9 @@ function BillsContent() {
               if (row.kind === 'bill') {
                 const bill = billSchema.parse(row.detail)
                 const total = Number(bill.total_amount ?? 0)
-                const paid = Number(bill.amount_paid ?? 0)
                 return (
-                  <div className='w-full min-w-0 space-y-1.5 tabular-nums'>
-                    <div>{formatMoney(total, bill.currency)}</div>
-                    <Progress
-                      value={paid}
-                      max={total}
-                      label={`Payment progress for ${bill.bill_number}`}
-                    />
-                    <div className='text-xs text-muted-foreground'>
-                      {paid > 0
-                        ? `${formatMoney(paid, bill.currency)} paid`
-                        : 'Nothing paid'}
-                    </div>
+                  <div className='tabular-nums'>
+                    {formatMoney(total, bill.currency)}
                   </div>
                 )
               }

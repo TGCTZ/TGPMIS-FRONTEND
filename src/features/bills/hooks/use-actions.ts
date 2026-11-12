@@ -49,10 +49,7 @@ export function useBillActions(bill: Bill | null): RowAction[] {
       tone: 'destructive',
       permission: perm('bills', 'delete'),
       onSelect: () => select('delete'),
-      hidden:
-        bill.status === 'paid' ||
-        bill.status === 'partially_paid' ||
-        Number(bill.amount_paid ?? 0) > 0,
+      hidden: bill.status === 'paid' || Number(bill.amount_paid ?? 0) > 0,
       separatorBefore: true,
     },
   ]

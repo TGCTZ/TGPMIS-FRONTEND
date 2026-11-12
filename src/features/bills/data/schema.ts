@@ -8,7 +8,6 @@ import { z } from 'zod'
  */
 export const BILL_STATUS_LABELS: Record<string, string> = {
   pending: 'Pending',
-  partially_paid: 'Partially paid',
   paid: 'Paid',
   cancelled: 'Cancelled',
 }

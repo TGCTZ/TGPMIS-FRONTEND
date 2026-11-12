@@ -268,7 +268,7 @@ There are five tones, and every status is one of them:
 | Tone | Means | Examples |
 | --- | --- | --- |
 | `success` | Arrived where it was going | paid, certified, collected, issued |
-| `warning` | Paused, partial, or waiting | on hold, partly paid, awaiting payment |
+| `warning` | Paused or waiting | on hold, awaiting payment |
 | `danger` | Stopped or withdrawn | cancelled, revoked, expired |
 | `info` | Under way | under identification, in findings |
 | `neutral` | An ordinary step with no news in it | received, pending, draft |
@@ -279,7 +279,6 @@ A feature does not write a badge. It writes a **map**, and
 ```tsx
 const TONES: Record<string, StatusTone> = {
   pending: 'warning',
-  partially_paid: 'warning',
   paid: 'success',
   cancelled: 'danger',
 }

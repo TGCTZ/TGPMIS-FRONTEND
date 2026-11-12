@@ -22,7 +22,7 @@ export const statusToneVariants = cva(
       tone: {
         /** Arrived where it was going: paid, certified, collected, issued. */
         success: 'border-success-border bg-success-subtle text-success-text',
-        /** Paused or short: on hold, partly paid, awaiting something. */
+        /** Paused or waiting. */
         warning: 'border-warning-border bg-warning-subtle text-warning-text',
         /** Stopped or withdrawn: cancelled, revoked, expired, deleted. */
         danger: 'border-danger-border bg-danger-subtle text-danger-text',
