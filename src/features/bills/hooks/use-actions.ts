@@ -51,7 +51,6 @@ export function useBillActions(bill: Bill | null): RowAction[] {
       onSelect: () => select('delete'),
       hidden:
         bill.status === 'paid' ||
-        bill.status === 'partially_paid' ||
         Number(bill.amount_paid ?? 0) > 0,
       separatorBefore: true,
     },

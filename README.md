@@ -52,7 +52,7 @@ Full setup and the common first-run failures:
 - **The lab pipeline** — identification, then billing, then findings, then
   certification, with worklists integrated into the relevant module pages
 - **Billing through GePG** — control numbers issued by the gateway, payment
-  notifications settled against the bill, partial payments supported
+  notifications recorded against bills, paid status only after full settlement
 - **Certificates** — issued per stone, with a PDF and a public verification page
 - **Reports** — financial and operational report pages with permission-filtered sections, date filters, tables, and XLSX/PDF exports
 - **Staff-created accounts** — no sign-up; an administrator creates an account

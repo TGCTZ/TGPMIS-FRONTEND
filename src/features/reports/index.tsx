@@ -237,7 +237,6 @@ export function ReportsPage({ kind, search, onChange }: Props) {
                     value={state.status}
                     choices={[
                       'pending',
-                      'partially_paid',
                       'paid',
                       'cancelled',
                       'expired',

@@ -119,7 +119,6 @@ export function ReportHighlightsPage({
                 value={state.status}
                 choices={[
                   'pending',
-                  'partially_paid',
                   'paid',
                   'cancelled',
                   'expired',

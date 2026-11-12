@@ -58,17 +58,11 @@ export const billPreviewQuery = (orderId: number) =>
  *
  * The server answers 404 unless it has both DEBUG and GEPG_SIMULATE on, so this
  * cannot reach a deployment that must never have it. Omit `amount` to pay the
- * balance outstanding; pass less to produce a part-paid bill, which nothing
- * else in the system can do offline.
+ * balance outstanding. The simulation always pays the outstanding balance in
+ * full so the test path matches the system's paid-or-pending bill states.
  */
-export async function simulateBillPayment(
-  id: number,
-  amount?: string
-): Promise<Bill> {
-  const res = await api.post(
-    `/bills/${id}/simulate-payment`,
-    amount ? { amount } : {}
-  )
+export async function simulateBillPayment(id: number): Promise<Bill> {
+  const res = await api.post(`/bills/${id}/simulate-payment`, {})
   return billSchema.parse(res.data)
 }
 
