@@ -50,8 +50,6 @@ describe('payment status labels', () => {
       />
     )
 
-    await expect
-      .element(screen.getByText('Paid').first())
-      .toHaveTextContent('Paid')
+    await expect.element(screen.getByText('Paid').first()).toBeInTheDocument()
   })
 })
