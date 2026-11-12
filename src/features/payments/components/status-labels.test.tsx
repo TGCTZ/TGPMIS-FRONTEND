@@ -7,6 +7,7 @@ import { PaymentViewDialog } from './view-dialog'
 
 vi.mock('@/components/data-table', () => ({
   DataTable: ({ toolbar }: { toolbar: ReactNode }) => <div>{toolbar}</div>,
+  DataTableColumnHeader: ({ title }: { title: string }) => <span>{title}</span>,
   DataTableRowActions: () => null,
 }))
 
