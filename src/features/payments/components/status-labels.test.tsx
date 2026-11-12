@@ -50,6 +50,8 @@ describe('payment status labels', () => {
       />
     )
 
-    await expect.element(screen.getByText('Paid')).toBeInTheDocument()
+    await expect
+      .element(screen.locator('[data-slot="status-badge"]'))
+      .toHaveTextContent('Paid')
   })
 })
