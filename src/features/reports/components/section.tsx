@@ -96,11 +96,16 @@ export function ReportSectionCard({
         </div>
         {summary.missing_dates > 0 && (
           <Alert>
-            <AlertTitle>Records without an event date</AlertTitle>
+            <AlertTitle>
+              {search.search?.trim()
+                ? 'Matching records without an event date'
+                : 'Records without an event date'}
+            </AlertTitle>
             <AlertDescription>
-              {summary.missing_dates} undated records match the other filters
-              across all dates. They cannot be assigned to this period and are
-              excluded.
+              {summary.missing_dates} undated records match the other filters.
+              {search.search?.trim()
+                ? ' They are included because search covers all dates.'
+                : ' They cannot be assigned to this period and are excluded.'}
             </AlertDescription>
           </Alert>
         )}

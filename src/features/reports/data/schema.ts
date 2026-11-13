@@ -71,6 +71,7 @@ export const reportSearchSchema = z.object({
   rangePreset: dateRangePresetSchema.optional().catch(undefined),
   section: z.string().optional().catch(undefined),
   status: z.string().optional().catch(undefined),
+  search: z.string().optional().catch(''),
   stoneType: z.coerce.number().int().positive().optional().catch(undefined),
   page: z.number().int().positive().optional().catch(1),
   pageSize: z.number().int().min(1).max(100).optional().catch(10),
