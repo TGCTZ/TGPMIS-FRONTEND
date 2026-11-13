@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
-import { Download } from 'lucide-react'
+import { Download, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { useDownloadFeedback } from '@/lib/download-feedback'
 import { serverMessageOr } from '@/lib/handle-server-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { brandPanelClassName } from '@/components/layout/brand-panel'
@@ -67,7 +68,9 @@ export function ReportsPage({ kind, search, onChange }: Props) {
     page: search.page ?? 1,
     pageSize: search.pageSize ?? 10,
   }
-  const problem = periodProblem(state.from, state.to)
+  const problem = state.search?.trim()
+    ? null
+    : periodProblem(state.from, state.to)
   const query = useQuery({ ...reportsQuery(kind, state), enabled: !problem })
   const [exporting, setExporting] = useState<'xlsx' | 'pdf' | null>(null)
   const feedback = useDownloadFeedback()
@@ -157,64 +160,82 @@ export function ReportsPage({ kind, search, onChange }: Props) {
         <ProfileDropdown />
       </Header>
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
-        <PageHeading title={config.title} description={config.description}>
-          <div className='flex gap-2'>
-            <Button
-              variant='success'
-              className='relative overflow-hidden'
-              disabled={
-                !data ||
-                !!problem ||
-                query.isFetching ||
-                !!exporting ||
-                totalRows > 10000
-              }
-              onClick={() => void exportFile('xlsx')}
-            >
-              <Download className='size-4' />
-              {exporting === 'xlsx' && feedback.visible
-                ? feedback.phase === 'preparing'
-                  ? 'Preparing…'
-                  : feedback.percent === null
-                    ? 'Downloading…'
-                    : `Downloading ${feedback.percent}%`
-                : 'Excel'}
-              {exporting === 'xlsx' && feedback.visible && (
-                <Progress
-                  value={feedback.percent ?? undefined}
-                  label='Excel report download progress'
-                  className='absolute inset-x-0 bottom-0 h-1 rounded-none'
-                />
-              )}
-            </Button>
-            <Button
-              variant='default'
-              className='relative overflow-hidden bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-institutional dark:text-institutional-foreground dark:hover:bg-institutional/90'
-              disabled={
-                !data ||
-                !!problem ||
-                query.isFetching ||
-                !!exporting ||
-                totalRows > 10000
-              }
-              onClick={() => void exportFile('pdf')}
-            >
-              <Download className='size-4' />
-              {exporting === 'pdf' && feedback.visible
-                ? feedback.phase === 'preparing'
-                  ? 'Preparing…'
-                  : feedback.percent === null
-                    ? 'Downloading…'
-                    : `Downloading ${feedback.percent}%`
-                : 'PDF'}
-              {exporting === 'pdf' && feedback.visible && (
-                <Progress
-                  value={feedback.percent ?? undefined}
-                  label='PDF report download progress'
-                  className='absolute inset-x-0 bottom-0 h-1 rounded-none'
-                />
-              )}
-            </Button>
+        <PageHeading
+          title={config.title}
+          description={config.description}
+          className='sm:flex-nowrap sm:items-center [&_.page-heading-actions]:ms-0 [&_.page-heading-actions]:w-full [&_.page-heading-actions]:flex-1'
+        >
+          <div className='flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:gap-4'>
+            <div className='relative mx-auto w-full max-w-md flex-1'>
+              <Search className='pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-white/65' />
+              <Input
+                aria-label='Search report rows across all dates'
+                placeholder='Search any report field...'
+                value={state.search ?? ''}
+                onChange={(event) =>
+                  changeFilters({ search: event.target.value })
+                }
+                className='h-11 rounded-lg border-white/30 bg-[#102b49] ps-10 text-white shadow-inner placeholder:text-white/65 focus-visible:border-white/60 focus-visible:ring-white/30 dark:border-input dark:bg-input/30 dark:text-foreground dark:placeholder:text-muted-foreground'
+              />
+            </div>
+            <div className='flex shrink-0 justify-end gap-2'>
+              <Button
+                variant='success'
+                className='relative overflow-hidden'
+                disabled={
+                  !data ||
+                  !!problem ||
+                  query.isFetching ||
+                  !!exporting ||
+                  totalRows > 10000
+                }
+                onClick={() => void exportFile('xlsx')}
+              >
+                <Download className='size-4' />
+                {exporting === 'xlsx' && feedback.visible
+                  ? feedback.phase === 'preparing'
+                    ? 'Preparing…'
+                    : feedback.percent === null
+                      ? 'Downloading…'
+                      : `Downloading ${feedback.percent}%`
+                  : 'Excel'}
+                {exporting === 'xlsx' && feedback.visible && (
+                  <Progress
+                    value={feedback.percent ?? undefined}
+                    label='Excel report download progress'
+                    className='absolute inset-x-0 bottom-0 h-1 rounded-none'
+                  />
+                )}
+              </Button>
+              <Button
+                variant='default'
+                className='relative overflow-hidden bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-institutional dark:text-institutional-foreground dark:hover:bg-institutional/90'
+                disabled={
+                  !data ||
+                  !!problem ||
+                  query.isFetching ||
+                  !!exporting ||
+                  totalRows > 10000
+                }
+                onClick={() => void exportFile('pdf')}
+              >
+                <Download className='size-4' />
+                {exporting === 'pdf' && feedback.visible
+                  ? feedback.phase === 'preparing'
+                    ? 'Preparing…'
+                    : feedback.percent === null
+                      ? 'Downloading…'
+                      : `Downloading ${feedback.percent}%`
+                  : 'PDF'}
+                {exporting === 'pdf' && feedback.visible && (
+                  <Progress
+                    value={feedback.percent ?? undefined}
+                    label='PDF report download progress'
+                    className='absolute inset-x-0 bottom-0 h-1 rounded-none'
+                  />
+                )}
+              </Button>
+            </div>
           </div>
         </PageHeading>
         <div className='space-y-4'>

@@ -12,6 +12,7 @@ function reportParams(search: ReportSearch) {
     to_date: search.to,
     section: search.section,
     status: search.status,
+    search: search.search,
     stone_type: search.stoneType,
     page: search.page,
     page_size: search.pageSize,
@@ -52,10 +53,10 @@ export async function downloadReport(
       ? (event) => onProgress({ loaded: event.loaded, total: event.total })
       : undefined,
   })
-  saveBlob(
-    response.data as Blob,
-    `${kind}-reports-${search.from}-${search.to}.${fileType}`
-  )
+  const period = search.search?.trim()
+    ? 'all-dates'
+    : `${search.from}-${search.to}`
+  saveBlob(response.data as Blob, `${kind}-reports-${period}.${fileType}`)
 }
 
 /** Download the totals shown on one highlights group, without detail rows. */
