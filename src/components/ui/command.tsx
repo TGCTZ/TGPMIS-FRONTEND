@@ -62,20 +62,22 @@ function CommandDialog({
 /** The search field. Filters the list as you type. */
 function CommandInput({
   className,
+  placeholder = 'Search...',
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Input>) {
   return (
     <div
       data-slot='command-input-wrapper'
-      className='flex h-9 items-center gap-2 border-b px-3'
+      className='flex h-11 items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 shadow-sm dark:border-slate-300 dark:bg-white'
     >
-      <SearchIcon className='size-4 shrink-0 opacity-50' />
+      <SearchIcon className='size-4 shrink-0 text-slate-700' />
       <CommandPrimitive.Input
         data-slot='command-input'
         className={cn(
-          'flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50',
+          'flex h-10 w-full rounded-md bg-transparent py-3 text-sm text-slate-900 outline-hidden placeholder:text-slate-600 placeholder:opacity-100 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-900 dark:placeholder:text-slate-600',
           className
         )}
+        placeholder={placeholder}
         {...props}
       />
     </div>

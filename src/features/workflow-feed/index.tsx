@@ -2,7 +2,7 @@ import { type ReactNode, useMemo } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import { formatDate } from '@/lib/format'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { SearchInput } from '@/components/ui/search-input'
 import { Can } from '@/components/can'
 import { DataTable, type TableQueryState } from '@/components/data-table'
 import { type WorkflowRow } from './data/api'
@@ -159,10 +159,9 @@ export function WorkflowFeedTable({
 
   const toolbar = (
     <>
-      <Input
+      <SearchInput
         aria-label='Search records'
-        placeholder='Search reference or customer…'
-        className='h-8 w-full max-w-72'
+        containerClassName='max-w-72'
         value={state.search}
         onChange={(event) =>
           onStateChange({ search: event.target.value, page: 1 })

@@ -1,8 +1,8 @@
 import { X } from 'lucide-react'
 import { type Meta } from '@/lib/api-query'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { SearchInput } from '@/components/ui/search-input'
 import {
   Select,
   SelectContent,
@@ -49,11 +49,11 @@ export function StonesTable({
 
   const toolbar = (
     <>
-      <Input
-        placeholder='Search label, order or type...'
+      <SearchInput
+        aria-label='Search stones'
+        containerClassName='max-w-64'
         value={state.search}
         onChange={(e) => onStateChange({ search: e.target.value, page: 1 })}
-        className='h-8 w-full max-w-64'
       />
 
       {/* Every status is offered here, including the ones only the pipeline

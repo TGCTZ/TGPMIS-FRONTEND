@@ -3,7 +3,7 @@ import { type Meta } from '@/lib/api-query'
 import { isIsoDate } from '@/lib/date'
 import { Button } from '@/components/ui/button'
 import { DateInput } from '@/components/ui/date-input'
-import { Input } from '@/components/ui/input'
+import { SearchInput } from '@/components/ui/search-input'
 import {
   Select,
   SelectContent,
@@ -56,11 +56,11 @@ export function AuditLogsTable({
 
   const toolbar = (
     <>
-      <Input
-        placeholder='Search description, actor or subject...'
+      <SearchInput
+        aria-label='Search audit logs'
+        containerClassName='max-w-64'
         value={state.search}
         onChange={(e) => onStateChange({ search: e.target.value, page: 1 })}
-        className='h-8 w-full max-w-64'
       />
 
       <Select

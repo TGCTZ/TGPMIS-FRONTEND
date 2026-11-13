@@ -8,8 +8,8 @@ import { toast } from 'sonner'
 import { formatMoney } from '@/lib/format'
 import { perm, restorePerm } from '@/lib/permissions'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { SearchInput } from '@/components/ui/search-input'
 import { Switch } from '@/components/ui/switch'
 import { BoolBadge } from '@/components/bool-badge'
 import { Can } from '@/components/can'
@@ -248,11 +248,11 @@ function LookupsContent({ config }: { config: LookupConfig }) {
 
   const toolbar = (
     <>
-      <Input
-        placeholder='Search...'
+      <SearchInput
+        aria-label='Search lookups'
+        containerClassName='max-w-56'
         value={state.search}
         onChange={(e) => handleStateChange({ search: e.target.value, page: 1 })}
-        className='h-8 w-full max-w-56'
       />
 
       <Can role={['admin', 'superadmin']}>

@@ -12,8 +12,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
+import { SearchInput } from '@/components/ui/search-input'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Can } from '@/components/can'
@@ -136,11 +136,11 @@ export function RoleViewDialog({
           <div className='space-y-3'>
             <div className='flex flex-wrap items-center justify-between gap-2'>
               <h3 className='text-sm font-medium'>Permissions held</h3>
-              <Input
-                placeholder='Filter permissions...'
+              <SearchInput
+                aria-label='Search permissions'
+                containerClassName='max-w-56'
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className='h-8 w-full max-w-56'
               />
             </div>
 

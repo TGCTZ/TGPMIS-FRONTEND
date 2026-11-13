@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
+import { SearchInput } from '@/components/ui/search-input'
 import {
   Select,
   SelectContent,
@@ -197,11 +197,11 @@ export function SystemLogs() {
 
   const toolbar = (
     <>
-      <Input
-        placeholder='Search messages and traces...'
+      <SearchInput
+        aria-label='Search system logs'
+        containerClassName='max-w-64'
         value={state.search}
         onChange={(e) => handleStateChange({ search: e.target.value, page: 1 })}
-        className='h-8 w-full max-w-64'
       />
 
       <Select

@@ -86,7 +86,7 @@ export function RegionSelect({
         className='w-(--radix-popover-trigger-width) min-w-60 p-0'
       >
         <Command>
-          <CommandInput placeholder='Search regions…' />
+          <CommandInput placeholder='Search...' />
           <CommandList>
             <CommandEmpty>No region by that name.</CommandEmpty>
             {REGION_ZONES.map(({ zone, label }) => (

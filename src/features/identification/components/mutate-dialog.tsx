@@ -953,11 +953,7 @@ function OptionField({
                 >
                   <Command>
                     <CommandInput
-                      placeholder={
-                        creatable
-                          ? `Search or add ${label.toLowerCase()}…`
-                          : `Search ${label.toLowerCase()}…`
-                      }
+                      placeholder='Search...'
                       value={searchTerm}
                       onValueChange={setSearchTerm}
                     />

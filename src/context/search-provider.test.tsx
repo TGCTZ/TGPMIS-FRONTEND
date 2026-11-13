@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/auth-store'
 import { PERMISSIONS, perm } from '@/lib/permissions'
 import { SearchProvider } from '@/context/search-provider'
 
-const COMMAND_MENU_PLACEHOLDER = 'Type a command or search...'
+const COMMAND_MENU_PLACEHOLDER = 'Search...'
 
 const mocks = vi.hoisted(() => ({
   navigate: vi.fn(),

@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { X } from 'lucide-react'
 import { type Meta } from '@/lib/api-query'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { SearchInput } from '@/components/ui/search-input'
 import {
   Select,
   SelectContent,
@@ -56,11 +56,11 @@ export function UsersTable({
 
   const toolbar = (
     <>
-      <Input
-        placeholder='Search name, username or email...'
+      <SearchInput
+        aria-label='Search users'
+        containerClassName='max-w-60'
         value={state.search}
         onChange={(e) => onStateChange({ search: e.target.value, page: 1 })}
-        className='h-8 w-full max-w-60'
       />
 
       <Select
