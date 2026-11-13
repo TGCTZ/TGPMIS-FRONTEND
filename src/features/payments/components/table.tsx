@@ -1,7 +1,7 @@
 import { X } from 'lucide-react'
 import { type Meta } from '@/lib/api-query'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { SearchInput } from '@/components/ui/search-input'
 import {
   Select,
   SelectContent,
@@ -43,11 +43,11 @@ export function PaymentsTable({
 
   const toolbar = (
     <>
-      <Input
-        placeholder='Search transaction, payer or provider...'
+      <SearchInput
+        aria-label='Search payments'
+        containerClassName='max-w-72'
         value={state.search}
         onChange={(e) => onStateChange({ search: e.target.value, page: 1 })}
-        className='h-8 w-full max-w-72'
       />
 
       {/* An unprocessed notification is the one thing worth filtering for:

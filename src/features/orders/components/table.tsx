@@ -1,8 +1,8 @@
 import { X } from 'lucide-react'
 import { type Meta } from '@/lib/api-query'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { SearchInput } from '@/components/ui/search-input'
 import {
   Select,
   SelectContent,
@@ -52,11 +52,11 @@ export function OrdersTable({
 
   const toolbar = (
     <>
-      <Input
-        placeholder='Search reference, customer or phone...'
+      <SearchInput
+        aria-label='Search orders'
+        containerClassName='max-w-72'
         value={state.search}
         onChange={(e) => onStateChange({ search: e.target.value, page: 1 })}
-        className='h-8 w-full max-w-72'
       />
 
       {/* The stage is derived from the stones and the bill rather than stored,

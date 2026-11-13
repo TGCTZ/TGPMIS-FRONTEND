@@ -1,8 +1,8 @@
 import { X } from 'lucide-react'
 import { type Meta } from '@/lib/api-query'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { SearchInput } from '@/components/ui/search-input'
 import { Switch } from '@/components/ui/switch'
 import { Can } from '@/components/can'
 import { DataTable, type TableQueryState } from '@/components/data-table'
@@ -39,11 +39,11 @@ export function CustomersTable({
 
   const toolbar = (
     <>
-      <Input
-        placeholder='Search name, phone, email or company...'
+      <SearchInput
+        aria-label='Search customers'
+        containerClassName='max-w-72'
         value={state.search}
         onChange={(e) => onStateChange({ search: e.target.value, page: 1 })}
-        className='h-8 w-full max-w-72'
       />
 
       <Can role={['admin', 'superadmin']}>

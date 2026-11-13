@@ -14,6 +14,7 @@ import {
   RequiredMark,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { SearchInput } from '@/components/ui/search-input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { RegionSelect } from '@/components/region-select'
 import { customerSearchQuery } from '@/features/customers/data/api'
@@ -218,13 +219,11 @@ function ExistingCustomerSearch({
 }) {
   return (
     <div className='space-y-2'>
-      <div className='relative'>
-        <Search className='absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground' />
-        <Input
+      <div>
+        <SearchInput
+          aria-label='Search customers'
           value={term}
           onChange={(e) => onTermChange(e.target.value)}
-          placeholder='Search by name, phone or company...'
-          className='ps-9'
           autoComplete='off'
         />
         {isFetching && (

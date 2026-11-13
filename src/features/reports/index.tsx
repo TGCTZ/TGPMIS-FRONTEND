@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
-import { Download, Search } from 'lucide-react'
+import { Download } from 'lucide-react'
 import { toast } from 'sonner'
 import { useDownloadFeedback } from '@/lib/download-feedback'
 import { serverMessageOr } from '@/lib/handle-server-error'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
+import { SearchInput } from '@/components/ui/search-input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { brandPanelClassName } from '@/components/layout/brand-panel'
 import { Header } from '@/components/layout/header'
@@ -166,18 +166,14 @@ export function ReportsPage({ kind, search, onChange }: Props) {
           className='sm:flex-nowrap sm:items-center [&_.page-heading-actions]:ms-0 [&_.page-heading-actions]:w-full [&_.page-heading-actions]:flex-1'
         >
           <div className='flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:gap-4'>
-            <div className='relative mx-auto w-full max-w-md flex-1'>
-              <Search className='pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-white/65' />
-              <Input
-                aria-label='Search report rows across all dates'
-                placeholder='Search any report field...'
-                value={state.search ?? ''}
-                onChange={(event) =>
-                  changeFilters({ search: event.target.value })
-                }
-                className='h-11 rounded-lg border-white/30 bg-[#102b49] ps-10 text-white shadow-inner placeholder:text-white/65 focus-visible:border-white/60 focus-visible:ring-white/30 dark:border-input dark:bg-input/30 dark:text-foreground dark:placeholder:text-muted-foreground'
-              />
-            </div>
+            <SearchInput
+              aria-label='Search report rows across all dates'
+              value={state.search ?? ''}
+              onChange={(event) =>
+                changeFilters({ search: event.target.value })
+              }
+              containerClassName='mx-auto max-w-md flex-1'
+            />
             <div className='flex shrink-0 justify-end gap-2'>
               <Button
                 variant='success'

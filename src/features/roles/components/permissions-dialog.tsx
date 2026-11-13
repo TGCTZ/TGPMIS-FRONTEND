@@ -14,8 +14,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
+import { SearchInput } from '@/components/ui/search-input'
 import { Switch } from '@/components/ui/switch'
 import { DialogBody } from '@/components/dialog-body'
 import { groupedPermissionsQuery, roleQuery, updateRole } from '../data/api'
@@ -181,11 +181,10 @@ export function RolePermissionsDialog({
           )}
         </DialogHeader>
 
-        <Input
-          placeholder='Filter permissions...'
+        <SearchInput
+          aria-label='Search permissions'
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className='h-8'
         />
 
         <DialogBody>
