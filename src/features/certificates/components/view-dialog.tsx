@@ -55,7 +55,7 @@ export function CertificateViewDialog({
           </DialogTitle>
           <DialogDescription>
             {certificate.order_reference} · {certificate.stone_label} ·{' '}
-            {certificate.customer_name}
+            <span className='uppercase'>{certificate.customer_name}</span>
           </DialogDescription>
         </DialogHeader>
 

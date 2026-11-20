@@ -49,15 +49,12 @@ export function CustomerViewDialog({
       <DialogContent className='flex max-h-[90dvh] flex-col overflow-hidden sm:max-w-2xl'>
         <DialogHeader className='text-start'>
           <DialogTitle className='flex flex-wrap items-center gap-2'>
-            {customer.full_name}
+            <span className='uppercase'>{customer.full_name}</span>
             {customer.deleted_at && (
               <StatusBadge tone='danger'>Deleted</StatusBadge>
             )}
           </DialogTitle>
-          <DialogDescription>
-            {customer.phone}
-            {customer.company_name ? ` · ${customer.company_name}` : ''}
-          </DialogDescription>
+          <DialogDescription>{customer.phone}</DialogDescription>
         </DialogHeader>
 
         <DialogBody className='space-y-5'>
@@ -66,8 +63,6 @@ export function CustomerViewDialog({
             <DefinitionList
               items={[
                 { label: 'Phone', value: customer.phone },
-                { label: 'Email', value: customer.email },
-                { label: 'Company', value: customer.company_name },
                 { label: 'Region', value: regionLabel(customer.region) },
                 { label: 'Address', value: customer.address, wide: true },
               ]}
@@ -80,9 +75,24 @@ export function CustomerViewDialog({
             <h3 className='text-sm font-medium'>Identity</h3>
             <DefinitionList
               items={[
-                { label: 'First name', value: customer.first_name },
-                { label: 'Middle name', value: customer.middle_name },
-                { label: 'Last name', value: customer.last_name },
+                {
+                  label: 'First name',
+                  value: (
+                    <span className='uppercase'>{customer.first_name}</span>
+                  ),
+                },
+                {
+                  label: 'Middle name',
+                  value: customer.middle_name ? (
+                    <span className='uppercase'>{customer.middle_name}</span>
+                  ) : null,
+                },
+                {
+                  label: 'Last name',
+                  value: (
+                    <span className='uppercase'>{customer.last_name}</span>
+                  ),
+                },
                 { label: 'ID number', value: customer.id_number },
               ]}
             />

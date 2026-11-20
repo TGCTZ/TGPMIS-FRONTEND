@@ -143,7 +143,11 @@ export function GenerateBillDialog({
                   { label: 'Order', value: order.reference_number },
                   {
                     label: 'Customer',
-                    value: order.customer_detail?.full_name ?? null,
+                    value: order.customer_detail?.full_name ? (
+                      <span className='uppercase'>
+                        {order.customer_detail.full_name}
+                      </span>
+                    ) : null,
                   },
                   {
                     label: 'Phone',

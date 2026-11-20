@@ -20,34 +20,25 @@ export const customersColumns: ColumnDef<Customer>[] = [
     cell: ({ row }) => (
       <div className='min-w-0 md:min-w-44'>
         <div className='flex items-center gap-2'>
-          <LongText className='max-w-48 font-medium'>
+          <LongText className='max-w-48 font-medium uppercase'>
             {row.original.full_name}
           </LongText>
           {row.original.deleted_at && (
             <StatusBadge tone='danger'>Deleted</StatusBadge>
           )}
         </div>
-        <div className='text-xs text-muted-foreground'>
-          {row.original.phone}
-        </div>
       </div>
     ),
   },
   {
-    accessorKey: 'email',
+    accessorKey: 'phone',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Email' />
+      <DataTableColumnHeader column={column} title='Phone number' />
     ),
     enableSorting: false,
     cell: ({ row }) => (
-      <LongText className='max-w-56'>{row.original.email || '—'}</LongText>
+      <LongText className='max-w-40'>{row.original.phone}</LongText>
     ),
-  },
-  {
-    accessorKey: 'company_name',
-    header: () => <span>Company</span>,
-    enableSorting: false,
-    cell: ({ row }) => orDash(row.original.company_name),
   },
   {
     accessorKey: 'region',

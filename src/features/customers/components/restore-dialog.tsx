@@ -21,7 +21,11 @@ export function CustomerRestoreDialog({
   const mutation = useMutation({
     mutationFn: () => restoreCustomer(currentRow.id),
     onSuccess: () => {
-      toast.success(`Restored ${currentRow.full_name}`)
+      toast.success(
+        <>
+          Restored <span className='uppercase'>{currentRow.full_name}</span>
+        </>
+      )
       queryClient.invalidateQueries({ queryKey: ['customers'] })
       queryClient.invalidateQueries({ queryKey: ['customer-options'] })
       onOpenChange(false)
@@ -41,7 +45,11 @@ export function CustomerRestoreDialog({
       open={open}
       onOpenChange={onOpenChange}
       title='Restore customer'
-      desc={`Restore ${currentRow.full_name}?`}
+      desc={
+        <>
+          Restore <span className='uppercase'>{currentRow.full_name}</span>?
+        </>
+      }
       confirmText={mutation.isPending ? 'Restoring...' : 'Restore'}
       disabled={mutation.isPending}
       handleConfirm={() => mutation.mutate()}

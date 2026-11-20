@@ -108,13 +108,12 @@ export function CustomerPicker({ allowCreate = true }: CustomerPickerProps) {
             <FormLabel>Customer</FormLabel>
             <div className='flex items-center justify-between gap-2 rounded-md border bg-muted/40 px-3 py-2'>
               <div className='min-w-0'>
-                <div className='truncate text-sm font-medium'>
+                <div className='truncate text-sm font-medium uppercase'>
                   {picked?.full_name ?? 'Customer selected'}
                 </div>
                 {picked && (
                   <div className='truncate text-xs text-muted-foreground'>
                     {picked.phone}
-                    {picked.company_name ? ` · ${picked.company_name}` : ''}
                     {picked.region ? ` · ${regionLabel(picked.region)}` : ''}
                   </div>
                 )}
@@ -248,7 +247,7 @@ function ExistingCustomerSearch({
               >
                 <Check className='size-4 shrink-0 text-muted-foreground' />
                 <span className='min-w-0'>
-                  <span className='block truncate text-sm font-medium'>
+                  <span className='block truncate text-sm font-medium uppercase'>
                     {customer.full_name}
                   </span>
                   <span className='block truncate text-xs text-muted-foreground'>
@@ -297,11 +296,19 @@ function NewCustomerFields() {
   return (
     <div className='space-y-4 rounded-md border border-dashed p-3'>
       <div className='grid gap-4 sm:grid-cols-2'>
-        <TextField name='first_name' label='First name' required />
-        <TextField name='last_name' label='Last name' required />
+        <TextField
+          name='first_name'
+          label='First name'
+          required
+          className='uppercase'
+        />
+        <TextField
+          name='last_name'
+          label='Last name'
+          required
+          className='uppercase'
+        />
         <TextField name='phone' label='Phone' required />
-        <TextField name='email' label='Email' />
-        <TextField name='company_name' label='Company' />
         <RegionField name='region' />
       </div>
     </div>
@@ -344,10 +351,12 @@ function TextField({
   name,
   label,
   required = false,
+  className,
 }: {
   name: string
   label: string
   required?: boolean
+  className?: string
 }) {
   const form = useFormContext()
 
@@ -362,7 +371,7 @@ function TextField({
             {required && <RequiredMark />}
           </FormLabel>
           <FormControl>
-            <Input {...field} value={field.value ?? ''} />
+            <Input {...field} value={field.value ?? ''} className={className} />
           </FormControl>
           <FormMessage />
         </FormItem>

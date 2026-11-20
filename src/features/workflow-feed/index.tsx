@@ -71,7 +71,13 @@ export function WorkflowFeedTable({
   const columns = useMemo<ColumnDef<WorkflowRow>[]>(
     () => [
       { accessorKey: 'reference', header: 'Reference' },
-      { accessorKey: 'customer', header: 'Customer' },
+      {
+        accessorKey: 'customer',
+        header: 'Customer',
+        cell: ({ row }) => (
+          <span className='uppercase'>{row.original.customer}</span>
+        ),
+      },
       ...(renderProgress
         ? [
             {
