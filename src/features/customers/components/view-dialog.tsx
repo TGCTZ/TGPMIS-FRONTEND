@@ -54,10 +54,7 @@ export function CustomerViewDialog({
               <StatusBadge tone='danger'>Deleted</StatusBadge>
             )}
           </DialogTitle>
-          <DialogDescription>
-            {customer.phone}
-            {customer.company_name ? ` · ${customer.company_name}` : ''}
-          </DialogDescription>
+          <DialogDescription>{customer.phone}</DialogDescription>
         </DialogHeader>
 
         <DialogBody className='space-y-5'>
@@ -66,8 +63,6 @@ export function CustomerViewDialog({
             <DefinitionList
               items={[
                 { label: 'Phone', value: customer.phone },
-                { label: 'Email', value: customer.email },
-                { label: 'Company', value: customer.company_name },
                 { label: 'Region', value: regionLabel(customer.region) },
                 { label: 'Address', value: customer.address, wide: true },
               ]}

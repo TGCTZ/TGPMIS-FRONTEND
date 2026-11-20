@@ -184,12 +184,6 @@ export function CustomerMutateDialog({
                     </FormItem>
                   )}
                 />
-                <TextField control={form.control} name='email' label='Email' />
-                <TextField
-                  control={form.control}
-                  name='company_name'
-                  label='Company'
-                />
                 <FormField
                   control={form.control}
                   name='region'

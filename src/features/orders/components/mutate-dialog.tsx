@@ -85,14 +85,14 @@ const orderFormSchema = z
 
 type FormValues = z.input<typeof orderFormSchema>
 
-/** Blank strings for every registration field, so a reset clears the block. */
+/** Default details for an inline customer; reception can change the region. */
 const BLANK_CUSTOMER = {
   first_name: '',
   last_name: '',
   phone: '',
   email: '',
   company_name: '',
-  region: '',
+  region: 'arusha',
 } as const
 
 /** Today in the `YYYY-MM-DD` shape a date input and the API both want. */

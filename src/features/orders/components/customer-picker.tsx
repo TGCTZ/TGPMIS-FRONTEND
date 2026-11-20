@@ -114,7 +114,6 @@ export function CustomerPicker({ allowCreate = true }: CustomerPickerProps) {
                 {picked && (
                   <div className='truncate text-xs text-muted-foreground'>
                     {picked.phone}
-                    {picked.company_name ? ` · ${picked.company_name}` : ''}
                     {picked.region ? ` · ${regionLabel(picked.region)}` : ''}
                   </div>
                 )}
@@ -310,8 +309,6 @@ function NewCustomerFields() {
           className='uppercase'
         />
         <TextField name='phone' label='Phone' required />
-        <TextField name='email' label='Email' />
-        <TextField name='company_name' label='Company' />
         <RegionField name='region' />
       </div>
     </div>

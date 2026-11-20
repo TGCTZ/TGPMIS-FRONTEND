@@ -157,12 +157,10 @@ export function OrderViewDialog({
                   ) : null,
                 },
                 { label: 'Phone', value: customer?.phone ?? null },
-                { label: 'Company', value: customer?.company_name ?? null },
                 {
                   label: 'Region',
                   value: regionLabel(customer?.region) || null,
                 },
-                { label: 'Email', value: customer?.email ?? null },
                 { label: 'ID number', value: customer?.id_number ?? null },
                 {
                   label: 'Address',
