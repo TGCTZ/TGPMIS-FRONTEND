@@ -40,7 +40,7 @@ const stonesDataColumns: ColumnDef<Stone>[] = [
           <div className='text-sm'>{stone.order_reference ?? '—'}</div>
           {stone.customer_name && (
             <>
-              <LongText className='max-w-48 text-xs'>
+              <LongText className='max-w-48 text-xs uppercase'>
                 {stone.customer_name}
               </LongText>
               <div className='text-xs text-muted-foreground'>

@@ -57,7 +57,8 @@ export function BillViewDialog({
             <BillStatusBadge status={bill.status} />
           </DialogTitle>
           <DialogDescription>
-            {bill.order_reference} · {bill.customer_name}
+            {bill.order_reference} ·{' '}
+            <span className='uppercase'>{bill.customer_name}</span>
           </DialogDescription>
         </DialogHeader>
 

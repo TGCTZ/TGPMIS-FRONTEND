@@ -38,7 +38,7 @@ const ordersDataColumns: ColumnDef<Order>[] = [
           </div>
           {customer ? (
             <>
-              <LongText className='max-w-52 text-sm'>
+              <LongText className='max-w-52 text-sm uppercase'>
                 {customer.full_name}
               </LongText>
               <div className='text-xs text-muted-foreground'>

@@ -94,7 +94,15 @@ export function CustomerMutateDialog({
         : createCustomer(values),
     onSuccess: (customer) => {
       toast.success(
-        isEdit ? `Updated ${customer.full_name}` : `Added ${customer.full_name}`
+        isEdit ? (
+          <>
+            Updated <span className='uppercase'>{customer.full_name}</span>
+          </>
+        ) : (
+          <>
+            Added <span className='uppercase'>{customer.full_name}</span>
+          </>
+        )
       )
       queryClient.invalidateQueries({ queryKey: ['customers'] })
       queryClient.invalidateQueries({ queryKey: ['customer-options'] })
@@ -124,7 +132,13 @@ export function CustomerMutateDialog({
       <DialogContent className='flex max-h-[90dvh] flex-col overflow-hidden sm:max-w-2xl'>
         <DialogHeader className='text-start'>
           <DialogTitle>
-            {isEdit ? `Edit ${currentRow?.full_name}` : 'Add customer'}
+            {isEdit ? (
+              <>
+                Edit <span className='uppercase'>{currentRow?.full_name}</span>
+              </>
+            ) : (
+              'Add customer'
+            )}
           </DialogTitle>
         </DialogHeader>
 
@@ -140,16 +154,19 @@ export function CustomerMutateDialog({
                   control={form.control}
                   name='first_name'
                   label='First name'
+                  className='uppercase'
                 />
                 <TextField
                   control={form.control}
                   name='last_name'
                   label='Last name'
+                  className='uppercase'
                 />
                 <TextField
                   control={form.control}
                   name='middle_name'
                   label='Middle name'
+                  className='uppercase'
                 />
                 <FormField
                   control={form.control}
@@ -234,9 +251,10 @@ type FieldProps = {
   control: any
   name: string
   label: string
+  className?: string
 }
 
-function TextField({ control, name, label }: FieldProps) {
+function TextField({ control, name, label, className }: FieldProps) {
   return (
     <FormField
       control={control}
@@ -245,7 +263,7 @@ function TextField({ control, name, label }: FieldProps) {
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input {...field} value={field.value ?? ''} />
+            <Input {...field} value={field.value ?? ''} className={className} />
           </FormControl>
           <FormMessage />
         </FormItem>

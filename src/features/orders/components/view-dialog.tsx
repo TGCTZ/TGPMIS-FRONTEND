@@ -118,7 +118,12 @@ export function OrderViewDialog({
           </DialogTitle>
           <DialogDescription>
             Received {formatDate(currentOrder.received_date)}
-            {customer ? ` · ${customer.full_name}` : ''}
+            {customer && (
+              <>
+                {' '}
+                · <span className='uppercase'>{customer.full_name}</span>
+              </>
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -145,7 +150,12 @@ export function OrderViewDialog({
             <h3 className='text-sm font-medium'>Customer</h3>
             <DefinitionList
               items={[
-                { label: 'Name', value: customer?.full_name ?? null },
+                {
+                  label: 'Name',
+                  value: customer?.full_name ? (
+                    <span className='uppercase'>{customer.full_name}</span>
+                  ) : null,
+                },
                 { label: 'Phone', value: customer?.phone ?? null },
                 { label: 'Company', value: customer?.company_name ?? null },
                 {

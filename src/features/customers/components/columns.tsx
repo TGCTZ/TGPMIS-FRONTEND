@@ -20,7 +20,7 @@ export const customersColumns: ColumnDef<Customer>[] = [
     cell: ({ row }) => (
       <div className='min-w-0 md:min-w-44'>
         <div className='flex items-center gap-2'>
-          <LongText className='max-w-48 font-medium'>
+          <LongText className='max-w-48 font-medium uppercase'>
             {row.original.full_name}
           </LongText>
           {row.original.deleted_at && (

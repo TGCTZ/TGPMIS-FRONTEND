@@ -22,7 +22,11 @@ export function CustomerDeleteDialog({
   const mutation = useMutation({
     mutationFn: () => deleteCustomer(currentRow.id),
     onSuccess: () => {
-      toast.success(`Deleted ${currentRow.full_name}`)
+      toast.success(
+        <>
+          Deleted <span className='uppercase'>{currentRow.full_name}</span>
+        </>
+      )
       queryClient.invalidateQueries({ queryKey: ['customers'] })
       queryClient.invalidateQueries({ queryKey: ['customer-options'] })
       onOpenChange(false)
@@ -49,7 +53,12 @@ export function CustomerDeleteDialog({
       open={open}
       onOpenChange={onOpenChange}
       title='Delete customer'
-      desc={`Delete ${currentRow.full_name}? Restore them later from Show deleted.`}
+      desc={
+        <>
+          Delete <span className='uppercase'>{currentRow.full_name}</span>?
+          Restore them later from Show deleted.
+        </>
+      }
       confirmText={mutation.isPending ? 'Deleting...' : 'Delete'}
       destructive
       disabled={mutation.isPending}
