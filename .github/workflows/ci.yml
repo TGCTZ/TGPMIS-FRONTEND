@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   install-lint-build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
@@ -60,7 +60,7 @@ jobs:
   deploy:
     needs: install-lint-build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: production
       url: ${{ vars.SITE_URL }}
