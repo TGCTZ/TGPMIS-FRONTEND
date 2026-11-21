@@ -1,6 +1,7 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import { toPaginated } from '@/lib/api-query'
+import { formatDateInput } from '@/lib/date'
 import { saveBlob } from '@/lib/download'
 import { type DownloadProgressEvent } from '@/lib/download-feedback'
 import { type ReportKind } from './config'
@@ -55,7 +56,8 @@ export async function downloadReport(
   })
   const period = search.search?.trim()
     ? 'all-dates'
-    : `${search.from}-${search.to}`
+    : `${formatDateInput(search.from).replaceAll('/', '-')}-` +
+      formatDateInput(search.to).replaceAll('/', '-')
   saveBlob(response.data as Blob, `${kind}-reports-${period}.${fileType}`)
 }
 
@@ -75,6 +77,7 @@ export async function downloadHighlights(
   })
   saveBlob(
     response.data as Blob,
-    `${kind}-highlights-${search.from}-${search.to}.${fileType}`
+    `${kind}-highlights-${formatDateInput(search.from).replaceAll('/', '-')}-` +
+      `${formatDateInput(search.to).replaceAll('/', '-')}.${fileType}`
   )
 }
