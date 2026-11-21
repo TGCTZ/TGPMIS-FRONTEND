@@ -20,6 +20,18 @@ function reportParams(search: ReportSearch) {
   }
 }
 
+function reportFilenamePeriod(search: ReportSearch): string {
+  if (search.search?.trim()) return 'all-dates'
+
+  const from = search.from
+    ? formatDateInput(search.from).replace(/\//g, '-')
+    : undefined
+  const to = search.to
+    ? formatDateInput(search.to).replace(/\//g, '-')
+    : undefined
+  return from && to ? `${from}-${to}` : 'current-period'
+}
+
 /** Parse every API response before passing it to the shared table components. */
 export const reportsQuery = (kind: ReportKind, search: ReportSearch) =>
   queryOptions({
@@ -54,10 +66,7 @@ export async function downloadReport(
       ? (event) => onProgress({ loaded: event.loaded, total: event.total })
       : undefined,
   })
-  const period = search.search?.trim()
-    ? 'all-dates'
-    : `${formatDateInput(search.from).replaceAll('/', '-')}-` +
-      formatDateInput(search.to).replaceAll('/', '-')
+  const period = reportFilenamePeriod(search)
   saveBlob(response.data as Blob, `${kind}-reports-${period}.${fileType}`)
 }
 
@@ -77,7 +86,6 @@ export async function downloadHighlights(
   })
   saveBlob(
     response.data as Blob,
-    `${kind}-highlights-${formatDateInput(search.from).replaceAll('/', '-')}-` +
-      `${formatDateInput(search.to).replaceAll('/', '-')}.${fileType}`
+    `${kind}-highlights-${reportFilenamePeriod(search)}.${fileType}`
   )
 }
