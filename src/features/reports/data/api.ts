@@ -1,6 +1,7 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import { toPaginated } from '@/lib/api-query'
+import { formatDateInput } from '@/lib/date'
 import { saveBlob } from '@/lib/download'
 import { type DownloadProgressEvent } from '@/lib/download-feedback'
 import { type ReportKind } from './config'
@@ -17,6 +18,18 @@ function reportParams(search: ReportSearch) {
     page: search.page,
     page_size: search.pageSize,
   }
+}
+
+function reportFilenamePeriod(search: ReportSearch): string {
+  if (search.search?.trim()) return 'all-dates'
+
+  const from = search.from
+    ? formatDateInput(search.from).replace(/\//g, '-')
+    : undefined
+  const to = search.to
+    ? formatDateInput(search.to).replace(/\//g, '-')
+    : undefined
+  return from && to ? `${from}-${to}` : 'current-period'
 }
 
 /** Parse every API response before passing it to the shared table components. */
@@ -53,9 +66,7 @@ export async function downloadReport(
       ? (event) => onProgress({ loaded: event.loaded, total: event.total })
       : undefined,
   })
-  const period = search.search?.trim()
-    ? 'all-dates'
-    : `${search.from}-${search.to}`
+  const period = reportFilenamePeriod(search)
   saveBlob(response.data as Blob, `${kind}-reports-${period}.${fileType}`)
 }
 
@@ -75,6 +86,6 @@ export async function downloadHighlights(
   })
   saveBlob(
     response.data as Blob,
-    `${kind}-highlights-${search.from}-${search.to}.${fileType}`
+    `${kind}-highlights-${reportFilenamePeriod(search)}.${fileType}`
   )
 }
