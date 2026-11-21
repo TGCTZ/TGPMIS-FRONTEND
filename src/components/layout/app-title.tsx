@@ -35,7 +35,7 @@ export function AppTitle() {
   const { setOpenMobile } = useSidebar()
 
   return (
-    <SidebarMenu>
+    <SidebarMenu className='my-auto'>
       <SidebarMenuItem>
         <Link
           to='/'
